@@ -50,3 +50,4 @@ None
 - **SPA page views.** On `astro:after-swap`, if GA is already loaded it fires a synthetic `page_view` event; otherwise it retries `initGoogleAnalytics`. No duplicate page views on initial load.
 - **`__gaLoaded` guard.** A `window.__gaLoaded` flag prevents double-initialization across idle callbacks and consent events.
 - **Idle loading.** Uses `requestIdleCallback` (3 s timeout) or `setTimeout(200 ms)` fallback so GA never blocks first paint.
+- **CSP.** GA4 loads `gtag/js` from `https://www.googletagmanager.com`. Add `www.googletagmanager.com` to `script-src` and `*.google-analytics.com` to `connect-src` in `public/_headers` or GA4 will be blocked silently.

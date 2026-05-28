@@ -47,7 +47,7 @@ None
 - **Env-var gated.** Requires `PUBLIC_POSTHOG_API_KEY` at build time. When absent, renders nothing — silent no-op. Optionally set `PUBLIC_POSTHOG_HOST` (ingest, defaults to `https://eu.i.posthog.com`) and `PUBLIC_POSTHOG_UI_HOST` (dashboard, defaults to `https://eu.posthog.com`).
 - **Consent required.** Calls `window.hasAnalyticsConsent()` before initializing. Listens for `passionfruit:consent-changed` for deferred consent. `CookieConsent.astro` must be on the page.
 - **EU instance.** The default `api_host` points to PostHog's EU ingest endpoint. If you need the US instance, set `PUBLIC_POSTHOG_HOST=https://us.i.posthog.com` and `PUBLIC_POSTHOG_UI_HOST=https://app.posthog.com`.
-- **Session recording is on by default** with `maskAllInputs: true`. Disable by setting `disable_session_recording: true` in the init config — this requires editing the component source.
+- **No prop exposes session recording control — must edit the component source to disable.** Session recording is on by default with `maskAllInputs: true`. To turn it off, open the component and set `disable_session_recording: true` in the PostHog `init` config.
 - **`person_profiles: 'identified_only'`** — anonymous visitors do not get a person profile, reducing EU GDPR exposure.
 - **`window.posthog.__loaded` guard.** Prevents re-initialization across idle callbacks and consent events.
 - **Cookie autoclear.** The `CookieConsent` config clears PostHog cookies (`/^_ph/`, `/^ph_/`) when the user revokes analytics consent.

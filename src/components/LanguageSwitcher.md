@@ -52,7 +52,7 @@ const currentSlug = "leistungen"; // DE slug for this page
 
 ## i18n keys
 
-None — label text (`DE` / `EN`) and `aria-label` (`"Deutsch"` / `"English"`) are hardcoded in the component.
+None — label text (`DE` / `EN`) and `aria-label` (`"Deutsch"` / `"English"`) are hardcoded in the component. These are stable language codes, not translatable UI copy, so the translation system adds no value here.
 
 ## Gotchas
 

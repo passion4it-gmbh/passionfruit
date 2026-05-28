@@ -65,6 +65,6 @@ None
 ## Gotchas
 
 - When `href` is set, `type` is ignored — the element is an `<a>`, not a `<button>`.
-- `disabled` via `...rest` adds `pointer-events-none opacity-50` via Tailwind; for `<a>` elements, also add `aria-disabled="true"` and prevent navigation in JS if needed (native `<a>` ignores `disabled`).
+- `baseClasses` uses Tailwind's `disabled:` modifier, which maps to the CSS `:disabled` pseudo-class. This fires correctly on `<button>` elements but never fires on `<a>` — anchors have no `:disabled` state. When rendering as a link, `pointer-events-none opacity-50` will not apply; add `aria-disabled="true"` and prevent navigation in JS manually.
 - Minimum height is 44px (`min-h-[44px]`) for touch compliance; don't override this with a tighter height utility.
 - Focus ring uses `focus-visible`, so it only appears on keyboard navigation — no visual noise for mouse users.

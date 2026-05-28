@@ -49,4 +49,4 @@ None
 
 - Content is slotted — no text prop. An empty slot renders an empty pill.
 - `status` variant (`green-100/green-800` on light, `green-900/30/green-400` on dark) is purely visual. It carries no semantic ARIA role; add `aria-label` or surrounding context when the color conveys meaning.
-- The `on-dark` palette uses `text-text-on-dark` (white-ish) — ensure the parent background is dark or the contrast will be insufficient.
+- The `on-dark` palette uses `text-text-on-dark` (maps to `--color-text-on-dark` in `global.css`) — ensure the parent background is dark or the contrast will be insufficient.

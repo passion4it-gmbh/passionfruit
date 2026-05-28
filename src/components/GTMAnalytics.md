@@ -18,7 +18,7 @@ Loads a Google Tag Manager container only after analytics consent is granted. Im
 
 - Alongside `GoogleAnalytics` — both load from `googletagmanager.com`; using both risks duplicate events and `dataLayer` conflicts.
 - When `PUBLIC_GTM_CONTAINER_ID` is not set — the component silently no-ops.
-- When GTM is not configured — an empty container still loads; a misconfigured container may fire unintended tags.
+- When the container ID was previously used for another site — that site's tags will load alongside yours. Verify the container is clean before pointing it at a new domain.
 
 ## Props
 
