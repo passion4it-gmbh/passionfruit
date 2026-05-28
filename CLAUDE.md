@@ -151,7 +151,9 @@ The deploy job is gated on `CLOUDFLARE_PROJECT_NAME` being set — when unset, t
 
 **Site URL:** Update `site` in `astro.config.mjs` after deployment. This affects canonical URLs, sitemap, and OG meta tags.
 
-**Security headers + caching** live in `public/_headers` (Cloudflare Pages auto-picks this up). Includes HSTS, CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and long-cache rules for `/_astro/*`. The CSP is scoped to what's actually used (PostHog + GA4); **if you add a new third-party script, iframe, or asset host, update the CSP or it will be blocked silently in the browser console.**
+**Security headers + caching** live in `public/_headers` (Cloudflare Pages auto-picks this up). Includes HSTS, CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and long-cache rules for `/_astro/*`. HTML pages get `max-age=60, must-revalidate` — short enough that copy edits propagate within a minute, long enough to skip the revalidation round-trip on back/forward navigation. The CSP is scoped to what's actually used (PostHog + GA4); **if you add a new third-party script, iframe, or asset host, update the CSP or it will be blocked silently in the browser console.**
+
+**CSP violation reporting** is opt-in: when `PUBLIC_POSTHOG_API_KEY` is set at build time, `scripts/postbuild-headers.mjs` injects `Reporting-Endpoints` + `report-uri`/`report-to` directives pointing at PostHog's `/report/` ingest. Violations show up in the PostHog dashboard under Reports. The script is a no-op without the key, so forks ship safely with reporting disabled. The reporting URL is tagged `v=1` — bump in the script when materially changing the CSP so historical noise doesn't drown out fresh regressions.
 
 ## 15. Git workflow
 
