@@ -1,5 +1,46 @@
 # Changelog
 
+## [0.2.0](https://github.com/passion4it-gmbh/passionfruit/compare/v0.1.0...v0.2.0) (2026-05-28)
+
+
+### Features
+
+* add Cloudflare Pages deployment with /deploy skill ([d3b652e](https://github.com/passion4it-gmbh/passionfruit/commit/d3b652efe6f377fb500de7c839429e087f593ad9))
+* add commitlint, commit hooks, spell checker, link checker, legal pages ([aa50db2](https://github.com/passion4it-gmbh/passionfruit/commit/aa50db28850c7160c1b1472644c1ae3580b6ce7e))
+* add release-please + template-cleanup workflow ([1d36c73](https://github.com/passion4it-gmbh/passionfruit/commit/1d36c734cab1222aedf8d687ced543c2d8a363be))
+* all pages — home, about, services, blog, team, contact, 404, sitemap ([2b5d5a4](https://github.com/passion4it-gmbh/passionfruit/commit/2b5d5a4e77ebc4d4f02b29093d20d5cb31ad72cb))
+* BaseLayout, Header, Footer, Button, Badge, LanguageSwitcher ([7df09ee](https://github.com/passion4it-gmbh/passionfruit/commit/7df09ee68fc596533824499ced8821743c3f0d47))
+* bilingual check script with test suite ([9ecef5f](https://github.com/passion4it-gmbh/passionfruit/commit/9ecef5fa4bebc8b472f3a3d2e0a3b81d33de6c41))
+* Claude Code setup — CLAUDE.md, STYLE_GUIDE.md, CONTRIBUTING.md, onboard skill, plugins ([8c62cec](https://github.com/passion4it-gmbh/passionfruit/commit/8c62cece62653da99968f7e7aadc4e49c2a26590))
+* complete visual redesign — scroll animations, glass effects, fluid typography ([d02c10d](https://github.com/passion4it-gmbh/passionfruit/commit/d02c10d74af096745bf7af94c3131d3c4a716dd5))
+* contact form, content skills, prerequisites check, brand assets ([57f21f1](https://github.com/passion4it-gmbh/passionfruit/commit/57f21f18c6cf5a5c0daf48fd9ab3b2f542bbe44f))
+* content collections — blog, team, pages with example bilingual content ([cede46b](https://github.com/passion4it-gmbh/passionfruit/commit/cede46b9f2182cb1c1a4d160bace0049aded6a8e))
+* content components — BlogCard, BlogPost, TeamCard, PageContent, FAQs, StructuredData ([30b49b9](https://github.com/passion4it-gmbh/passionfruit/commit/30b49b9ea83b15b290e2b45bcee0f7e619f963be))
+* cookie consent + PostHog analytics (consent-gated, env-var-driven) ([f5ac948](https://github.com/passion4it-gmbh/passionfruit/commit/f5ac94851b6f2b1d5f1f3007dc43bb789198b76c))
+* **deploy:** preview deploys on PRs + document PR workflow ([5270ef5](https://github.com/passion4it-gmbh/passionfruit/commit/5270ef5dc1c06d649335eb1e00bbccb362724be5))
+* ESLint configs (TS + a11y) and CI pipeline ([00fe33f](https://github.com/passion4it-gmbh/passionfruit/commit/00fe33f24edd0ec46512f33ab8e8b2cfec22c3c7))
+* GPT Image generation + visual upgrade ([a3bd20a](https://github.com/passion4it-gmbh/passionfruit/commit/a3bd20a3d5d73dd0f8597e543ffaf9037d90681a))
+* i18n system — useTranslations hook, de/en translation files ([b0c63ee](https://github.com/passion4it-gmbh/passionfruit/commit/b0c63eeaacfcfa73af8a63867da5faf8a7824256))
+* lib utilities — page registry, structured data, date formatting ([3ed0175](https://github.com/passion4it-gmbh/passionfruit/commit/3ed01753bd71ea503fdb5e91f73aa75930df940a))
+* polish pass — header glass, TeamCard photos, STYLE_GUIDE.md ([3354641](https://github.com/passion4it-gmbh/passionfruit/commit/33546414a41bfd3546b33edeb3aea815fea7beed))
+* redesign all inner pages as proper designed sections ([0d729bc](https://github.com/passion4it-gmbh/passionfruit/commit/0d729bc9647c4de271e6bc63f78754a1e9b9739a))
+* refine BlogPost, BlogCard, and 404 page ([73cdcaf](https://github.com/passion4it-gmbh/passionfruit/commit/73cdcaf3a3922c3ac381b65af3da7eedfd08a7d7))
+* styling foundation — Tailwind v4 tokens, Inter font, blog prose ([398c4da](https://github.com/passion4it-gmbh/passionfruit/commit/398c4da9b5a4fbc03979343667f77250db7ac543))
+* upgrade all inner pages + team headshots ([16cefbe](https://github.com/passion4it-gmbh/passionfruit/commit/16cefbea18ce33e02e6960933e75de0dc5b97407))
+
+
+### Bug Fixes
+
+* **deploy:** skip deploy job when Cloudflare not configured ([b0a05f0](https://github.com/passion4it-gmbh/passionfruit/commit/b0a05f0f64dae3443dd1369c9d908690e1a798b2))
+* exclude content.config.ts from ESLint type-checked rules (astro:content virtual types) ([07afe3f](https://github.com/passion4it-gmbh/passionfruit/commit/07afe3f29bffd5740091bee4f96bb8781a8a5708))
+* hero extends behind transparent header — no light strip ([cdf94eb](https://github.com/passion4it-gmbh/passionfruit/commit/cdf94eb58752973394a4ed7b1e732488c9fa9950))
+* link 'passionfruit' in footer to GitHub repo ([6c13a85](https://github.com/passion4it-gmbh/passionfruit/commit/6c13a85ca104fc5b74564c7061909508932d1654))
+* rename content config to src/content.config.ts (Astro v6 convention) ([92cb7c9](https://github.com/passion4it-gmbh/passionfruit/commit/92cb7c97d311d8e6f27008dd192116feeb16d0a9))
+* run astro sync before lint/typecheck in build + CI (generates astro:content types) ([1be990a](https://github.com/passion4it-gmbh/passionfruit/commit/1be990af29d82a06a023f559b7d4155f7fb17ba6))
+* transparent header on dark pages, gains bg on scroll ([aa73077](https://github.com/passion4it-gmbh/passionfruit/commit/aa73077cd889ca8a76d1614e62e5bf3f54d17853))
+
+## Changelog
+
 All notable changes to the **passionfruit** template are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
