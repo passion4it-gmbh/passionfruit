@@ -1,0 +1,158 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
+import { MapPin, Clock, Briefcase, ArrowLeft, ArrowRight } from "@lucide/astro";
+import type { Locale } from "~/i18n";
+import { useTranslations, getLocalizedPath } from "~/i18n";
+import { findPageByKey } from "~/lib/page-registry";
+import { formatDate } from "~/lib/format-date";
+import Button from "~/components/Button.astro";
+import Badge from "~/components/Badge.astro";
+import "~/styles/blog-prose.css";
+
+interface Props {
+  entry: CollectionEntry<"careers">;
+  lang: Locale;
+}
+
+const { entry, lang } = Astro.props;
+const { t } = useTranslations(lang);
+const { Content } = await render(entry);
+
+const careersPage = findPageByKey("careers-index");
+const careersIndexSlug =
+  careersPage?.slug[lang] ?? (lang === "de" ? "karriere" : "careers");
+const backHref = getLocalizedPath(careersIndexSlug, lang);
+
+const employmentTypeLabel = t(
+  `careers.employmentType.${entry.data.employmentType}`,
+);
+const formattedPostedAt = formatDate(entry.data.postedAt, lang);
+const formattedClosesAt = entry.data.closesAt
+  ? formatDate(entry.data.closesAt, lang)
+  : undefined;
+---
+
+<!-- Hero -->
+<section class="bg-surface-dark noise relative overflow-hidden">
+  <div class="absolute inset-0 bg-grid opacity-20"></div>
+  <div
+    class="glow-orb absolute top-1/2 left-0 w-[500px] h-[500px] rounded-full bg-accent/10 blur-[140px] -translate-y-1/2 -translate-x-1/3"
+  >
+  </div>
+  <div class="container relative z-10 pt-44 pb-20 md:pt-52 md:pb-28">
+    <a
+      href={backHref}
+      class="inline-flex items-center gap-2 text-sm text-text-on-dark/50 hover:text-text-on-dark transition-colors mb-8 hero-stagger"
+      style="--delay: 100ms"
+    >
+      <ArrowLeft class="w-4 h-4" />
+      {t("careers.backToCareers")}
+    </a>
+
+    <div class="mb-4 hero-stagger" style="--delay: 200ms">
+      <Badge tone="on-dark">{employmentTypeLabel}</Badge>
+    </div>
+
+    <h1
+      class="text-h1 text-text-on-dark max-w-3xl hero-stagger"
+      style="--delay: 300ms"
+    >
+      {entry.data.title}
+    </h1>
+
+    <p
+      class="text-body-lg text-text-on-dark/60 mt-4 max-w-2xl hero-stagger"
+      style="--delay: 400ms"
+    >
+      {entry.data.summary}
+    </p>
+
+    <!-- Metadata pills -->
+    <div class="flex flex-wrap gap-3 mt-8 hero-stagger" style="--delay: 500ms">
+      <span class="posting-pill">
+        <MapPin class="w-4 h-4" aria-hidden="true" />
+        {entry.data.location}
+      </span>
+      <span class="posting-pill">
+        <Clock class="w-4 h-4" aria-hidden="true" />
+        {employmentTypeLabel}
+      </span>
+      {
+        entry.data.department && (
+          <span class="posting-pill">
+            <Briefcase class="w-4 h-4" aria-hidden="true" />
+            {entry.data.department}
+          </span>
+        )
+      }
+    </div>
+
+    <p
+      class="text-text-on-dark/40 text-sm mt-6 hero-stagger"
+      style="--delay: 600ms"
+    >
+      {t("careers.postedOn")}
+      <time datetime={entry.data.postedAt.toISOString().split("T")[0]}>
+        {formattedPostedAt}
+      </time>
+      {
+        formattedClosesAt && (
+          <>
+            {" "}
+            &bull; {t("careers.closesOn")}
+            <time datetime={entry.data.closesAt!.toISOString().split("T")[0]}>
+              {formattedClosesAt}
+            </time>
+          </>
+        )
+      }
+    </p>
+  </div>
+</section>
+
+<!-- Body -->
+<section class="py-16 md:py-24">
+  <div class="container">
+    <article class="blog-prose max-w-3xl mx-auto">
+      <Content />
+    </article>
+
+    <!-- Apply CTA -->
+    <div
+      class="max-w-3xl mx-auto mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-start sm:items-center gap-4"
+    >
+      <Button
+        href={entry.data.applyUrl}
+        variant="primary"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {t("careers.apply")}
+        <ArrowRight class="w-4 h-4 ml-2" aria-hidden="true" />
+      </Button>
+      <a
+        href={backHref}
+        class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-accent transition-colors"
+      >
+        <ArrowLeft class="w-4 h-4" />
+        {t("careers.backToCareers")}
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .posting-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: color-mix(in srgb, var(--color-text-on-dark) 60%, transparent);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-card);
+    background: color-mix(in srgb, var(--color-text-on-dark) 6%, transparent);
+    border: 1px solid
+      color-mix(in srgb, var(--color-text-on-dark) 12%, transparent);
+  }
+</style>

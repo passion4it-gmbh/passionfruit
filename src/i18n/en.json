@@ -161,5 +161,21 @@
     "feature": "Feature",
     "yes": "Yes",
     "no": "No"
+  },
+  "careers": {
+    "title": "Careers",
+    "description": "Join our team. Open positions at Greenleaf Digital.",
+    "apply": "Apply now",
+    "openPosition": "Open position",
+    "postedOn": "Posted on",
+    "closesOn": "Closes on",
+    "noOpenings": "No open positions currently",
+    "backToCareers": "Back to Careers",
+    "employmentType": {
+      "full-time": "Full-time",
+      "part-time": "Part-time",
+      "contractor": "Contractor",
+      "internship": "Internship"
+    }
   }
 }

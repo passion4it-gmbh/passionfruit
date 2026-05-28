@@ -161,5 +161,21 @@
     "feature": "Merkmal",
     "yes": "Ja",
     "no": "Nein"
+  },
+  "careers": {
+    "title": "Karriere",
+    "description": "Werde Teil unseres Teams. Offene Stellen bei Greenleaf Digital.",
+    "apply": "Jetzt bewerben",
+    "openPosition": "Offene Position",
+    "postedOn": "Veröffentlicht am",
+    "closesOn": "Bewerbungsfrist",
+    "noOpenings": "Keine offenen Stellen aktuell",
+    "backToCareers": "Zurück zu Karriere",
+    "employmentType": {
+      "full-time": "Vollzeit",
+      "part-time": "Teilzeit",
+      "contractor": "Freiberuflich",
+      "internship": "Praktikum"
+    }
   }
 }
