@@ -84,11 +84,11 @@ For per-locale regeneration: `pnpm generate-og --lang de` or `--lang en`.
 
 Ask: "Describe what you'd like the image to convey — visual style, mood, key elements."
 
-Then generate both locales separately (so DE and EN visitors see the same artistic image):
+Generate once, then copy to the second locale — `gpt-image-2` is non-deterministic, so two separate calls with the same prompt produce two visually different images. We want DE and EN visitors to see the same artistic image.
 
 ```bash
 pnpm generate-image "<prompt including company name, brand style, professional look>" -o public/og-default-de.png --size 1536x1024
-pnpm generate-image "<same prompt>" -o public/og-default-en.png --size 1536x1024
+cp public/og-default-de.png public/og-default-en.png
 ```
 
 Guidelines for the prompt:
