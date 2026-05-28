@@ -1,6 +1,6 @@
 ---
 component: case-studies-index
-oneLiner: Renders the bilingual case studies index with filters and a card grid
+oneLiner: Bilingual case studies index with category/tag filters; sorted newest first
 status: stable
 tags: [page]
 ---

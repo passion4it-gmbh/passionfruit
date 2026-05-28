@@ -45,7 +45,7 @@ Composes:
 
 - **No filter bar.** Jobs are listed by recency only — no tag or department filtering. Add `CollectionFilter` and rebuild the query server-side if filtering is needed.
 - **No `heroImage` support.** The careers hero is always text-only.
-- **Job listings section uses `bg-surface-dark`.** The grid renders on the dark surface without a white-section break — this differs from `blog-index` and `team` which use the default light background for their grids.
+- **Job listings section uses `bg-surface-dark`.** The grid renders on the dark surface without a white-section break — this differs from `blog-index` and `team` which use the default light background for their grids. The empty-state text also differs: `text-text-on-dark/50` instead of `text-muted`.
 - **Bilingual job entries required.** Both DE and EN entries with matching `translationKey` must exist; `check-bilingual.mjs` enforces this at prebuild.
 - **`CareerPost` handles detail routing.** This index only lists cards; do not add per-entry anchors or modal overlays here — the catch-all route renders the full detail view.
 - **`postedAt` is the sort key.** Jobs with the same `postedAt` timestamp have undefined relative order — keep timestamps unique.

@@ -29,7 +29,7 @@ Do not use for a plain "get in touch" paragraph embedded in another page — use
 Composes:
 
 - `<BaseLayout>` (headerVariant: "on-dark")
-- Dark hero with optional `<Image>` from the `pages` collection `heroImage`; title and description come from `entry.data`, not i18n
+- Dark hero with optional `<Image>` from the `pages` collection `heroImage`; hero heading and lead paragraph come from `entry.data.title` / `entry.data.description`, while `<BaseLayout>` receives its SEO `title` and meta `description` from `t("contact.title")` / `t("contact.description")`
 - Two-column content section: prose `<Content />` + contact-info links (Mail, Phone, MapPin icons) left; async `<form>` card right
 - `<Button type="submit">` with Send icon
 
@@ -56,7 +56,7 @@ The form submits to `PUBLIC_FORM_ENDPOINT` when set; falls back to a `mailto:` r
 ## Gotchas
 
 - **Page entry is required.** If no `pages` collection entry with `translationKey: "contact"` exists for the locale, the component redirects to `/404`. Both DE and EN entries must be present.
-- **`heroImage` is optional.** When absent, the hero is single-column. When present, a two-column grid splits text and image. Hero title and description come from `entry.data`, not i18n.
+- **`heroImage` is optional.** When absent, the hero is single-column. When present, a two-column grid splits text and image. Hero heading and lead paragraph come from `entry.data.title` / `entry.data.description`; SEO title and meta description come from `t("contact.title")` / `t("contact.description")` via `<BaseLayout>`.
 - **`PUBLIC_FORM_ENDPOINT` is opt-in.** Without it, form submission opens a pre-filled `mailto:` in the user's mail client. Set the env var to any endpoint that accepts `{ name, email, message }` JSON via `POST`.
 - **Form i18n strings are injected as `data-*` attributes.** This lets the inline `<script>` (which runs in the browser) access translated strings without re-exporting them.
 - **Alternate slug requires both locales.** `getAlternateCollectionSlug` is called; if the alternate-locale entry is missing the hreflang link is absent.
