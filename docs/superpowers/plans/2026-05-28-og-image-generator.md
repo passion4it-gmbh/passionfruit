@@ -6,7 +6,7 @@
 
 **Architecture:** Discovery → Template (JSX) → Satori (SVG) → resvg (PNG) → file write. Four small modules in `scripts/`, plus a CLI orchestrator and one test file. JSX uses the `react-jsx` transform already configured in `tsconfig.json`; the existing `tsx` runner handles `.tsx` natively.
 
-**Tech Stack:** Node 22 (`type: "module"`), `tsx` (already present), `satori` (new), `@resvg/resvg-js` (new), `@fontsource/inter` (new devDep — ships TTF; the existing `@fontsource-variable/inter` ships WOFF2 only, which Satori does not accept). `node:test` for tests, matching `scripts/check-bilingual.test.mjs`.
+**Tech Stack:** Node 22 (`type: "module"`), `tsx` (already present), `satori` (new), `@resvg/resvg-js` (new), `@fontsource/inter` (new devDep — ships WOFF; Satori 0.26 accepts WOFF, TTF, OTF but explicitly rejects WOFF2, which is what the existing `@fontsource-variable/inter` ships). `node:test` for tests, matching `scripts/check-bilingual.test.mjs`.
 
 **Spec:** `docs/superpowers/specs/2026-05-28-og-image-generator-design.md`. All decisions there (D1–D8) are binding.
 
@@ -17,7 +17,7 @@
 ## Pre-flight notes
 
 - **Worktree quirk:** the pre-commit hook fails the first time because pnpm's deps-status check runs `pnpm install` → `prepare` → `lefthook install` → fails on the worktree's `core.hooksPath`. Workaround: run `pnpm install --ignore-scripts` once at session start. After that, commits go through cleanly. See the prior commit `2b0cbe0` for context.
-- **Font format:** Satori does NOT accept WOFF2. The site's existing `@fontsource-variable/inter` dep is WOFF2-only. The script needs TTF. The cleanest fix is adding `@fontsource/inter` as a devDep (ships per-weight TTF in `node_modules/@fontsource/inter/files/inter-latin-{400,700}-normal.ttf`). Two weights (400 + 700) are enough for the template.
+- **Font format:** Satori does NOT accept WOFF2. The site's existing `@fontsource-variable/inter` dep is WOFF2-only. Satori does accept WOFF. We add `@fontsource/inter` (v5.x) as a devDep — it ships per-weight WOFF in `node_modules/@fontsource/inter/files/inter-latin-{400,700}-normal.woff`. Two weights (400 + 700) are enough for the template.
 - **JSX execution:** `tsconfig.json` already sets `"jsx": "react-jsx"` and excludes `scripts/` from tsc. The `tsx` runner uses esbuild and respects the same config. JSX in `scripts/og-template.tsx` Just Works without an `import React` line.
 - **Default values for missing data:** the script must be honest about failures. The accent color is the only soft fallback — everything else exits non-zero with a clear message naming the missing file/key.
 
@@ -61,7 +61,7 @@ Removed:
 
 - [ ] **1.1** Add `satori` (latest, expected major: 0.x) and `@resvg/resvg-js` (latest, expected major: 2.x) to `dependencies`. Add `@fontsource/inter` (latest, v5.x) to `devDependencies`.
 
-- [ ] **1.2** Run `pnpm install --ignore-scripts`. Verify the three new packages appear under `node_modules/`. Verify `node_modules/@fontsource/inter/files/inter-latin-400-normal.ttf` and `node_modules/@fontsource/inter/files/inter-latin-700-normal.ttf` both exist. If they don't, the wrong font package was added — stop and reconsider before continuing.
+- [ ] **1.2** Run `pnpm install --ignore-scripts`. Verify the three new packages appear under `node_modules/`. Verify `node_modules/@fontsource/inter/files/inter-latin-400-normal.woff` and `node_modules/@fontsource/inter/files/inter-latin-700-normal.woff` both exist. If they don't, the wrong font package was added — stop and reconsider before continuing.
 
 - [ ] **1.3** Commit: `chore(deps): add satori, @resvg/resvg-js, @fontsource/inter for og generator`.
 
@@ -171,7 +171,7 @@ Removed:
 
 - [ ] **5.1** Implement `og-render.ts`.
 
-- [ ] **5.2** Standalone smoke run inside `tsx -e`: load the two TTFs from `node_modules/@fontsource/inter/files/inter-latin-{400,700}-normal.ttf` as Buffers, call `loadSiteData(cwd, 'en')` for real props, call `renderOg(...)`, write the buffer to `/tmp/og-smoke.png`. Open the file (or `file /tmp/og-smoke.png`) — expect `PNG image data, 1200 x 630, 8-bit/color RGB`.
+- [ ] **5.2** Standalone smoke run inside `tsx -e`: load the two WOFF files from `node_modules/@fontsource/inter/files/inter-latin-{400,700}-normal.woff` as Buffers, call `loadSiteData(cwd, 'en')` for real props, call `renderOg(...)`, write the buffer to `/tmp/og-smoke.png`. Open the file (or `file /tmp/og-smoke.png`) — expect `PNG image data, 1200 x 630, 8-bit/color RGB`.
 
 - [ ] **5.3** Commit: `feat(og): add satori+resvg render pipeline`.
 
@@ -195,7 +195,7 @@ Removed:
 **Behavior:**
 
 - Resolves `projectRoot` once at the top.
-- Loads the two TTFs from `${projectRoot}/node_modules/@fontsource/inter/files/inter-latin-{400,700}-normal.ttf`. If either is missing, exits 1 with a message naming the path and suggesting `pnpm install`.
+- Loads the two WOFF files from `${projectRoot}/node_modules/@fontsource/inter/files/inter-latin-{400,700}-normal.woff`. If either is missing, exits 1 with a message naming the path and suggesting `pnpm install`.
 - Iterates `['de', 'en']` (or just the one from `--lang`):
   - Calls `loadSiteData(projectRoot, lang)`. Any `OgDiscoverError` is caught and printed to stderr; the process exits 1 immediately (no partial outputs).
   - Calls `renderOg({ props: { ...siteData, lang }, fonts })`.
