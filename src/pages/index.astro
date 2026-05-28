@@ -2,7 +2,7 @@
 import { Image } from "astro:assets";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import Button from "~/components/Button.astro";
-import FAQs from "~/components/FAQs.astro";
+import FAQ from "~/components/sections/FAQ.astro";
 import { useTranslations, getLocalizedPath } from "~/i18n";
 import { getTestimonials } from "~/data/testimonials";
 import { getFAQs } from "~/data/faqs";
@@ -223,16 +223,7 @@ const servicesHref = getLocalizedPath("leistungen", lang);
   </section>
 
   <!-- ═══════════ FAQs ═══════════ -->
-  <section class="py-28 md:py-40">
-    <div class="container">
-      <div class="text-center anim-slide-up">
-        <h2 class="text-h2 text-text-heading">{t("home.faq.title")}</h2>
-      </div>
-      <div class="max-w-2xl mx-auto mt-16 anim-fade">
-        <FAQs items={faqItems} />
-      </div>
-    </div>
-  </section>
+  <FAQ headline={t("home.faq.title")} items={faqItems} />
 
   <!-- ═══════════ CTA ═══════════ -->
   <section
