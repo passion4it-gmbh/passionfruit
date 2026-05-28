@@ -1,0 +1,30 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import AsymmetricHero from "~/components/sections/AsymmetricHero.astro";
+import { useTranslations, type Locale } from "~/i18n";
+import heroImage from "~/assets/home/hero.png";
+
+// Locale detection mirrors the catch-all [...path].astro pattern.
+// Cloudflare Pages serves dist/500/index.html when a function errors
+// (trailingSlash: "always" is set in astro.config.mjs).
+const lang: Locale = Astro.url.pathname.startsWith("/en") ? "en" : "de";
+const { t } = useTranslations(lang);
+
+const homeHref = lang === "en" ? "/en/" : "/";
+const title = t("state.500.title");
+const description = t("state.500.body");
+---
+
+<BaseLayout title={title} description={description} lang={lang} noindex={true}>
+  <AsymmetricHero
+    eyebrow="500"
+    headline={title}
+    lede={description}
+    cta={{ label: t("state.500.cta"), href: homeHref }}
+    image={heroImage}
+    imageAlt=""
+    imagePosition="right"
+    tone="surface"
+    padding="lg"
+  />
+</BaseLayout>
