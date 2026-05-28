@@ -130,7 +130,7 @@ describe("one missing sidecar", () => {
 // ---------------------------------------------------------------------------
 // 4. Two missing sidecars list both in stderr
 // ---------------------------------------------------------------------------
-describe("two missing sidecars", () => {
+describe("three missing sidecars", () => {
   let tmpDir;
 
   before(() => {
@@ -185,7 +185,32 @@ describe("orphan sidecar without matching component", () => {
 });
 
 // ---------------------------------------------------------------------------
-// 6. Recurses into subdirectories
+// 6. CLAUDE.md is not treated as a sidecar
+// ---------------------------------------------------------------------------
+describe("CLAUDE.md is not treated as a sidecar", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-test-"));
+    seedComponent(tmpDir, "Alpha", { withDoc: true });
+    writeFileSync(join(tmpDir, "CLAUDE.md"), "# Project notes\nNot a sidecar.");
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 0 (CLAUDE.md is not flagged as an orphan)", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 0, `stderr: ${result.stderr}`);
+  });
+
+  it("success summary counts only 1 component, not 2", () => {
+    const result = runScript(tmpDir);
+    assert.match(result.stdout, /component docs: 1 components/i);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 7. Recurses into subdirectories
 // ---------------------------------------------------------------------------
 describe("recursion into subdirectories", () => {
   let tmpDir;
