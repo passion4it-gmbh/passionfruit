@@ -32,8 +32,10 @@ function seedComponent(rootDir, name, options = {}) {
   if (options.withDoc) {
     const frontmatter =
       options.frontmatter ??
-      `---\ntitle: "${base}"\ndescription: "A component."\n---\n`;
-    const body = options.body ?? "## Overview\nDoes things.";
+      `---\ncomponent: ${base}\noneLiner: "A concise description of the ${base} component."\nstatus: stable\ntags:\n  - ui\n---\n`;
+    const body =
+      options.body ??
+      `## Purpose\nSolves the problem.\n\n## When to use\n- Use it here.\n\n## When NOT to use\n- Not here.\n\n## Props\nNone.\n\n## Example\n\`\`\`astro\n<${base} />\n\`\`\`\n\n## i18n keys\nNone.\n\n## Gotchas\nNone.\n`;
     writeFileSync(join(dir, `${base}.md`), frontmatter + body);
   }
 }
@@ -219,6 +221,487 @@ describe("recursion into subdirectories", () => {
     tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-test-"));
     seedComponent(tmpDir, "Foo", { withDoc: true });
     seedComponent(tmpDir, "pages/about", { withDoc: true });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 0", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 0, `stderr: ${result.stderr}`);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Schema validation helpers
+// ---------------------------------------------------------------------------
+
+/** Builds a valid sidecar frontmatter string. */
+function validFrontmatter(name) {
+  return `---\ncomponent: ${name}\noneLiner: "A concise description of the ${name} component."\nstatus: stable\ntags:\n  - ui\n---\n`;
+}
+
+/** Builds a valid sidecar body with all seven H2 sections in order. */
+const VALID_BODY = `## Purpose
+Solves the problem.
+
+## When to use
+- Use it here.
+
+## When NOT to use
+- Not here.
+
+## Props
+None.
+
+## Example
+\`\`\`astro
+<Foo />
+\`\`\`
+
+## i18n keys
+None.
+
+## Gotchas
+None.
+`;
+
+// ---------------------------------------------------------------------------
+// 8. Schema: valid sidecar passes
+// ---------------------------------------------------------------------------
+describe("schema: valid sidecar passes", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter: validFrontmatter("Badge"),
+      body: VALID_BODY,
+    });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 0", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 0, `stderr: ${result.stderr}`);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 9. Schema: missing frontmatter exits 1
+// ---------------------------------------------------------------------------
+describe("schema: missing frontmatter exits 1", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter: "",
+      body: VALID_BODY,
+    });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 1", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 1, `stdout: ${result.stdout}`);
+  });
+
+  it("stderr mentions file path and missing component key", () => {
+    const result = runScript(tmpDir);
+    assert.match(result.stderr, /Badge\.md/);
+    assert.match(result.stderr, /component/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 10. Schema: missing `component` key exits 1
+// ---------------------------------------------------------------------------
+describe("schema: missing component key exits 1", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter:
+        '---\noneLiner: "A description."\nstatus: stable\ntags:\n  - ui\n---\n',
+      body: VALID_BODY,
+    });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 1", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 1, `stdout: ${result.stdout}`);
+  });
+
+  it("stderr mentions file path and component key", () => {
+    const result = runScript(tmpDir);
+    assert.match(result.stderr, /Badge\.md/);
+    assert.match(result.stderr, /component/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 11. Schema: component mismatched with filename exits 1
+// ---------------------------------------------------------------------------
+describe("schema: component mismatch exits 1", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    // File is Badge.md but frontmatter says component: Foo
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter:
+        '---\ncomponent: Foo\noneLiner: "A description."\nstatus: stable\ntags:\n  - ui\n---\n',
+      body: VALID_BODY,
+    });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 1", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 1, `stdout: ${result.stdout}`);
+  });
+
+  it("stderr mentions file path and mismatch reason", () => {
+    const result = runScript(tmpDir);
+    assert.match(result.stderr, /Badge\.md/);
+    assert.match(result.stderr, /mismatch/i);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 12. Schema: missing `oneLiner` exits 1
+// ---------------------------------------------------------------------------
+describe("schema: missing oneLiner exits 1", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter:
+        "---\ncomponent: Badge\nstatus: stable\ntags:\n  - ui\n---\n",
+      body: VALID_BODY,
+    });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 1", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 1, `stdout: ${result.stdout}`);
+  });
+
+  it("stderr mentions file path and oneLiner", () => {
+    const result = runScript(tmpDir);
+    assert.match(result.stderr, /Badge\.md/);
+    assert.match(result.stderr, /oneLiner/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 13. Schema: oneLiner over 80 chars exits 1
+// ---------------------------------------------------------------------------
+describe("schema: oneLiner over 80 chars exits 1", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    const longLine = "x".repeat(81);
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter: `---\ncomponent: Badge\noneLiner: "${longLine}"\nstatus: stable\ntags:\n  - ui\n---\n`,
+      body: VALID_BODY,
+    });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 1", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 1, `stdout: ${result.stdout}`);
+  });
+
+  it("stderr mentions file path and oneLiner length", () => {
+    const result = runScript(tmpDir);
+    assert.match(result.stderr, /Badge\.md/);
+    assert.match(result.stderr, /oneLiner/);
+    assert.match(result.stderr, /80/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 14. Schema: invalid status value exits 1
+// ---------------------------------------------------------------------------
+describe("schema: invalid status value exits 1", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter:
+        '---\ncomponent: Badge\noneLiner: "A description."\nstatus: experimental\ntags:\n  - ui\n---\n',
+      body: VALID_BODY,
+    });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 1", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 1, `stdout: ${result.stdout}`);
+  });
+
+  it("stderr mentions file path and status", () => {
+    const result = runScript(tmpDir);
+    assert.match(result.stderr, /Badge\.md/);
+    assert.match(result.stderr, /status/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 15. Schema: missing tags exits 1
+// ---------------------------------------------------------------------------
+describe("schema: missing tags exits 1", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter:
+        '---\ncomponent: Badge\noneLiner: "A description."\nstatus: stable\n---\n',
+      body: VALID_BODY,
+    });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 1", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 1, `stdout: ${result.stdout}`);
+  });
+
+  it("stderr mentions file path and tags", () => {
+    const result = runScript(tmpDir);
+    assert.match(result.stderr, /Badge\.md/);
+    assert.match(result.stderr, /tags/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 16. Schema: empty tags array exits 1
+// ---------------------------------------------------------------------------
+describe("schema: empty tags array exits 1", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter:
+        '---\ncomponent: Badge\noneLiner: "A description."\nstatus: stable\ntags: []\n---\n',
+      body: VALID_BODY,
+    });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 1", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 1, `stdout: ${result.stdout}`);
+  });
+
+  it("stderr mentions file path and tags", () => {
+    const result = runScript(tmpDir);
+    assert.match(result.stderr, /Badge\.md/);
+    assert.match(result.stderr, /tags/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 17. Schema: missing H2 section exits 1
+// ---------------------------------------------------------------------------
+describe("schema: missing H2 section exits 1", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    // Body has only six of seven required H2s (Gotchas is missing)
+    const incompleteBody = `## Purpose
+Solves the problem.
+
+## When to use
+- Use it here.
+
+## When NOT to use
+- Not here.
+
+## Props
+None.
+
+## Example
+\`\`\`astro
+<Badge />
+\`\`\`
+
+## i18n keys
+None.
+`;
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter: validFrontmatter("Badge"),
+      body: incompleteBody,
+    });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 1", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 1, `stdout: ${result.stdout}`);
+  });
+
+  it("stderr mentions file path and the missing section", () => {
+    const result = runScript(tmpDir);
+    assert.match(result.stderr, /Badge\.md/);
+    assert.match(result.stderr, /Gotchas/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 18. Schema: H2 sections out of order exits 1
+// ---------------------------------------------------------------------------
+describe("schema: H2 sections out of order exits 1", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    // Gotchas appears before i18n keys
+    const outOfOrderBody = `## Purpose
+Solves the problem.
+
+## When to use
+- Use it here.
+
+## When NOT to use
+- Not here.
+
+## Props
+None.
+
+## Example
+\`\`\`astro
+<Badge />
+\`\`\`
+
+## Gotchas
+None.
+
+## i18n keys
+None.
+`;
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter: validFrontmatter("Badge"),
+      body: outOfOrderBody,
+    });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 1", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 1, `stdout: ${result.stdout}`);
+  });
+
+  it("stderr mentions file path and order", () => {
+    const result = runScript(tmpDir);
+    assert.match(result.stderr, /Badge\.md/);
+    assert.match(result.stderr, /order/i);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 19. Schema: disallowed extra H2 exits 1
+// ---------------------------------------------------------------------------
+describe("schema: disallowed extra H2 exits 1", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    const extraH2Body = VALID_BODY + "\n## Notes\nExtra section.\n";
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter: validFrontmatter("Badge"),
+      body: extraH2Body,
+    });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 1", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 1, `stdout: ${result.stdout}`);
+  });
+
+  it("stderr mentions file path and disallowed section", () => {
+    const result = runScript(tmpDir);
+    assert.match(result.stderr, /Badge\.md/);
+    assert.match(result.stderr, /Notes/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 20. Schema: H3 subsections inside the seven H2s are allowed
+// ---------------------------------------------------------------------------
+describe("schema: H3 subsections inside H2s are allowed", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    const bodyWithH3 = `## Purpose
+Solves the problem.
+
+### Sub-purpose
+More detail.
+
+## When to use
+- Use it here.
+
+## When NOT to use
+- Not here.
+
+## Props
+None.
+
+## Example
+\`\`\`astro
+<Badge />
+\`\`\`
+
+## i18n keys
+None.
+
+## Gotchas
+### Watch out
+None.
+`;
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter: validFrontmatter("Badge"),
+      body: bodyWithH3,
+    });
   });
 
   after(() => rmSync(tmpDir, { recursive: true, force: true }));
