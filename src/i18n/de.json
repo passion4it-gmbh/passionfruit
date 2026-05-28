@@ -144,7 +144,7 @@
     }
   },
   "legal": {
-    "lastUpdated": "Zuletzt aktualisiert: {date}"
+    "lastUpdated": "Zuletzt aktualisiert:"
   },
   "podcast": {
     "play": "{title} auf Spotify abspielen"

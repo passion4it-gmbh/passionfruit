@@ -24,7 +24,10 @@ const { t } = useTranslations(lang);
       {
         lastUpdated && (
           <p class="text-sm text-muted mb-8">
-            {t("legal.lastUpdated", { date: formatDate(lastUpdated, lang) })}
+            {t("legal.lastUpdated")}{" "}
+            <time datetime={lastUpdated.toISOString()}>
+              {formatDate(lastUpdated, lang)}
+            </time>
           </p>
         )
       }

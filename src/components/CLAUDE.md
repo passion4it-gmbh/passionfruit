@@ -16,12 +16,12 @@ This directory holds Astro components shared across pages. **One component per c
 
 Reusable wrapper for legal pages (imprint, privacy, future terms/AGB). Renders a constrained-width prose container with the page title, an optional last-updated timestamp, and a slot for the markdown body. Uses `blog-prose` typography.
 
-| Prop          | Type     | Required | Default | Notes                                                                       |
-| ------------- | -------- | -------- | ------- | --------------------------------------------------------------------------- |
-| `title`       | `string` | yes      | —       | Rendered as the page `<h1>`.                                                |
-| `lang`        | `Locale` | yes      | —       | Drives locale-aware date formatting and `t('legal.lastUpdated', { date })`. |
-| `lastUpdated` | `Date`   | no       | —       | When provided, renders a formatted timestamp below the heading.             |
-| `class`       | `string` | no       | —       | Extra classes appended to the outer `<section>`.                            |
+| Prop          | Type     | Required | Default | Notes                                                                     |
+| ------------- | -------- | -------- | ------- | ------------------------------------------------------------------------- |
+| `title`       | `string` | yes      | —       | Rendered as the page `<h1>`.                                              |
+| `lang`        | `Locale` | yes      | —       | Drives locale-aware date formatting; label from `t('legal.lastUpdated')`. |
+| `lastUpdated` | `Date`   | no       | —       | When provided, renders a formatted timestamp below the heading.           |
+| `class`       | `string` | no       | —       | Extra classes appended to the outer `<section>`.                          |
 
 Slot: the markdown `<Content />` from the page collection entry.
 
