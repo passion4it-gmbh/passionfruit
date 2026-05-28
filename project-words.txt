@@ -55,3 +55,4 @@ youtube
 spotify
 ytimg
 scdn
+claude

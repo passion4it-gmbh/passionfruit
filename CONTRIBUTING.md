@@ -4,6 +4,28 @@ Content workflows for the passionfruit template. All content is bilingual (DE + 
 
 ---
 
+## Recommended Claude Code plugins
+
+The template's `.claude/settings.json` **enables** four plugins from the default `claude-plugins-official` marketplace, but Claude Code does not auto-install them. If you see "plugin not found" warnings on first run, install them once with:
+
+```bash
+/plugin install superpowers@claude-plugins-official
+/plugin install playwright-skill@claude-plugins-official
+/plugin install claude-md-management@claude-plugins-official
+/plugin install frontend-design@claude-plugins-official
+```
+
+| Plugin                 | What it gives you                                                                           |
+| ---------------------- | ------------------------------------------------------------------------------------------- |
+| `superpowers`          | Process skills: brainstorming, TDD, debugging, plan execution, verification — the workhorse |
+| `playwright-skill`     | Browser automation for visual verification of UI changes                                    |
+| `claude-md-management` | Audit and improve CLAUDE.md across the repo as it grows                                     |
+| `frontend-design`      | Production-grade frontend design system guidance (used by `/onboard`)                       |
+
+The project skills (`/onboard`, `/brand`, `/deploy`, `/new-post`, `/new-team-member`) ship in `.claude/skills/` and load automatically — no install needed.
+
+---
+
 ## Blog Posts
 
 **Path:** `src/content/blog/{de,en}/<slug>.md`
