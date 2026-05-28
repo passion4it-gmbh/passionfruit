@@ -1,0 +1,164 @@
+---
+import { Image } from "astro:assets";
+import Section from "~/components/Section.astro";
+import type { MagazineGridProps, MagazineGridCell } from "~/types/sections";
+
+type Props = MagazineGridProps;
+
+const {
+  eyebrow,
+  headline,
+  lede,
+  cells,
+  tone = "surface",
+  padding = "md",
+  align = "start",
+} = Astro.props;
+
+const sizeClass: Record<MagazineGridCell["size"], string> = {
+  large: "pf-mag__cell--large",
+  medium: "pf-mag__cell--medium",
+  small: "pf-mag__cell--small",
+};
+---
+
+<Section tone={tone} padding={padding}>
+  {
+    (eyebrow || headline || lede) && (
+      <header
+        class:list={[
+          "pf-mag__header",
+          align === "center" && "pf-mag__header--center",
+        ]}
+      >
+        {eyebrow && <span class="text-eyebrow pf-mag__eyebrow">{eyebrow}</span>}
+        <h2 class="text-h1 pf-mag__title">{headline}</h2>
+        {lede && <p class="text-body-lg pf-mag__lede">{lede}</p>}
+      </header>
+    )
+  }
+
+  <div class="pf-mag__grid">
+    {
+      cells.map((cell) => {
+        const Tag = cell.href ? "a" : "div";
+        const HeadingTag = cell.size === "large" ? "h2" : "h3";
+        const headingClass = cell.size === "large" ? "text-h2" : "text-h3";
+
+        return (
+          <Tag
+            class:list={["pf-mag__cell", sizeClass[cell.size]]}
+            href={cell.href}
+          >
+            {cell.image && (
+              <div class="pf-mag__media">
+                <Image
+                  src={cell.image}
+                  alt={cell.imageAlt ?? ""}
+                  loading="lazy"
+                  class="pf-mag__image"
+                />
+              </div>
+            )}
+            <HeadingTag class:list={[headingClass, "pf-mag__heading"]}>
+              {cell.headline}
+            </HeadingTag>
+            {cell.lede && <p class="pf-mag__copy">{cell.lede}</p>}
+          </Tag>
+        );
+      })
+    }
+  </div>
+</Section>
+
+<style>
+  .pf-mag__header {
+    margin-bottom: var(--space-12);
+    max-width: 48rem;
+  }
+
+  .pf-mag__header--center {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .pf-mag__eyebrow {
+    display: inline-block;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+    color: var(--color-accent);
+  }
+
+  .pf-mag__title {
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .pf-mag__lede {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .pf-mag__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--grid-gap-md);
+  }
+
+  .pf-mag__cell {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    transition: transform var(--duration-base) var(--ease-standard);
+  }
+
+  a.pf-mag__cell:hover {
+    transform: translateY(-2px);
+  }
+
+  a.pf-mag__cell:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-card);
+  }
+
+  .pf-mag__media {
+    margin-bottom: var(--space-4);
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    aspect-ratio: 4 / 3;
+  }
+
+  .pf-mag__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .pf-mag__heading {
+    margin: 0 0 var(--space-2) 0;
+  }
+
+  .pf-mag__copy {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  @media (min-width: 768px) {
+    .pf-mag__grid {
+      grid-template-columns: var(--grid-cols-12);
+      gap: var(--grid-gap-md);
+    }
+
+    .pf-mag__cell--large {
+      grid-column: span 8;
+    }
+    .pf-mag__cell--medium {
+      grid-column: span 6;
+    }
+    .pf-mag__cell--small {
+      grid-column: span 4;
+    }
+  }
+</style>
