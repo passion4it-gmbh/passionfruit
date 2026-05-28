@@ -10,9 +10,10 @@ export type PageKey =
   | "team"
   | "contact"
   | "privacy"
-  | "imprint";
+  | "imprint"
+  | "careers-index";
 
-export type CollectionName = "blog" | "team" | "pages";
+export type CollectionName = "blog" | "team" | "pages" | "careers";
 
 export interface PageEntry {
   key: PageKey;
@@ -30,7 +31,10 @@ export type StaticPageMatch = { kind: "static-page"; entry: PageEntry };
 export type CollectionDetailMatch = {
   kind: "collection-detail";
   collection: CollectionName;
-  entry: CollectionEntry<"blog"> | CollectionEntry<"pages">;
+  entry:
+    | CollectionEntry<"blog">
+    | CollectionEntry<"pages">
+    | CollectionEntry<"careers">;
 };
 
 export type RouteMatch = StaticPageMatch | CollectionDetailMatch;
@@ -75,6 +79,11 @@ export const PAGES = [
     slug: { de: "impressum", en: "imprint" },
     component: () => import("~/components/pages/imprint.astro"),
   },
+  {
+    key: "careers-index" as const,
+    slug: { de: "karriere", en: "careers" },
+    component: () => import("~/components/pages/careers-index.astro"),
+  },
 ] satisfies PageEntry[];
 
 // ---------------------------------------------------------------------------
@@ -85,6 +94,7 @@ const COLLECTION_REGISTRY_KEY: Record<CollectionName, PageKey> = {
   blog: "blog-index",
   team: "team",
   pages: "about", // pages collection detail routes nest under about
+  careers: "careers-index",
 };
 
 // ---------------------------------------------------------------------------
@@ -106,7 +116,10 @@ export function findPageBySlug(
 // Collection detail paths
 // ---------------------------------------------------------------------------
 
-type AnyCollectionEntry = CollectionEntry<"blog"> | CollectionEntry<"pages">;
+type AnyCollectionEntry =
+  | CollectionEntry<"blog">
+  | CollectionEntry<"pages">
+  | CollectionEntry<"careers">;
 
 type CollectionDetailPath = {
   params: { path: string };
@@ -128,7 +141,7 @@ function toPathParam(lang: Locale, slug: string): string {
 function pushDetailPaths(
   paths: CollectionDetailPath[],
   collectionName: CollectionName,
-  entries: (CollectionEntry<"blog"> | CollectionEntry<"pages">)[],
+  entries: AnyCollectionEntry[],
   locales: Locale[],
 ): void {
   const registryKey = COLLECTION_REGISTRY_KEY[collectionName];
@@ -170,6 +183,9 @@ export async function getCollectionDetailPaths(): Promise<
   // Pages collection is consumed by static page components, not routed independently.
   const blog = await getCollection("blog");
   pushDetailPaths(paths, "blog", blog, locales);
+
+  const careers = await getCollection("careers");
+  pushDetailPaths(paths, "careers", careers, locales);
 
   return paths;
 }
@@ -222,7 +238,7 @@ export async function getAlternateCollectionSlug(
   translationKey: string,
 ): Promise<string | undefined> {
   const otherLang: Locale = currentLang === "de" ? "en" : "de";
-  const rawEntries = await getCollection(collectionName);
+  const rawEntries = await getCollection(collectionName as "blog");
   const entries = rawEntries as {
     id: string;
     data: { translationKey: string };

@@ -9,8 +9,9 @@ import type { CollectionEntry } from "astro:content";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import BlogPost from "~/components/BlogPost.astro";
 import PageContent from "~/components/PageContent.astro";
+import CareerPost from "~/components/CareerPost.astro";
 import StructuredData from "~/components/StructuredData.astro";
-import { buildBlogPostingLd } from "~/lib/structured-data";
+import { buildBlogPostingLd, buildJobPostingLd } from "~/lib/structured-data";
 
 export async function getStaticPaths() {
   return getAllPaths();
@@ -23,7 +24,10 @@ type Props =
       lang: Locale;
       slug: string;
       collection: CollectionName;
-      entry: CollectionEntry<"blog"> | CollectionEntry<"pages">;
+      entry:
+        | CollectionEntry<"blog">
+        | CollectionEntry<"pages">
+        | CollectionEntry<"careers">;
     };
 
 const props = Astro.props as Props;
@@ -36,6 +40,7 @@ let collectionTitle = "";
 let collectionDescription = "";
 let collectionAlternateSlug: string | undefined;
 let blogPostingLd: Record<string, unknown> | undefined;
+let jobPostingLd: Record<string, unknown> | undefined;
 let StaticComponent: AstroPageDefault | undefined;
 
 if (props.kind === "collection-detail") {
@@ -64,6 +69,13 @@ if (props.kind === "collection-detail") {
       lang,
     );
   }
+
+  if (props.collection === "careers") {
+    const careersEntry = props.entry as CollectionEntry<"careers">;
+    const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+    jobPostingLd = buildJobPostingLd(careersEntry, canonicalUrl);
+    collectionDescription = careersEntry.data.summary;
+  }
 } else {
   const pageEntry = findPageBySlug(lang, slug);
   if (!pageEntry) {
@@ -90,12 +102,25 @@ if (props.kind === "collection-detail") {
           data={blogPostingLd}
         />
       )}
+      {jobPostingLd && (
+        <StructuredData
+          slot="structured-data"
+          type="JobPosting"
+          data={jobPostingLd}
+        />
+      )}
       {props.collection === "blog" && (
         <BlogPost entry={props.entry as CollectionEntry<"blog">} lang={lang} />
       )}
       {props.collection === "pages" && (
         <PageContent
           entry={props.entry as CollectionEntry<"pages">}
+          lang={lang}
+        />
+      )}
+      {props.collection === "careers" && (
+        <CareerPost
+          entry={props.entry as CollectionEntry<"careers">}
           lang={lang}
         />
       )}

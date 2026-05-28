@@ -6,6 +6,8 @@
 import type { CollectionEntry } from "astro:content";
 import type { Locale } from "~/i18n";
 
+export type { Locale };
+
 const SITE_URL = "https://example.com";
 const LOGO_URL = `${SITE_URL}/logos/greenleaf-digital.svg`;
 
@@ -36,6 +38,65 @@ export const PUBLISHER_REF = {
 export interface BlogAuthor {
   name: string;
   role?: string;
+}
+
+/** Maps the template's employmentType enum to Schema.org-valid values. */
+const SCHEMA_EMPLOYMENT_TYPE: Record<string, string> = {
+  "full-time": "FULL_TIME",
+  "part-time": "PART_TIME",
+  contractor: "CONTRACTOR",
+  internship: "INTERN",
+};
+
+export function buildJobPostingLd(
+  entry: CollectionEntry<"careers">,
+  canonicalUrl: string,
+): Record<string, unknown> {
+  const d = entry.data;
+  const ld: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: d.title,
+    description: d.summary,
+    datePosted: d.postedAt.toISOString().split("T")[0],
+    employmentType:
+      SCHEMA_EMPLOYMENT_TYPE[d.employmentType] ?? d.employmentType,
+    hiringOrganization: {
+      "@type": "Organization",
+      name: "Greenleaf Digital",
+      sameAs: SITE_URL,
+      logo: LOGO_URL,
+    },
+    jobLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: d.location,
+      },
+    },
+    url: canonicalUrl,
+    directApply: false,
+    applyURL: d.applyUrl,
+  };
+
+  if (d.closesAt) {
+    ld["validThrough"] = d.closesAt.toISOString().split("T")[0];
+  }
+
+  if (d.salaryMin !== undefined || d.salaryMax !== undefined) {
+    ld["baseSalary"] = {
+      "@type": "MonetaryAmount",
+      currency: d.salaryCurrency,
+      value: {
+        "@type": "QuantitativeValue",
+        ...(d.salaryMin !== undefined ? { minValue: d.salaryMin } : {}),
+        ...(d.salaryMax !== undefined ? { maxValue: d.salaryMax } : {}),
+        unitText: "YEAR",
+      },
+    };
+  }
+
+  return ld;
 }
 
 export function buildBlogPostingLd(

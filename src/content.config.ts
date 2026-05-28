@@ -47,4 +47,37 @@ const pages = defineCollection({
     }),
 });
 
-export const collections = { blog, team, pages };
+// ---------------------------------------------------------------------------
+// careers
+//
+// Plain markdown-based job postings. No external HR-platform dependency —
+// downstream users add .md files directly under src/content/careers/{de,en}/.
+// The markdown body is the long-form job description.
+// ---------------------------------------------------------------------------
+const careers = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/careers" }),
+  schema: z.object({
+    /** Bilingual pairing key — must match across DE and EN variants. */
+    translationKey: z.string().min(1),
+    title: z.string(),
+    location: z.string(),
+    department: z.string().optional(),
+    employmentType: z.enum([
+      "full-time",
+      "part-time",
+      "contractor",
+      "internship",
+    ]),
+    applyUrl: z.string().url(),
+    summary: z.string(),
+    postedAt: z.coerce.date(),
+    closesAt: z.coerce.date().optional(),
+    seniority: z.string().optional(),
+    salaryMin: z.number().optional(),
+    salaryMax: z.number().optional(),
+    salaryCurrency: z.string().default("EUR"),
+    tags: z.array(z.string()).default([]),
+  }),
+});
+
+export const collections = { blog, team, pages, careers };
