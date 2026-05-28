@@ -36,7 +36,7 @@ const {
   noindex = false,
 } = Astro.props;
 
-const defaultOgImage = "/og-default.png";
+const defaultOgImage = `/og-default-${lang}.png`;
 const effectiveOgImage = ogImage ?? defaultOgImage;
 
 // Canonical URL: absolute, with trailing slash (trailingSlash: 'always').

@@ -88,7 +88,7 @@ if (props.kind === "collection-detail") {
     blogPostingLd = buildBlogPostingLd(
       blogEntry,
       { name: blogEntry.data.author },
-      `${Astro.site?.href ?? ""}og-default.png`,
+      `${Astro.site?.href ?? ""}og-default-${lang}.png`,
       canonicalUrl,
       lang,
     );
