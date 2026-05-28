@@ -63,3 +63,39 @@ export interface SplitFeatureItem {
 export interface SplitFeatureProps extends SectionProps {
   features: SplitFeatureItem[];
 }
+
+export interface TrustLogo {
+  src: ImageMetadata;
+  alt: string;
+  href?: string;
+}
+
+export interface TrustProps extends SectionProps {
+  logos: TrustLogo[];
+}
+
+export interface ComparisonColumn {
+  name: string;
+  highlight?: boolean;
+}
+
+export interface ComparisonRow {
+  feature: string;
+  values: (boolean | string)[];
+}
+
+export interface ComparisonProps extends SectionProps {
+  columns: ComparisonColumn[];
+  rows: ComparisonRow[];
+  /** Drives screen-reader labels for the Check/X icons. */
+  lang?: "de" | "en";
+}
+
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+export interface FAQProps extends SectionProps {
+  items: FAQItem[];
+}

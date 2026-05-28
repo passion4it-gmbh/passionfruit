@@ -256,29 +256,22 @@ Embeds via `open.spotify.com/embed/{kind}/{id}`. Defaults to podcast episodes bu
 
 ## Social proof
 
-### `TrustSection.astro`
+### `sections/Trust.astro`
 
-Horizontal strip of partner/client logos with an optional eyebrow heading. Logos are grayscale at rest and reveal color on hover — a low-noise way to signal credibility without visual shouting.
+Horizontal strip of partner/client logos. Logos are grayscale at rest and reveal color on hover — a low-noise way to signal credibility. Composes with `<Section>` and accepts the standard `SectionProps` (`eyebrow`, `headline`, `lede`, `tone`, `padding`, `align`) plus a `logos` array.
 
-| Prop      | Type                                                        | Required | Default | Notes                                                                  |
-| --------- | ----------------------------------------------------------- | -------- | ------- | ---------------------------------------------------------------------- |
-| `logos`   | `Array<{ src: ImageMetadata; alt: string; href?: string }>` | yes      | —       | Local image imports only. Pass meaningful `alt` — logo name is enough. |
-| `eyebrow` | `string`                                                    | no       | —       | Short label above the logo row (e.g., "Trusted by"). Sentence case.    |
-| `class`   | `string`                                                    | no       | —       | Extra classes appended to the root `<section>`.                        |
-
-- `href` wraps the logo in an `<a target="_blank" rel="noopener noreferrer">`. When set, the `alt` text moves to `aria-label` on the anchor and the `<Image>` gets `alt=""` (decorative). When absent, `alt` goes on the image directly.
-- Images are rendered via `<Image>` at `height={40}` (`h-10`). Don't pass width — it is derived from the source aspect ratio.
-- The section already has `border-y border-border` and `py-16`. Don't wrap it in another section with the same treatment.
+Props are typed by `TrustProps` in `~/types/sections`. The most common use is just `eyebrow` + `logos`, but you can promote it to a fuller section by adding `headline` and `lede`.
 
 ```astro
 ---
 import logoAcme from "~/assets/logos/acme.svg";
 import logoWidget from "~/assets/logos/widget.png";
-import TrustSection from "~/components/TrustSection.astro";
+import Trust from "~/components/sections/Trust.astro";
 ---
 
-<TrustSection
+<Trust
   eyebrow="Trusted by"
+  headline="Marken, die mit uns wachsen"
   logos={[
     { src: logoAcme, alt: "Acme Corp", href: "https://acme.example.com" },
     { src: logoWidget, alt: "Widget GmbH" },
