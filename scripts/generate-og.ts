@@ -20,7 +20,12 @@ import { join, resolve } from "node:path";
 
 import type { SatoriOptions } from "satori";
 
-import { type Locale, OgDiscoverError, loadSiteData } from "./og-discover.ts";
+import {
+  type Locale,
+  type SiteData,
+  OgDiscoverError,
+  loadSiteData,
+} from "./og-discover.ts";
 import { renderOg } from "./og-render.ts";
 
 const LOCALES: readonly Locale[] = ["de", "en"];
@@ -189,7 +194,7 @@ async function main(argv: string[]): Promise<number> {
   // aborts before any file is written (no partial outputs).
   const bundles: Array<{
     lang: Locale;
-    data: ReturnType<typeof loadSiteData>;
+    data: SiteData;
   }> = [];
   for (const lang of locales) {
     try {
