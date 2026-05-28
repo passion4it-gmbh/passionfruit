@@ -1,0 +1,61 @@
+---
+import { getCollection } from "astro:content";
+import CollectionFilter, {
+  type Facet,
+} from "~/components/CollectionFilter.astro";
+import { useTranslations, type Locale } from "~/i18n";
+
+interface Props {
+  lang: Locale;
+  selected: Record<string, string[]>;
+  baseUrl: string;
+}
+
+const { lang, selected, baseUrl } = Astro.props;
+const { t } = useTranslations(lang);
+
+const allEvents = await getCollection("events", ({ id }) =>
+  id.startsWith(`${lang}/`),
+);
+
+// --- category facet ---
+const categoryCounts = new Map<string, number>();
+for (const event of allEvents) {
+  const cat = event.data.category;
+  categoryCounts.set(cat, (categoryCounts.get(cat) ?? 0) + 1);
+}
+
+// --- tag facet ---
+const tagCounts = new Map<string, number>();
+for (const event of allEvents) {
+  for (const tag of event.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+
+const facets: Facet[] = [
+  {
+    key: "category",
+    label: t("events.filter.category"),
+    values: [...categoryCounts.entries()].map(([key, count]) => ({
+      key,
+      label: key,
+      count,
+    })),
+  },
+];
+
+if (tagCounts.size > 0) {
+  facets.push({
+    key: "tag",
+    label: t("events.filter.tag"),
+    values: [...tagCounts.entries()].map(([key, count]) => ({
+      key,
+      label: key,
+      count,
+    })),
+  });
+}
+---
+
+<CollectionFilter {facets} {selected} {lang} {baseUrl} />

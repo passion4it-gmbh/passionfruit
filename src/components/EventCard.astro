@@ -1,0 +1,131 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import { Calendar, Globe, MapPin, ArrowRight } from "@lucide/astro";
+import { useTranslations, getLocalizedPath, type Locale } from "~/i18n";
+import { findPageByKey } from "~/lib/page-registry";
+import { formatDate } from "~/lib/format-date";
+import Button from "~/components/Button.astro";
+
+interface Props {
+  entry: CollectionEntry<"events">;
+  lang: Locale;
+}
+
+const { entry, lang } = Astro.props;
+const { t } = useTranslations(lang);
+
+const entrySlug = entry.id.slice(entry.id.indexOf("/") + 1);
+const parentSlug =
+  findPageByKey("events-index")?.slug[lang] ??
+  (lang === "de" ? "veranstaltungen" : "events");
+const href = getLocalizedPath(`${parentSlug}/${entrySlug}`, lang);
+
+const formattedDate = formatDate(entry.data.startsAt, lang);
+const loc = entry.data.location;
+---
+
+<div
+  class="card group flex flex-col overflow-hidden p-0 transition-all hover:shadow-lg hover:shadow-accent/5 hover:-translate-y-0.5"
+>
+  {
+    entry.data.heroImage ? (
+      <div class="aspect-[16/10] overflow-hidden flex-shrink-0">
+        <Image
+          src={entry.data.heroImage}
+          alt={entry.data.title}
+          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          width={600}
+          height={375}
+        />
+      </div>
+    ) : (
+      <div class="aspect-[16/10] flex-shrink-0 bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center">
+        <Calendar class="w-12 h-12 text-accent/40" aria-hidden="true" />
+      </div>
+    )
+  }
+
+  <div class="flex flex-col flex-1 gap-3 p-6">
+    <!-- Date + location kind -->
+    <div class="flex flex-wrap items-center gap-3">
+      <time
+        datetime={entry.data.startsAt.toISOString()}
+        class="event-date-badge"
+      >
+        <Calendar class="w-3 h-3 shrink-0" aria-hidden="true" />
+        {formattedDate}
+      </time>
+      {
+        (loc.kind === "online" || loc.kind === "hybrid") && (
+          <span class="inline-flex items-center gap-1 text-xs text-muted font-medium">
+            <Globe class="w-3 h-3 shrink-0" aria-hidden="true" />
+            {t("events.location.online")}
+          </span>
+        )
+      }
+      {
+        (loc.kind === "in-person" || loc.kind === "hybrid") &&
+          (loc.venue ?? loc.city) && (
+            <span class="inline-flex items-center gap-1 text-xs text-muted font-medium">
+              <MapPin class="w-3 h-3 shrink-0" aria-hidden="true" />
+              {loc.venue ?? loc.city}
+            </span>
+          )
+      }
+    </div>
+
+    <!-- Title -->
+    <h3
+      class="text-h3 text-text-heading group-hover:text-accent transition-colors leading-snug"
+    >
+      {entry.data.title}
+    </h3>
+
+    <!-- Summary -->
+    <p class="text-muted text-sm leading-relaxed line-clamp-3 flex-1">
+      {entry.data.summary}
+    </p>
+
+    <!-- CTA -->
+    <div class="mt-auto pt-1">
+      {
+        entry.data.registrationUrl ? (
+          <Button
+            href={entry.data.registrationUrl}
+            variant="secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t("events.register")}
+            <ArrowRight class="w-3.5 h-3.5 ml-1" aria-hidden="true" />
+          </Button>
+        ) : (
+          <a
+            href={href}
+            class="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline"
+          >
+            {t("events.details")}
+            <ArrowRight class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+          </a>
+        )
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .event-date-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: var(--font-heading);
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+  }
+</style>

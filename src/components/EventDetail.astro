@@ -1,0 +1,275 @@
+---
+import { Image, Picture } from "astro:assets";
+import { getEntries, render, type CollectionEntry } from "astro:content";
+import {
+  ArrowLeft,
+  Globe,
+  MapPin,
+  ExternalLink,
+  Calendar,
+  ArrowRight,
+} from "@lucide/astro";
+import { useTranslations, getLocalizedPath, type Locale } from "~/i18n";
+import { findPageByKey } from "~/lib/page-registry";
+import { formatDateTime } from "~/lib/format-date";
+import Button from "~/components/Button.astro";
+import "~/styles/blog-prose.css";
+
+interface Props {
+  entry: CollectionEntry<"events">;
+  lang: Locale;
+}
+
+const { entry, lang } = Astro.props;
+const { t } = useTranslations(lang);
+
+const eventsIndexSlug =
+  findPageByKey("events-index")?.slug[lang] ??
+  (lang === "de" ? "veranstaltungen" : "events");
+const eventsPath = getLocalizedPath(eventsIndexSlug, lang);
+
+const now = new Date();
+const isPast = entry.data.startsAt < now;
+
+const formattedStart = formatDateTime(entry.data.startsAt, lang);
+const formattedEnd = entry.data.endsAt
+  ? formatDateTime(entry.data.endsAt, lang)
+  : null;
+
+const loc = entry.data.location;
+
+const speakers: CollectionEntry<"team">[] =
+  entry.data.speakers && entry.data.speakers.length > 0
+    ? await getEntries(entry.data.speakers)
+    : [];
+
+const { Content } = await render(entry);
+---
+
+<article>
+  <!-- Back link -->
+  <nav class="mb-8" aria-label={t("events.backToEvents")}>
+    <a
+      href={eventsPath}
+      class="inline-flex items-center gap-1.5 text-muted text-sm hover:text-accent transition-colors duration-150"
+    >
+      <ArrowLeft class="w-4 h-4" aria-hidden="true" />
+      {t("events.backToEvents")}
+    </a>
+  </nav>
+
+  <!-- Hero image -->
+  {
+    entry.data.heroImage && (
+      <div class="mb-10 rounded-[var(--radius-card)] overflow-hidden">
+        <Picture
+          src={entry.data.heroImage}
+          alt={entry.data.title}
+          formats={["avif", "webp"]}
+          widths={[640, 960, 1280]}
+          sizes="(max-width: 768px) 640px, (max-width: 1280px) 960px, 1280px"
+          class="w-full h-auto"
+          loading="eager"
+        />
+      </div>
+    )
+  }
+
+  <!-- Header -->
+  <header class="mb-10">
+    <h1
+      class="font-heading text-4xl md:text-5xl font-bold text-text-heading leading-tight mb-6"
+    >
+      {entry.data.title}
+    </h1>
+
+    <p class="text-body-lg text-text leading-relaxed mb-8">
+      {entry.data.summary}
+    </p>
+
+    <!-- Date/time -->
+    <div class="detail-card mb-4 flex items-start gap-4">
+      <Calendar
+        class="w-6 h-6 text-accent mt-0.5 shrink-0"
+        aria-hidden="true"
+      />
+      <div>
+        <p
+          class="font-heading text-xs font-bold text-muted mb-1 uppercase tracking-wide"
+        >
+          {t("events.dateTime")}
+        </p>
+        <time
+          class="font-semibold text-text-heading"
+          datetime={entry.data.startsAt.toISOString()}
+        >
+          {formattedStart}
+        </time>
+        {
+          formattedEnd && (
+            <>
+              <span class="text-muted mx-1" aria-hidden="true">
+                –
+              </span>
+              <time
+                class="font-semibold text-text-heading"
+                datetime={entry.data.endsAt!.toISOString()}
+              >
+                {formattedEnd}
+              </time>
+            </>
+          )
+        }
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div class="detail-card flex items-start gap-4">
+      {
+        loc.kind === "online" ? (
+          <Globe
+            class="w-6 h-6 text-accent mt-0.5 shrink-0"
+            aria-hidden="true"
+          />
+        ) : (
+          <MapPin
+            class="w-6 h-6 text-accent mt-0.5 shrink-0"
+            aria-hidden="true"
+          />
+        )
+      }
+      <div class="flex-1">
+        <p
+          class="font-heading text-xs font-bold text-muted mb-1 uppercase tracking-wide"
+        >
+          {
+            loc.kind === "hybrid"
+              ? t("events.location.hybrid")
+              : loc.kind === "online"
+                ? t("events.location.online")
+                : t("events.location.atVenue")
+          }
+        </p>
+        {
+          (loc.kind === "in-person" || loc.kind === "hybrid") && (
+            <div>
+              {loc.venue && (
+                <p class="font-semibold text-text-heading">{loc.venue}</p>
+              )}
+              {loc.city && <p class="text-sm text-muted">{loc.city}</p>}
+            </div>
+          )
+        }
+        {
+          loc.url && (
+            <a
+              href={loc.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 text-sm text-accent hover:underline mt-1"
+            >
+              {t("events.openMap")}
+              <ExternalLink class="w-3.5 h-3.5" aria-hidden="true" />
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </header>
+
+  <!-- Speakers -->
+  {
+    speakers.length > 0 && (
+      <section class="mb-10">
+        <h2 class="font-heading text-2xl font-bold text-text-heading mb-5">
+          {t("events.speakers")}
+        </h2>
+        <div class="flex flex-wrap gap-4">
+          {speakers.map((speaker) => (
+            <div class="speaker-card flex items-center gap-3">
+              {speaker.data.photo && (
+                <div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-accent">
+                  <Image
+                    src={speaker.data.photo}
+                    alt={speaker.data.name}
+                    width={96}
+                    height={96}
+                    class="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+              <div>
+                <p class="font-semibold text-sm text-text-heading">
+                  {speaker.data.name}
+                </p>
+                <p class="text-xs text-muted">{speaker.data.role}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Body -->
+  <div class="blog-prose max-w-3xl mx-auto">
+    <Content />
+  </div>
+
+  <!-- Registration CTA -->
+  {
+    entry.data.registrationUrl && !isPast && (
+      <div class="max-w-3xl mx-auto mt-12 pt-8 border-t border-[var(--color-border)]">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <Button
+            href={entry.data.registrationUrl}
+            variant="primary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t("events.register")}
+            <ArrowRight class="w-5 h-5 ml-2" aria-hidden="true" />
+          </Button>
+          <a
+            href={eventsPath}
+            class="inline-flex items-center gap-1.5 text-muted text-sm hover:text-accent transition-colors duration-150"
+          >
+            <ArrowLeft class="w-4 h-4" aria-hidden="true" />
+            {t("events.backToEvents")}
+          </a>
+        </div>
+      </div>
+    )
+  }
+
+  {
+    (!entry.data.registrationUrl || isPast) && (
+      <div class="max-w-3xl mx-auto mt-12 pt-8 border-t border-[var(--color-border)]">
+        <a
+          href={eventsPath}
+          class="inline-flex items-center gap-1.5 text-muted text-sm hover:text-accent transition-colors duration-150"
+        >
+          <ArrowLeft class="w-4 h-4" aria-hidden="true" />
+          {t("events.backToEvents")}
+        </a>
+      </div>
+    )
+  }
+</article>
+
+<style>
+  .detail-card {
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+
+  .speaker-card {
+    padding: 0.875rem 1rem;
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+</style>

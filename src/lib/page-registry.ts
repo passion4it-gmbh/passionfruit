@@ -8,12 +8,13 @@ export type PageKey =
   | "services"
   | "blog-index"
   | "team"
+  | "events-index"
   | "contact"
   | "privacy"
   | "imprint"
   | "careers-index";
 
-export type CollectionName = "blog" | "team" | "pages" | "careers";
+export type CollectionName = "blog" | "team" | "pages" | "careers" | "events";
 
 export interface PageEntry {
   key: PageKey;
@@ -34,7 +35,8 @@ export type CollectionDetailMatch = {
   entry:
     | CollectionEntry<"blog">
     | CollectionEntry<"pages">
-    | CollectionEntry<"careers">;
+    | CollectionEntry<"careers">
+    | CollectionEntry<"events">;
 };
 
 export type RouteMatch = StaticPageMatch | CollectionDetailMatch;
@@ -58,6 +60,11 @@ export const PAGES = [
     key: "blog-index" as const,
     slug: { de: "blog", en: "blog" },
     component: () => import("~/components/pages/blog-index.astro"),
+  },
+  {
+    key: "events-index" as const,
+    slug: { de: "veranstaltungen", en: "events" },
+    component: () => import("~/components/pages/events-index.astro"),
   },
   {
     key: "team" as const,
@@ -95,6 +102,7 @@ const COLLECTION_REGISTRY_KEY: Record<CollectionName, PageKey> = {
   team: "team",
   pages: "about", // pages collection detail routes nest under about
   careers: "careers-index",
+  events: "events-index",
 };
 
 // ---------------------------------------------------------------------------
@@ -119,7 +127,8 @@ export function findPageBySlug(
 type AnyCollectionEntry =
   | CollectionEntry<"blog">
   | CollectionEntry<"pages">
-  | CollectionEntry<"careers">;
+  | CollectionEntry<"careers">
+  | CollectionEntry<"events">;
 
 type CollectionDetailPath = {
   params: { path: string };
@@ -186,6 +195,9 @@ export async function getCollectionDetailPaths(): Promise<
 
   const careers = await getCollection("careers");
   pushDetailPaths(paths, "careers", careers, locales);
+
+  const eventsEntries = await getCollection("events");
+  pushDetailPaths(paths, "events", eventsEntries, locales);
 
   return paths;
 }

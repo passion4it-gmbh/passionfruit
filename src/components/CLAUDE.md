@@ -316,3 +316,77 @@ Page key: `careers-index`. Bilingual slugs: `{ de: "karriere", en: "careers" }`.
 Builds a Schema.org-valid `JobPosting` JSON-LD object for a careers entry. Maps `employmentType` enum values to Schema.org constants (`FULL_TIME`, `PART_TIME`, `CONTRACTOR`, `INTERN`). Includes `baseSalary` when `salaryMin` or `salaryMax` is set; includes `validThrough` when `closesAt` is set.
 
 Emitted via `<StructuredData type="JobPosting" data={jobPostingLd} />` in `[...path].astro`.
+
+## Events
+
+Three components form the events trilogy: `EventCard` (list item), `EventDetail` (full-page), and `EventsFilter` (filter bar wrapping `CollectionFilter`).
+
+### `EventCard.astro`
+
+Card representation for a single event in a listing. Shows a hero image (or an accent-gradient placeholder), date badge, location kind indicator, title, summary, and a primary CTA — either a registration link or a "View details" link.
+
+| Prop    | Type                        | Required | Notes                                   |
+| ------- | --------------------------- | -------- | --------------------------------------- |
+| `entry` | `CollectionEntry<"events">` | yes      | The event collection entry.             |
+| `lang`  | `Locale`                    | yes      | Drives i18n strings and localized href. |
+
+```astro
+<EventCard entry={event} lang={lang} />
+```
+
+### `EventDetail.astro`
+
+Full-page event detail view. Renders back-navigation, optional hero image, title, summary, date/time card, location card (with map link when `location.url` is set), speakers section (resolved via `getEntries`), markdown body, and a registration CTA for future events.
+
+| Prop    | Type                        | Required | Notes                                        |
+| ------- | --------------------------- | -------- | -------------------------------------------- |
+| `entry` | `CollectionEntry<"events">` | yes      | The event collection entry.                  |
+| `lang`  | `Locale`                    | yes      | Drives i18n strings and localized back-link. |
+
+Consumed by `src/pages/[...path].astro` — do not instantiate directly in page components.
+
+### `EventsFilter.astro`
+
+Thin wrapper around `CollectionFilter`. Derives `category` and `tag` facets with counts from the entries the caller passes in, then delegates rendering to `CollectionFilter`. The caller is responsible for reading the collection once and passing the locale-filtered slice — `EventsFilter` does **not** call `getCollection` internally.
+
+| Prop       | Type                            | Required | Notes                                                              |
+| ---------- | ------------------------------- | -------- | ------------------------------------------------------------------ |
+| `entries`  | `CollectionEntry<"events">[]`   | yes      | Locale-filtered events; read the collection once in the index page. |
+| `lang`     | `Locale`                        | yes      | Drives i18n strings for facet labels.                              |
+| `selected` | `Record<string, string[]>`      | yes      | Active filter values keyed by facet key.                           |
+| `baseUrl`  | `string`                        | yes      | Pass `Astro.url.pathname`.                                         |
+
+```astro
+---
+import { getCollection } from "astro:content";
+
+const allEvents = await getCollection("events", ({ id }) =>
+  id.startsWith(`${lang}/`),
+);
+const selectedCategories = Astro.url.searchParams.getAll("category");
+const selectedTags = Astro.url.searchParams.getAll("tag");
+const selected = { category: selectedCategories, tag: selectedTags };
+---
+
+<EventsFilter entries={allEvents} {lang} {selected} baseUrl={Astro.url.pathname} />
+```
+
+### i18n keys (`events.*`)
+
+| Key                        | DE                                   | EN                                   |
+| -------------------------- | ------------------------------------ | ------------------------------------ |
+| `events.title`             | Veranstaltungen                      | Events                               |
+| `events.description`       | Webinare, Workshops und Konferenzen… | Webinars, workshops and conferences… |
+| `events.noResults`         | Keine Veranstaltungen gefunden.      | No events found.                     |
+| `events.register`          | Jetzt anmelden                       | Register now                         |
+| `events.details`           | Details ansehen                      | View details                         |
+| `events.backToEvents`      | Zurück zu den Veranstaltungen        | Back to events                       |
+| `events.dateTime`          | Datum & Uhrzeit                      | Date & Time                          |
+| `events.speakers`          | Referenten                           | Speakers                             |
+| `events.openMap`           | Auf Karte anzeigen                   | View on map                          |
+| `events.location.online`   | Online                               | Online                               |
+| `events.location.inPerson` | Vor Ort                              | In person                            |
+| `events.location.hybrid`   | Hybrid (Vor Ort + Online)            | Hybrid (in person + online)          |
+| `events.location.atVenue`  | Veranstaltungsort                    | Venue                                |
+| `events.filter.category`   | Kategorie                            | Category                             |
+| `events.filter.tag`        | Thema                                | Topic                                |

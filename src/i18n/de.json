@@ -178,5 +178,26 @@
       "contractor": "Freiberuflich",
       "internship": "Praktikum"
     }
+  },
+  "events": {
+    "title": "Veranstaltungen",
+    "description": "Webinare, Workshops und Konferenzen von Greenleaf Digital.",
+    "noResults": "Keine Veranstaltungen gefunden.",
+    "register": "Jetzt anmelden",
+    "details": "Details ansehen",
+    "backToEvents": "Zurück zu den Veranstaltungen",
+    "dateTime": "Datum & Uhrzeit",
+    "speakers": "Referenten",
+    "openMap": "Auf Karte anzeigen",
+    "location": {
+      "online": "Online",
+      "inPerson": "Vor Ort",
+      "hybrid": "Hybrid (Vor Ort + Online)",
+      "atVenue": "Veranstaltungsort"
+    },
+    "filter": {
+      "category": "Kategorie",
+      "tag": "Thema"
+    }
   }
 }

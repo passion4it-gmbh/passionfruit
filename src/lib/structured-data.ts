@@ -110,6 +110,46 @@ export function buildJobPostingLd(
   return ld;
 }
 
+export function buildEventLd(
+  entry: CollectionEntry<"events">,
+  canonicalUrl: string,
+  lang: Locale,
+): Record<string, unknown> {
+  const loc = entry.data.location;
+
+  const locationLd: Record<string, unknown> =
+    loc.kind === "online"
+      ? { "@type": "VirtualLocation", url: loc.url ?? canonicalUrl }
+      : {
+          "@type": "Place",
+          name: loc.venue ?? loc.city ?? "TBD",
+          address: loc.city
+            ? { "@type": "PostalAddress", addressLocality: loc.city }
+            : undefined,
+        };
+
+  return {
+    name: entry.data.title,
+    description: entry.data.summary,
+    startDate: entry.data.startsAt.toISOString(),
+    ...(entry.data.endsAt ? { endDate: entry.data.endsAt.toISOString() } : {}),
+    eventStatus: "https://schema.org/EventScheduled",
+    eventAttendanceMode:
+      loc.kind === "online"
+        ? "https://schema.org/OnlineEventAttendanceMode"
+        : loc.kind === "hybrid"
+          ? "https://schema.org/MixedEventAttendanceMode"
+          : "https://schema.org/OfflineEventAttendanceMode",
+    location: locationLd,
+    ...(entry.data.registrationUrl
+      ? { offers: { "@type": "Offer", url: entry.data.registrationUrl } }
+      : {}),
+    organizer: PUBLISHER_REF,
+    url: canonicalUrl,
+    inLanguage: lang === "de" ? "de-DE" : "en-US",
+  };
+}
+
 export function buildBlogPostingLd(
   entry: CollectionEntry<"blog">,
   author: BlogAuthor | undefined,

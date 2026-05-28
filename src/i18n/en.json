@@ -178,5 +178,26 @@
       "contractor": "Contractor",
       "internship": "Internship"
     }
+  },
+  "events": {
+    "title": "Events",
+    "description": "Webinars, workshops and conferences by Greenleaf Digital.",
+    "noResults": "No events found.",
+    "register": "Register now",
+    "details": "View details",
+    "backToEvents": "Back to events",
+    "dateTime": "Date & Time",
+    "speakers": "Speakers",
+    "openMap": "View on map",
+    "location": {
+      "online": "Online",
+      "inPerson": "In person",
+      "hybrid": "Hybrid (in person + online)",
+      "atVenue": "Venue"
+    },
+    "filter": {
+      "category": "Category",
+      "tag": "Topic"
+    }
   }
 }

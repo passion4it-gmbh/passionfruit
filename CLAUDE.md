@@ -55,6 +55,8 @@ See CONTRIBUTING.md for full details. Summary:
 
 **Page:** `src/content/pages/{de,en}/<slug>.md` — needs translationKey, title, description. Also update `src/lib/page-registry.ts`.
 
+**Event:** `src/content/events/{de,en}/<slug>.md` — needs translationKey, title, summary, startsAt, category, location. Routed under `/veranstaltungen/<slug>/` (DE) and `/en/events/<slug>/` (EN). Index page at `events-index` registry key.
+
 **Translations:** Always update both `src/i18n/de.json` and `src/i18n/en.json` in lockstep. Nested key structure, accessed via `t('section.key')`.
 
 ## 7. Component conventions
@@ -87,6 +89,9 @@ Key rules:
 **Google Analytics 4** — `PUBLIC_GA_MEASUREMENT_ID` (format `G-XXXXXXXXXX`). Uses Consent Mode v2 with `analytics_storage: granted` only after the user accepts; ad cookies stay denied. IP anonymization on.
 
 You can run either, both, or neither. Most users want GA4 (familiar dashboard); PostHog is for those who want session replay, funnels, and feature flags.
+
+**Google Tag Manager** — `PUBLIC_GTM_CONTAINER_ID` (format `GTM-XXXXXXX`). Use this instead of GA4 direct when you need a tag-management layer (e.g. multiple tracking pixels, custom event triggers, A/B testing tools). Loads the GTM container only after analytics consent is granted; uses Consent Mode v2 with `analytics_storage` granted on consent and all ad\_\* signals permanently denied (passionfruit has no marketing category). GTM, GA4, and PostHog are all independent — each is env-var gated, so any combination works.
+
 
 ## 10. Routing
 

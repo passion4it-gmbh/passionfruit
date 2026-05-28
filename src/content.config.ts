@@ -1,4 +1,4 @@
-import { defineCollection, z } from "astro:content";
+import { defineCollection, reference, z } from "astro:content";
 import { glob } from "astro/loaders";
 
 const blog = defineCollection({
@@ -84,4 +84,39 @@ const careers = defineCollection({
   }),
 });
 
-export const collections = { blog, team, pages, careers };
+// ---------------------------------------------------------------------------
+// events
+//
+// Generic event collection for marketing sites. Categories and tags are open
+// strings so downstream users can name their own taxonomy without touching
+// the schema. Location supports online, in-person, and hybrid formats.
+// ---------------------------------------------------------------------------
+
+const events = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/events" }),
+  schema: ({ image }) =>
+    z.object({
+      /** Bilingual pairing key — must match across DE and EN variants. */
+      translationKey: z.string().min(1),
+      title: z.string(),
+      summary: z.string(),
+      startsAt: z.coerce.date(),
+      endsAt: z.coerce.date().optional(),
+      /** Open string — users name their own categories: "Webinar", "Workshop", etc. */
+      category: z.string(),
+      /** Open tags array for multi-facet filtering. */
+      tags: z.array(z.string()).default([]),
+      location: z.object({
+        kind: z.enum(["online", "in-person", "hybrid"]),
+        venue: z.string().optional(),
+        city: z.string().optional(),
+        url: z.string().url().optional(),
+      }),
+      registrationUrl: z.string().url().optional(),
+      heroImage: image().optional(),
+      /** References entries in the `team` collection. */
+      speakers: z.array(reference("team")).optional(),
+    }),
+});
+
+export const collections = { blog, team, pages, careers, events };

@@ -10,8 +10,13 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 import BlogPost from "~/components/BlogPost.astro";
 import PageContent from "~/components/PageContent.astro";
 import CareerPost from "~/components/CareerPost.astro";
+import EventDetail from "~/components/EventDetail.astro";
 import StructuredData from "~/components/StructuredData.astro";
-import { buildBlogPostingLd, buildJobPostingLd } from "~/lib/structured-data";
+import {
+  buildBlogPostingLd,
+  buildJobPostingLd,
+  buildEventLd,
+} from "~/lib/structured-data";
 
 export async function getStaticPaths() {
   return getAllPaths();
@@ -27,7 +32,8 @@ type Props =
       entry:
         | CollectionEntry<"blog">
         | CollectionEntry<"pages">
-        | CollectionEntry<"careers">;
+        | CollectionEntry<"careers">
+        | CollectionEntry<"events">;
     };
 
 const props = Astro.props as Props;
@@ -41,6 +47,7 @@ let collectionDescription = "";
 let collectionAlternateSlug: string | undefined;
 let blogPostingLd: Record<string, unknown> | undefined;
 let jobPostingLd: Record<string, unknown> | undefined;
+let eventLd: Record<string, unknown> | undefined;
 let StaticComponent: AstroPageDefault | undefined;
 
 if (props.kind === "collection-detail") {
@@ -48,8 +55,13 @@ if (props.kind === "collection-detail") {
 
   collectionTitle =
     typeof data["title"] === "string" ? data["title"] : props.entry.id;
+  // Events and careers use `summary` as the meta description; blog/pages use `description`.
   collectionDescription =
-    typeof data["description"] === "string" ? data["description"] : "";
+    typeof data["description"] === "string"
+      ? data["description"]
+      : typeof data["summary"] === "string"
+        ? data["summary"]
+        : "";
 
   const { translationKey } = data as { translationKey: string };
   collectionAlternateSlug = await getAlternateCollectionSlug(
@@ -75,6 +87,12 @@ if (props.kind === "collection-detail") {
     const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     jobPostingLd = buildJobPostingLd(careersEntry, canonicalUrl);
     collectionDescription = careersEntry.data.summary;
+  }
+
+  if (props.collection === "events") {
+    const eventEntry = props.entry as CollectionEntry<"events">;
+    const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+    eventLd = buildEventLd(eventEntry, canonicalUrl, lang);
   }
 } else {
   const pageEntry = findPageBySlug(lang, slug);
@@ -109,6 +127,9 @@ if (props.kind === "collection-detail") {
           data={jobPostingLd}
         />
       )}
+      {eventLd && (
+        <StructuredData slot="structured-data" type="Event" data={eventLd} />
+      )}
       {props.collection === "blog" && (
         <BlogPost entry={props.entry as CollectionEntry<"blog">} lang={lang} />
       )}
@@ -121,6 +142,12 @@ if (props.kind === "collection-detail") {
       {props.collection === "careers" && (
         <CareerPost
           entry={props.entry as CollectionEntry<"careers">}
+          lang={lang}
+        />
+      )}
+      {props.collection === "events" && (
+        <EventDetail
+          entry={props.entry as CollectionEntry<"events">}
           lang={lang}
         />
       )}

@@ -153,6 +153,50 @@ Always create both `de/<slug>.md` and `en/<slug>.md` with a matching `translatio
 
 ---
 
+## Events
+
+**Path:** `src/content/events/{de,en}/<slug>.md`
+
+**Frontmatter:**
+
+```yaml
+---
+translationKey: my-event        # Same value in both locale files
+title: "Event title"
+summary: "Short description shown on cards and as meta description"
+startsAt: 2026-09-10T10:00:00
+endsAt: 2026-09-10T11:30:00    # Optional
+category: "Webinar"             # Open string — name your own categories
+tags: ["AI", "SME"]             # Optional, open string array for filtering
+location:
+  kind: "online"                # "online" | "in-person" | "hybrid"
+  venue: "Event Hall"           # Optional — for in-person/hybrid
+  city: "Berlin"                # Optional — for in-person/hybrid
+  url: "https://example.com"    # Optional — map or stream link
+registrationUrl: "https://example.com/register/my-event"  # Optional
+heroImage: "./_images/event-hero.jpg"  # Optional
+speakers:                       # Optional — references team collection entries
+  - de/jane-doe
+---
+```
+
+Always create both `de/<slug>.md` and `en/<slug>.md` with matching `translationKey`. The bilingual check runs as `prebuild` and exits 1 if any entry is unpaired.
+
+**Routing:**
+
+- DE detail: `/veranstaltungen/<slug>/`
+- EN detail: `/en/events/<slug>/`
+- Index pages are static pages registered in `src/lib/page-registry.ts` under key `events-index`.
+
+**Adding a new event:**
+
+1. Create `src/content/events/de/<slug>.md` and `src/content/events/en/<slug>.md`
+2. Both files must share a `translationKey`
+3. Add any new i18n strings to `src/i18n/de.json` and `src/i18n/en.json`
+4. Run `pnpm build` — bilingual check, typecheck, and build must pass
+
+---
+
 ## Translations (i18n)
 
 **Files:** `src/i18n/de.json` and `src/i18n/en.json`
