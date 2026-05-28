@@ -53,7 +53,7 @@ import Header from "~/components/Header.astro";
 | `navigation.team`        | Team       | Team         |
 | `navigation.contact`     | Kontakt    | Contact      |
 
-Nav links are hardcoded as `navItems` in the component frontmatter. Localized slugs (`ueber-uns` ↔ `about`, `leistungen` ↔ `services`, etc.) are defined inline using a `lang === "de"` ternary — they must stay in sync with `src/lib/page-registry.ts`.
+Nav links are hardcoded as `navItems` in the component frontmatter. Localized slugs (`ueber-uns` ↔ `about`, `leistungen` ↔ `services`, etc.) are defined inline via `lang === "de"` ternaries — `page-registry.ts` is not imported; the two must be kept in sync manually.
 
 ## Gotchas
 
