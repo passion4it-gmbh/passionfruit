@@ -4,12 +4,13 @@ import AsymmetricHero from "~/components/sections/AsymmetricHero.astro";
 import { useTranslations, type Locale } from "~/i18n";
 import heroImage from "~/assets/home/hero.png";
 
-// Locale detection mirrors the catch-all [...path].astro pattern.
-// Cloudflare Pages serves this same 404 for both /missing and /en/missing.
-const lang: Locale = Astro.url.pathname.startsWith("/en") ? "en" : "de";
+// Static-output 404: locale is decided at build time, not request time.
+// Cloudflare Pages walks up the directory tree for the nearest 404.html,
+// so /en/missing serves src/pages/en/404.astro and /missing serves this one.
+const lang: Locale = "de";
 const { t } = useTranslations(lang);
 
-const homeHref = lang === "en" ? "/en/" : "/";
+const homeHref = "/";
 const title = t("state.404.title");
 const description = t("state.404.body");
 ---

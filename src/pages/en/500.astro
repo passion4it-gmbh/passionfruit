@@ -4,13 +4,12 @@ import AsymmetricHero from "~/components/sections/AsymmetricHero.astro";
 import { useTranslations, type Locale } from "~/i18n";
 import heroImage from "~/assets/home/hero.png";
 
-// Static-output 500: locale is decided at build time. The /en/ mirror at
-// src/pages/en/500.astro carries the English copy; Cloudflare Pages serves
-// the nearest 500.html walking up the tree.
-const lang: Locale = "de";
+// EN mirror of the root 500. Cloudflare Pages walks up the directory tree
+// to find the nearest 500.html, so an EN-route function error serves this.
+const lang: Locale = "en";
 const { t } = useTranslations(lang);
 
-const homeHref = "/";
+const homeHref = "/en/";
 const title = t("state.500.title");
 const description = t("state.500.body");
 ---
