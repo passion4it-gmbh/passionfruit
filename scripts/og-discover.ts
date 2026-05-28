@@ -7,9 +7,8 @@
  *  - `loadSiteText(projectRoot, lang)` — `site.name` + `site.tagline` from the
  *    locale's i18n JSON. Runs once per locale.
  *
- * `loadSiteData` composes the two for callers that want the full bundle for
- * one locale. The split exists so the CLI can hoist global asset reads out of
- * the per-locale loop — without it, a malformed `--color-*` value emits its
+ * The split exists so the CLI can hoist global asset reads out of the
+ * per-locale loop — without it, a malformed `--color-*` value would emit its
  * `[warn]` line twice.
  *
  * Synchronous, ESM, no `any`, no top-level side effects.
@@ -35,8 +34,6 @@ export interface SiteText {
   name: string;
   tagline: string;
 }
-
-export interface SiteData extends GlobalAssets, SiteText {}
 
 /**
  * Discriminator error so callers can distinguish discovery failures
@@ -163,15 +160,4 @@ export function loadSiteText(projectRoot: string, lang: Locale): SiteText {
   }
 
   return { name, tagline };
-}
-
-/**
- * Convenience composition: load global assets + per-locale text in one call.
- * The CLI uses the split functions directly to avoid duplicate reads/warnings
- * across locales; tests and one-shot callers can use this.
- */
-export function loadSiteData(projectRoot: string, lang: Locale): SiteData {
-  const globals = loadGlobalAssets(projectRoot);
-  const text = loadSiteText(projectRoot, lang);
-  return { ...globals, ...text };
 }

@@ -120,15 +120,19 @@ function parseArgs(argv: string[]): ParseResult {
       continue;
     }
 
-    // `--key=value` not supported — generate-image.ts also doesn't, and a
-    // clear hint beats a generic "unknown option".
+    // `--known-flag=value` not supported — generate-image.ts also doesn't, and
+    // a clear hint beats a generic "unknown option". Only suggest the
+    // corrected syntax when `key` is one of the flags we actually accept;
+    // otherwise the hint would falsely advertise unrelated unknown options.
     if (arg.startsWith("--") && arg.includes("=")) {
       const [key] = arg.split("=", 1);
-      return {
-        ok: false,
-        help: false,
-        message: `Unknown option: ${arg} (use "${key} <value>" — "=" syntax is not supported)`,
-      };
+      if (KNOWN_FLAGS.has(key)) {
+        return {
+          ok: false,
+          help: false,
+          message: `Unknown option: ${arg} (use "${key} <value>" — "=" syntax is not supported)`,
+        };
+      }
     }
 
     return {
@@ -140,6 +144,12 @@ function parseArgs(argv: string[]): ParseResult {
 
   return { ok: true, args };
 }
+
+const KNOWN_FLAGS: ReadonlySet<string> = new Set([
+  "--lang",
+  "--out-dir",
+  "--project-root",
+]);
 
 function loadFonts(projectRoot: string): SatoriOptions["fonts"] {
   const baseDir = join(

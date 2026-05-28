@@ -206,6 +206,40 @@ test("7.4 invalid --lang exits 1 with helpful message", () => {
 });
 
 // ---------------------------------------------------------------------------
+// 7.4b — `--key=value` syntax for known flags exits 1 with usage hint
+// ---------------------------------------------------------------------------
+
+test("7.4b --lang=de hints at the supported syntax", () => {
+  const result = runCli(["--lang=de"]);
+  assert.equal(result.status, 1, `expected exit 1, stdout: ${result.stdout}`);
+  assert.match(
+    result.stderr,
+    /--lang=de/,
+    `stderr should echo the bad arg: ${result.stderr}`,
+  );
+  assert.match(
+    result.stderr,
+    /--lang <value>/,
+    `stderr should suggest the supported syntax: ${result.stderr}`,
+  );
+});
+
+test("7.4c --frobnicate=x falls through to generic unknown-option (no false hint)", () => {
+  const result = runCli(["--frobnicate=x"]);
+  assert.equal(result.status, 1, `expected exit 1, stdout: ${result.stdout}`);
+  assert.match(
+    result.stderr,
+    /Unknown option: --frobnicate=x/,
+    `stderr should name the unknown option: ${result.stderr}`,
+  );
+  assert.doesNotMatch(
+    result.stderr,
+    /--frobnicate <value>/,
+    `stderr must NOT advertise an unsupported flag: ${result.stderr}`,
+  );
+});
+
+// ---------------------------------------------------------------------------
 // 7.5 — missing tagline (fixture) exits 1
 // ---------------------------------------------------------------------------
 
