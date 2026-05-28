@@ -6,8 +6,6 @@
 
 The "Greenleaf Digital" branding, the blog posts, the team members, the services copy — all of that is **fixture content** that downstream consumers replace via `/onboard` and `/brand`. Treat it as example data, not customer content. When evaluating changes, ask "does this improve the template?", not "does Greenleaf need this?"
 
-The sibling repo at `/Users/mordras/dev/passion4it/website` is the real customer site (Greenleaf's actual passion4it website) — patterns proven there are good candidates to port back into this template.
-
 ## 2. Self-improvement rule
 
 **Claude must keep CLAUDE.md, STYLE_GUIDE.md, and CONTRIBUTING.md in sync with reality.** Update these files when:
