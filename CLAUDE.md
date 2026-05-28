@@ -92,7 +92,6 @@ You can run either, both, or neither. Most users want GA4 (familiar dashboard); 
 
 **Google Tag Manager** — `PUBLIC_GTM_CONTAINER_ID` (format `GTM-XXXXXXX`). Use this instead of GA4 direct when you need a tag-management layer (e.g. multiple tracking pixels, custom event triggers, A/B testing tools). Loads the GTM container only after analytics consent is granted; uses Consent Mode v2 with `analytics_storage` granted on consent and all ad\_\* signals permanently denied (passionfruit has no marketing category). GTM, GA4, and PostHog are all independent — each is env-var gated, so any combination works.
 
-
 ## 10. Routing
 
 - URL scheme: **apex-locale** — DE at root (`/`), EN under `/en/`.
@@ -118,7 +117,7 @@ Before committing:
 
 ### Social sharing (OG) image — `pnpm generate-og`
 
-Produces the site's bilingual OG sharing image from project data (no API key, runs in <1 second). Inputs are auto-discovered: `site.name` + `site.tagline` from `src/i18n/{de,en}.json`, accent color from `src/styles/global.css`, logo from `public/favicon.svg`. Outputs land at `public/og-default-de.png` and `public/og-default-en.png` (1200×630). `BaseLayout` picks the locale-specific file per page.
+Produces the site's bilingual OG sharing image from project data (no API key, runs in <1 second). Inputs are auto-discovered: `site.name` + `site.tagline` from `src/i18n/{de,en}.json`, accent color from `src/styles/global.css`, logo from `public/favicon.svg`. Optional: drop a photo at `src/assets/og/bg.png` and it gets composited full-cover behind the text (with a left-anchored scrim for legibility). Outputs land at `public/og-default-de.png` and `public/og-default-en.png` (1200×630). `BaseLayout` picks the locale-specific file per page.
 
 ```bash
 pnpm generate-og              # regenerate both locales
@@ -126,7 +125,7 @@ pnpm generate-og --lang de    # only DE
 pnpm generate-og --lang en    # only EN
 ```
 
-Re-run after `/onboard` (which changes i18n strings) or when the favicon / accent color changes. For an art-directed AI alternative, use `pnpm generate-image` (below) targeting `public/og-default-{de,en}.png` directly.
+Re-run after `/onboard` (which changes i18n strings) or when the favicon / accent color / `src/assets/og/bg.png` changes. For an art-directed AI alternative that skips the Satori template entirely, use `pnpm generate-image` (below) targeting `public/og-default-{de,en}.png` directly.
 
 ### Content images — `pnpm generate-image`
 

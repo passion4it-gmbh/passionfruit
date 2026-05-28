@@ -80,6 +80,15 @@ This writes `public/og-default-de.png` and `public/og-default-en.png` from the p
 
 For per-locale regeneration: `pnpm generate-og --lang de` or `--lang en`.
 
+**Optional background photo.** Drop a 1200×630-ish image at `src/assets/og/bg.png` before running and the generator composites it full-cover behind the text (a left-anchored scrim keeps the title legible regardless of the photo's brightness). Best results when the photo has a darker left third — Satori text sits on the left. Use `pnpm generate-image` to produce a fitting photo first, e.g.:
+
+```bash
+pnpm generate-image "<describe a banner-style photo with empty/dark left third, no text>" -o src/assets/og/bg.png --size 1536x1024
+pnpm generate-og
+```
+
+No code changes needed — bg.png absence falls back to the flat surface look.
+
 ### Option B: AI generated
 
 Ask: "Describe what you'd like the image to convey — visual style, mood, key elements."
