@@ -99,7 +99,7 @@ Implementation will fan out across subagents per chapter. Token foundation lands
 4. Micro-interactions standardized: button `:active` depression (subtle Y-translate), card hover lift (Y + shadow), input focus glow harmonized. All routed through tokens; archetypes pick them up.
 5. StickyStory sticky adapter (Chapter 2 deferral): CSS `position: sticky` for layout, IntersectionObserver for progress signal. Reduced-motion disables sticky.
 6. Reduced-motion contract end-to-end: every animation honors `prefers-reduced-motion: reduce`.
-7. Dev-only motion fixture at `src/pages/_design/motion.astro`, gated by `import.meta.env.DEV`. Renders every primitive in isolation for verification.
+7. Dev-only motion fixture at `src/pages/design-floor/motion.astro`, gated by `import.meta.env.DEV`. Renders every primitive in isolation for verification.
 8. Rename `src/styles/scroll-animations.css` → `src/styles/motion.css`. Update import in `global.css`. Audit other importers (current import is only in `global.css`).
 
 **Files:** extend `@theme`; rename `scroll-animations.css` → `motion.css`; new `src/components/motion/`; edit `BaseLayout.astro`; complete `StickyStory.astro` from Chapter 2.
@@ -198,7 +198,7 @@ Sequenced for subagent fan-out:
 - `src/components/motion/` (Motion + sugar primitives)
 - `src/components/state/` (Skeleton, EmptyState, ErrorState)
 - `src/pages/500.astro`
-- `src/pages/_design/motion.astro` (DEV-gated)
+- `src/pages/design-floor/motion.astro` (DEV-gated)
 
 ### 9.6 Risks / open questions
 
@@ -216,7 +216,7 @@ Done when:
 - [ ] Both DE and EN renders verified on home, blog index, blog post, services, 404, 500.
 - [ ] Mobile layout intact at 375px across all archetypes.
 - [ ] `prefers-reduced-motion: reduce` verified end-to-end: no shimmer animation, no entrance animations, no sticky behavior; static fallbacks render correctly.
-- [ ] Dev fixture `/_design/motion` renders every primitive without errors.
+- [ ] Dev fixture `/design-floor/motion` renders every primitive without errors.
 - [ ] PostHog and GA4 fire pageviews on view transitions (manual check with both env vars set).
 - [ ] No hex literals introduced in any component.
 - [ ] No new npm dependencies introduced.

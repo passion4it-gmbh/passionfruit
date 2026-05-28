@@ -68,11 +68,11 @@ Parent dispatches Phases 1–4 in a single message with multiple `Agent` tool us
 - `src/components/state/EmptyState.astro`
 - `src/components/state/ErrorState.astro`
 - `src/pages/500.astro`
-- `src/pages/_design/index.astro` (DEV-gated index of all fixture pages)
-- `src/pages/_design/type.astro` (Chapter 1 fixture)
-- `src/pages/_design/sections.astro` (Chapter 2 fixture)
-- `src/pages/_design/motion.astro` (Chapter 3 fixture)
-- `src/pages/_design/state.astro` (Chapter 4 fixture)
+- `src/pages/design-floor/index.astro` (DEV-gated index of all fixture pages)
+- `src/pages/design-floor/type.astro` (Chapter 1 fixture)
+- `src/pages/design-floor/sections.astro` (Chapter 2 fixture)
+- `src/pages/design-floor/motion.astro` (Chapter 3 fixture)
+- `src/pages/design-floor/state.astro` (Chapter 4 fixture)
 - `src/types/sections.ts` — shared prop shape interface for archetypes
 - `src/types/motion.ts` — shared prop shape interface for Motion primitive
 
@@ -148,14 +148,14 @@ Parent dispatches Phases 1–4 in a single message with multiple `Agent` tool us
 
 **Files:**
 
-- Create: `src/pages/_design/index.astro`
+- Create: `src/pages/design-floor/index.astro`
 
-- [ ] **Step 1:** Create the fixture index page gated by `import.meta.env.DEV` — when `false`, the page redirects to `/`. When `true`, it renders an unstyled list of links to `/_design/type`, `/_design/sections`, `/_design/motion`, `/_design/state`. Use the `BaseLayout` so chrome is consistent.
-- [ ] **Step 2:** Verify by running `pnpm dev` in a background process, navigating to `/_design`, and confirming the four links render. Then kill the dev server.
+- [ ] **Step 1:** Create the fixture index page gated by `import.meta.env.DEV` — when `false`, the page redirects to `/`. When `true`, it renders an unstyled list of links to `/design-floor/type`, `/design-floor/sections`, `/design-floor/motion`, `/design-floor/state`. Use the `BaseLayout` so chrome is consistent.
+- [ ] **Step 2:** Verify by running `pnpm dev` in a background process, navigating to `/design-floor`, and confirming the four links render. Then kill the dev server.
       Acceptance: page renders four links; navigating to each link returns 404 (the chapter fixtures don't exist yet — this is expected and confirms the dev-only gating works).
 - [ ] **Step 3:** Run `pnpm build`. Expected: passes. The fixture page is built statically; the `import.meta.env.DEV` check is evaluated at build time and the prod build serves the redirect.
 - [ ] **Step 4:** Commit.
-      Run: `git add src/pages/_design/index.astro && git commit -m "feat(design-floor): add dev fixture index"`
+      Run: `git add src/pages/design-floor/index.astro && git commit -m "feat(design-floor): add dev fixture index"`
 
 **Phase 0 done when:** all five tasks committed, `pnpm build` passes, `git log --oneline -6` shows the five commits plus the spec commit on the worktree branch.
 
@@ -198,13 +198,13 @@ Parent dispatches Phases 1–4 in a single message with multiple `Agent` tool us
 
 **Files:**
 
-- Create: `src/pages/_design/type.astro`
+- Create: `src/pages/design-floor/type.astro`
 
-- [ ] **Step 1:** Create `src/pages/_design/type.astro` gated by `import.meta.env.DEV`. The page renders, in order: a sample of every heading level (h1–h6) with realistic copy in DE and EN; a sample paragraph using `<Prose>` with default measure; a sample paragraph using `<Prose dropCap>`; a numeric data table with tabular figures; a code block (ligatures off should be visible).
+- [ ] **Step 1:** Create `src/pages/design-floor/type.astro` gated by `import.meta.env.DEV`. The page renders, in order: a sample of every heading level (h1–h6) with realistic copy in DE and EN; a sample paragraph using `<Prose>` with default measure; a sample paragraph using `<Prose dropCap>`; a numeric data table with tabular figures; a code block (ligatures off should be visible).
 - [ ] **Step 2:** Visit via dev server. Verify: each heading uses its tracking; oldstyle figures appear in paragraph numerals (e.g., "1985" should sit on the baseline with descenders); tabular figures align in the table; the drop-cap variant renders; the measure caps at the configured value and the page does not exceed it.
 - [ ] **Step 3:** Run `pnpm build`. Expected: passes.
 - [ ] **Step 4:** Commit.
-      Run: `git add src/pages/_design/type.astro && git commit -m "feat(design-floor): add Chapter 1 type fixture page"`
+      Run: `git add src/pages/design-floor/type.astro && git commit -m "feat(design-floor): add Chapter 1 type fixture page"`
 
 ### Task 1.4: Wire `<Prose>` into Markdown-rendering components
 
@@ -222,7 +222,7 @@ Parent dispatches Phases 1–4 in a single message with multiple `Agent` tool us
 - [ ] **Step 6:** Commit.
       Run: `git add src/components/{BlogPost,LegalDocument,PageContent}.astro && git commit -m "feat(content): wrap Markdown components in Prose primitive"`
 
-**Phase 1 done when:** all four tasks committed, `pnpm build` + `pnpm check:all` pass, `/_design/type` renders every sample without error.
+**Phase 1 done when:** all four tasks committed, `pnpm build` + `pnpm check:all` pass, `/design-floor/type` renders every sample without error.
 
 ---
 
@@ -368,16 +368,16 @@ Parent dispatches Phases 1–4 in a single message with multiple `Agent` tool us
 
 **Files:**
 
-- Create: `src/pages/_design/sections.astro`
+- Create: `src/pages/design-floor/sections.astro`
 
-- [ ] **Step 1:** Create `src/pages/_design/sections.astro` (DEV-gated). Render one realistic instance of each archetype with placeholder content: AsymmetricHero (image-right default, then image-left, then fullbleed), MagazineGrid (mix of small/medium/large cells), StickyStory (3 chapters), EditorialQuote (with avatar), SplitFeature (3 features), plus the three migrated sections (Trust, Comparison, FAQ).
-- [ ] **Step 2:** Run dev server, visit `/_design/sections`. Verify: each archetype renders, the 7/5 asymmetric ratio is visible on AsymmetricHero, MagazineGrid layouts cells correctly, StickyStory's sticky behavior works on desktop, the three migrated sections render with consistent padding/tones.
+- [ ] **Step 1:** Create `src/pages/design-floor/sections.astro` (DEV-gated). Render one realistic instance of each archetype with placeholder content: AsymmetricHero (image-right default, then image-left, then fullbleed), MagazineGrid (mix of small/medium/large cells), StickyStory (3 chapters), EditorialQuote (with avatar), SplitFeature (3 features), plus the three migrated sections (Trust, Comparison, FAQ).
+- [ ] **Step 2:** Run dev server, visit `/design-floor/sections`. Verify: each archetype renders, the 7/5 asymmetric ratio is visible on AsymmetricHero, MagazineGrid layouts cells correctly, StickyStory's sticky behavior works on desktop, the three migrated sections render with consistent padding/tones.
 - [ ] **Step 3:** Verify mobile: resize to 375px, every section reflows to single-column without horizontal scroll.
 - [ ] **Step 4:** Run `pnpm build`. Expected: passes.
 - [ ] **Step 5:** Commit.
-      Run: `git add src/pages/_design/sections.astro && git commit -m "feat(design-floor): add Chapter 2 sections fixture page"`
+      Run: `git add src/pages/design-floor/sections.astro && git commit -m "feat(design-floor): add Chapter 2 sections fixture page"`
 
-**Phase 2 done when:** all ten tasks committed, `pnpm build` + `pnpm check:all` pass, `/_design/sections` renders every archetype without error in both DE and EN previews (use the language switcher).
+**Phase 2 done when:** all ten tasks committed, `pnpm build` + `pnpm check:all` pass, `/design-floor/sections` renders every archetype without error in both DE and EN previews (use the language switcher).
 
 ---
 
@@ -410,7 +410,7 @@ Parent dispatches Phases 1–4 in a single message with multiple `Agent` tool us
 - [ ] **Step 2:** Add scoped CSS targeting `[data-motion-effect="fade-up"]`, etc. Set initial state (`opacity: 0; transform: translateY(8px)` for `fade-up`); target state (`opacity: 1; transform: none`). Apply transition using the duration token mapped from the prop (e.g., `duration="base"` → `var(--duration-base)`). Wrap in `@media (prefers-reduced-motion: no-preference)` so reduced-motion users see the target state immediately.
 - [ ] **Step 3:** Use CSS `animation-timeline: view()` where supported: the element animates as it enters the viewport. Use `@supports (animation-timeline: view())` for the modern path; the IntersectionObserver fallback (Step 4) lives outside the `@supports` block.
 - [ ] **Step 4:** Add a small client script (inline in the Astro component) — gated behind `@supports not (animation-timeline: view())` would not work in JS, so detect via feature test in JS: `if (!CSS.supports('animation-timeline', 'view()'))` set up an IntersectionObserver that adds `data-motion-visible="true"` to elements when their intersection ratio crosses the threshold. CSS targets `[data-motion-visible="true"]` to apply the target state. Honor `once` by disconnecting the observer for that element after first trigger.
-- [ ] **Step 5:** Test by adding a `<Motion effect="fade-up">` instance to the `/_design/sections` page header temporarily. Reload. Expected: element fades in from below as it enters viewport. Toggle `prefers-reduced-motion: reduce` in DevTools. Expected: element appears in target state immediately, no animation. Remove the temporary instance.
+- [ ] **Step 5:** Test by adding a `<Motion effect="fade-up">` instance to the `/design-floor/sections` page header temporarily. Reload. Expected: element fades in from below as it enters viewport. Toggle `prefers-reduced-motion: reduce` in DevTools. Expected: element appears in target state immediately, no animation. Remove the temporary instance.
 - [ ] **Step 6:** Run `pnpm build`. Expected: passes.
 - [ ] **Step 7:** Commit.
       Run: `git add src/components/motion/Motion.astro && git commit -m "feat(motion): add Motion primitive with animation-timeline + IO fallback"`
@@ -450,7 +450,7 @@ Parent dispatches Phases 1–4 in a single message with multiple `Agent` tool us
 
 - [ ] **Step 1:** In `StickyStory.astro`, locate the placeholder comment from Phase 2. Replace with: wrap the sticky CSS in `@media (prefers-reduced-motion: no-preference)`. Under reduced motion, the left column does NOT use `position: sticky` — it becomes a normal block flowing with content.
 - [ ] **Step 2:** Add an IntersectionObserver-based progress signal: as each chapter (in the visuals stack on the right) enters the viewport, the corresponding copy block on the left gets a `data-active="true"` attribute. CSS uses this to subtly highlight the active chapter (e.g., `opacity: 1` for active, `opacity: 0.4` for inactive). Add the client script inline.
-- [ ] **Step 3:** Test on dev server `/_design/sections`. Scroll the StickyStory section. Verify: copy column sticks (desktop), each chapter dims/brightens as the corresponding visual enters the viewport.
+- [ ] **Step 3:** Test on dev server `/design-floor/sections`. Scroll the StickyStory section. Verify: copy column sticks (desktop), each chapter dims/brightens as the corresponding visual enters the viewport.
 - [ ] **Step 4:** Toggle reduced-motion. Verify: sticky behavior disabled, no active-chapter dimming animation, chapters always appear at full opacity.
 - [ ] **Step 5:** Run `pnpm build`. Expected: passes.
 - [ ] **Step 6:** Commit.
@@ -460,15 +460,15 @@ Parent dispatches Phases 1–4 in a single message with multiple `Agent` tool us
 
 **Files:**
 
-- Create: `src/pages/_design/motion.astro`
+- Create: `src/pages/design-floor/motion.astro`
 
-- [ ] **Step 1:** Create `src/pages/_design/motion.astro` (DEV-gated). Render: examples of each Motion effect (`fade`, `fade-up`, `fade-down`, `scale-in`) in a vertical stack so scrolling triggers them; instances of `FadeUp` and `FadeIn` sugar primitives; a button row to verify press depression; a card grid to verify hover lift; a form to verify focus glow. Add a heading at top that calls out: "Toggle prefers-reduced-motion in DevTools to verify the static-fallback state."
+- [ ] **Step 1:** Create `src/pages/design-floor/motion.astro` (DEV-gated). Render: examples of each Motion effect (`fade`, `fade-up`, `fade-down`, `scale-in`) in a vertical stack so scrolling triggers them; instances of `FadeUp` and `FadeIn` sugar primitives; a button row to verify press depression; a card grid to verify hover lift; a form to verify focus glow. Add a heading at top that calls out: "Toggle prefers-reduced-motion in DevTools to verify the static-fallback state."
 - [ ] **Step 2:** Visit dev server. Verify all listed behaviors. Toggle reduced-motion. Verify static fallback for each.
 - [ ] **Step 3:** Run `pnpm build`. Expected: passes.
 - [ ] **Step 4:** Commit.
-      Run: `git add src/pages/_design/motion.astro && git commit -m "feat(design-floor): add Chapter 3 motion fixture page"`
+      Run: `git add src/pages/design-floor/motion.astro && git commit -m "feat(design-floor): add Chapter 3 motion fixture page"`
 
-**Phase 3 done when:** all six tasks committed, `pnpm build` + `pnpm check:all` pass, `/_design/motion` exercises every primitive cleanly in normal and reduced-motion modes, view transitions work site-wide, PostHog + GA4 SPA pageviews verified.
+**Phase 3 done when:** all six tasks committed, `pnpm build` + `pnpm check:all` pass, `/design-floor/motion` exercises every primitive cleanly in normal and reduced-motion modes, view transitions work site-wide, PostHog + GA4 SPA pageviews verified.
 
 ---
 
@@ -570,15 +570,15 @@ Parent dispatches Phases 1–4 in a single message with multiple `Agent` tool us
 
 **Files:**
 
-- Create: `src/pages/_design/state.astro`
+- Create: `src/pages/design-floor/state.astro`
 
-- [ ] **Step 1:** Create `src/pages/_design/state.astro` (DEV-gated). Render: a grid of Skeleton variants (text 1/2/3 lines, card, image, circle); an EmptyState instance (using empty.posts strings); an ErrorState instance for each tone (warning, error, info); links to `/404-test` and `/500-test` with notes that they preview the redesigned state pages.
-- [ ] **Step 2:** Visit dev server `/_design/state`. Verify: every variant renders. Toggle reduced-motion. Verify: skeleton shimmer disabled (becomes static muted block).
+- [ ] **Step 1:** Create `src/pages/design-floor/state.astro` (DEV-gated). Render: a grid of Skeleton variants (text 1/2/3 lines, card, image, circle); an EmptyState instance (using empty.posts strings); an ErrorState instance for each tone (warning, error, info); links to `/404-test` and `/500-test` with notes that they preview the redesigned state pages.
+- [ ] **Step 2:** Visit dev server `/design-floor/state`. Verify: every variant renders. Toggle reduced-motion. Verify: skeleton shimmer disabled (becomes static muted block).
 - [ ] **Step 3:** Run `pnpm build`. Expected: passes.
 - [ ] **Step 4:** Commit.
-      Run: `git add src/pages/_design/state.astro && git commit -m "feat(design-floor): add Chapter 4 state fixture page"`
+      Run: `git add src/pages/design-floor/state.astro && git commit -m "feat(design-floor): add Chapter 4 state fixture page"`
 
-**Phase 4 done when:** all eight tasks committed, `pnpm build` + `pnpm check:all` pass, `/_design/state` renders every primitive in both motion states, 404 and 500 render correctly in DE and EN.
+**Phase 4 done when:** all eight tasks committed, `pnpm build` + `pnpm check:all` pass, `/design-floor/state` renders every primitive in both motion states, 404 and 500 render correctly in DE and EN.
 
 ---
 
@@ -609,7 +609,7 @@ Parent dispatches Phases 1–4 in a single message with multiple `Agent` tool us
 
 - [ ] **Step 1:** Start dev server.
       Run: `pnpm dev` (background).
-- [ ] **Step 2:** Walk through: `/`, `/leistungen` (DE services), `/en/`, `/en/services`, a blog post in DE, a blog post in EN, the imprint, `/this-does-not-exist` (404), `/_design/index`, then visit each fixture page.
+- [ ] **Step 2:** Walk through: `/`, `/leistungen` (DE services), `/en/`, `/en/services`, a blog post in DE, a blog post in EN, the imprint, `/this-does-not-exist` (404), `/design-floor/index`, then visit each fixture page.
 - [ ] **Step 3:** For each page, verify in browser: typography looks editorial; sections render at the right padding/tone; view transitions work smoothly between routes; reduced-motion (DevTools toggle) gives the static fallback; mobile (375px) reflows cleanly; no console errors.
 - [ ] **Step 4:** Kill dev server.
 
