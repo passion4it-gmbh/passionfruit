@@ -74,8 +74,10 @@
     line-height: var(--leading-caption);
   }
 
-  /* Paragraph rhythm — stacked paragraphs breathe */
-  p + p {
+  /* Paragraph rhythm — stacked paragraphs in Prose-wrapped content breathe.
+     Scoped to .prose-root so unrelated paragraph stacks (heroes, cards,
+     footers) keep their own spacing. */
+  .prose-root > p + p {
     margin-block-start: calc(var(--leading-body) * 0.5em);
   }
 
@@ -90,5 +92,19 @@
 
   h3 {
     letter-spacing: -0.02em;
+  }
+
+  /* Drop cap — unscoped so it can match slotted markdown <p> elements
+     that don't carry Prose.astro's scoped data attribute.
+     :first-of-type targets the first paragraph even if content leads with
+     a heading. */
+  .has-drop-cap > p:first-of-type::first-letter {
+    font-size: var(--text-display);
+    float: inline-start;
+    line-height: 0.85;
+    margin-inline-end: 0.1em;
+    padding-block-start: 0.05em;
+    color: var(--color-text-heading);
+    font-weight: 700;
   }
 }
