@@ -1,8 +1,8 @@
 ---
 import { getCollection, render } from "astro:content";
 import type { Locale } from "~/i18n";
-import { useTranslations } from "~/i18n";
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import LegalDocument from "~/components/LegalDocument.astro";
 import { getAlternateCollectionSlug } from "~/lib/page-registry";
 
 interface Props {
@@ -11,7 +11,6 @@ interface Props {
 }
 
 const { lang, currentSlug } = Astro.props;
-const { t } = useTranslations(lang);
 
 const allPages = await getCollection("pages");
 const entry = allPages.find(
@@ -37,12 +36,7 @@ const alternateSlug = await getAlternateCollectionSlug(
   currentSlug={currentSlug}
   alternateSlug={alternateSlug}
 >
-  <section class="py-20 md:py-28">
-    <div class="container">
-      <article class="blog-prose max-w-3xl mx-auto">
-        <h1>{entry.data.title}</h1>
-        <Content />
-      </article>
-    </div>
-  </section>
+  <LegalDocument title={entry.data.title} lang={lang}>
+    <Content />
+  </LegalDocument>
 </BaseLayout>

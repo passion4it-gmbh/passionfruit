@@ -10,6 +10,33 @@ This directory holds Astro components shared across pages. **One component per c
 - **i18n:** `useTranslations(locale)` from `~/i18n`. Adding a new string means updating both `src/i18n/de.json` and `src/i18n/en.json` in the same commit.
 - **Images:** `<Image>` from `astro:assets`. Alt text is mandatory (ESLint enforces `jsx-a11y/alt-text` as error).
 
+## Legal pages
+
+### `LegalDocument.astro`
+
+Reusable wrapper for legal pages (imprint, privacy, future terms/AGB). Renders a constrained-width prose container with the page title, an optional last-updated timestamp, and a slot for the markdown body. Uses `blog-prose` typography.
+
+| Prop          | Type     | Required | Default | Notes                                                                       |
+| ------------- | -------- | -------- | ------- | --------------------------------------------------------------------------- |
+| `title`       | `string` | yes      | —       | Rendered as the page `<h1>`.                                                |
+| `lang`        | `Locale` | yes      | —       | Drives locale-aware date formatting and `t('legal.lastUpdated', { date })`. |
+| `lastUpdated` | `Date`   | no       | —       | When provided, renders a formatted timestamp below the heading.             |
+| `class`       | `string` | no       | —       | Extra classes appended to the outer `<section>`.                            |
+
+Slot: the markdown `<Content />` from the page collection entry.
+
+```astro
+<LegalDocument
+  title={entry.data.title}
+  lang={lang}
+  lastUpdated={new Date("2025-01-01")}
+>
+  <Content />
+</LegalDocument>
+```
+
+Adding a new legal page: create `src/content/pages/{de,en}/<slug>.md` with matching `translationKey`, wire up a page component in `src/components/pages/`, add the route to `src/lib/page-registry.ts`. The `legal.lastUpdated` i18n key is already in both `de.json` and `en.json`.
+
 ## Media facades
 
 Privacy-friendly click-to-load embeds — static poster + Play button until the user opts in. See [`../../STYLE_GUIDE.md`](../../STYLE_GUIDE.md) §10 for the design rationale and provider rules.
