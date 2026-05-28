@@ -1,0 +1,9 @@
+# release-please owns the CHANGELOG — prettier reformatting fights its output
+CHANGELOG.md
+
+# Auto-generated
+.astro
+dist
+node_modules
+.cache
+.release-please-manifest.json
