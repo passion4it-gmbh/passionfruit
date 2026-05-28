@@ -1,4 +1,5 @@
 ---
+import { RotateCcw } from "@lucide/astro";
 import { useTranslations, type Locale } from "~/i18n";
 
 export interface FacetValue {
@@ -25,8 +26,10 @@ interface Props {
   /** Current active selections keyed by facet key, e.g. { tag: ["ai", "design"] } */
   selected: Record<string, string[]>;
   lang: Locale;
-  /** Base URL to build filter links against — defaults to current path */
-  baseUrl?: string;
+  /** Base URL to build filter links against — pass Astro.url.pathname */
+  baseUrl: string;
+  /** Controls idle chip styling: "on-light" (default) or "on-dark" */
+  tone?: "on-light" | "on-dark";
   /** Override the "Reset filters" label; falls back to t('filter.reset') */
   resetLabel?: string;
   /** Extra classes on the root element */
@@ -38,6 +41,7 @@ const {
   selected,
   lang,
   baseUrl,
+  tone = "on-light",
   resetLabel,
   class: className = "",
 } = Astro.props;
@@ -49,38 +53,38 @@ const allLabel = t("filter.allLabel");
 
 /**
  * Build a URL for toggling a specific facet value.
- * If the value is already selected, clicking removes it (toggle off).
- * If not selected, it adds it alongside existing selections.
+ * Adds the value if absent; removes it if already selected.
  */
 function buildToggleUrl(facetKey: string, valueKey: string): string {
   const params = new URLSearchParams();
 
   for (const [fk, values] of Object.entries(selected)) {
-    const filtered =
+    const next =
       fk === facetKey
         ? values.includes(valueKey)
           ? values.filter((v) => v !== valueKey)
           : [...values, valueKey]
         : values;
-    for (const v of filtered) {
+    for (const v of next) {
       params.append(fk, v);
     }
   }
 
-  // If this facet has no current selection, add the new value
   if (!(facetKey in selected)) {
     params.append(facetKey, valueKey);
   }
 
-  const base = baseUrl ?? "";
   const qs = params.toString();
-  return qs ? `${base}?${qs}` : base || "?";
+  return qs ? `${baseUrl}?${qs}` : baseUrl;
 }
 
-/** URL that clears all filters — just the base path */
-const resetUrl = baseUrl ?? "";
+/** URL that clears all filters — just the base path with no params */
+const resetUrl = baseUrl;
 
 const hasActiveFilters = Object.values(selected).some((v) => v.length > 0);
+
+const idleChipClasses =
+  tone === "on-dark" ? "chip--idle-dark" : "chip--idle-light";
 ---
 
 <nav
@@ -91,33 +95,30 @@ const hasActiveFilters = Object.values(selected).some((v) => v.length > 0);
     facets.map((facet) => {
       const activeValues = selected[facet.key] ?? [];
 
+      // Build "All" href — current params minus this facet
+      const allParams = new URLSearchParams();
+      for (const [fk, values] of Object.entries(selected)) {
+        if (fk !== facet.key) {
+          for (const v of values) allParams.append(fk, v);
+        }
+      }
+      const allQs = allParams.toString();
+      const allHref = allQs ? `${baseUrl}?${allQs}` : baseUrl;
+      const isAll = activeValues.length === 0;
+
       return (
         <div class="flex flex-wrap items-center gap-2 mb-3 last:mb-0">
           <span class="text-xs font-semibold uppercase tracking-wide text-muted mr-1 shrink-0">
             {facet.label}
           </span>
 
-          {/* "All" chip — links to URL without this facet param */}
-          {(() => {
-            const params = new URLSearchParams();
-            for (const [fk, values] of Object.entries(selected)) {
-              if (fk !== facet.key) {
-                for (const v of values) params.append(fk, v);
-              }
-            }
-            const qs = params.toString();
-            const href = qs ? `${baseUrl ?? ""}?${qs}` : (baseUrl ?? "");
-            const isAll = activeValues.length === 0;
-            return (
-              <a
-                href={href || "?"}
-                aria-current={isAll ? "true" : undefined}
-                class:list={["chip", isAll ? "chip--active" : "chip--idle"]}
-              >
-                {allLabel}
-              </a>
-            );
-          })()}
+          <a
+            href={allHref}
+            aria-current={isAll ? "true" : undefined}
+            class:list={["chip", isAll ? "chip--active" : idleChipClasses]}
+          >
+            {allLabel}
+          </a>
 
           {facet.values.map((val) => {
             const isActive = activeValues.includes(val.key);
@@ -125,7 +126,10 @@ const hasActiveFilters = Object.values(selected).some((v) => v.length > 0);
               <a
                 href={buildToggleUrl(facet.key, val.key)}
                 aria-current={isActive ? "true" : undefined}
-                class:list={["chip", isActive ? "chip--active" : "chip--idle"]}
+                class:list={[
+                  "chip",
+                  isActive ? "chip--active" : idleChipClasses,
+                ]}
               >
                 {val.label}
                 {val.count !== undefined && (
@@ -143,26 +147,16 @@ const hasActiveFilters = Object.values(selected).some((v) => v.length > 0);
     hasActiveFilters && (
       <div class="mt-2">
         <a
-          href={resetUrl || "/"}
-          class="inline-flex items-center gap-1.5 text-sm font-medium text-muted hover:text-accent transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded"
+          href={resetUrl}
+          class:list={[
+            "inline-flex items-center gap-1.5 text-sm font-medium motion-safe:transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded",
+            tone === "on-dark"
+              ? "text-white/60 hover:text-white"
+              : "text-muted hover:text-accent",
+          ]}
           aria-label={resolvedResetLabel}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M3 6h18" />
-            <path d="M8 6V4h8v2" />
-            <path d="M19 6l-1 14H6L5 6" />
-          </svg>
+          <RotateCcw size={14} aria-hidden="true" />
           {resolvedResetLabel}
         </a>
       </div>
@@ -176,30 +170,50 @@ const hasActiveFilters = Object.values(selected).some((v) => v.length > 0);
     align-items: center;
     padding: 0.375rem 0.875rem;
     border-radius: 9999px;
-    border: 1px solid var(--color-border);
+    border: 1px solid transparent;
     font-size: 0.8125rem;
     font-weight: 600;
     letter-spacing: 0.01em;
     line-height: 1;
     text-decoration: none;
-    transition:
-      background-color 150ms ease,
-      border-color 150ms ease,
-      color 150ms ease;
-    /* 44px min touch target via line-height + padding */
+    /* 44px min touch target */
     min-height: 2.75rem;
   }
 
-  .chip--idle {
-    color: var(--color-text);
-    background-color: transparent;
+  @media (prefers-reduced-motion: no-preference) {
+    .chip {
+      transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        color 150ms ease;
+    }
   }
 
-  .chip--idle:hover {
+  /* On-light idle */
+  .chip--idle-light {
+    background-color: var(--color-surface-elevated);
+    border-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  .chip--idle-light:hover {
     border-color: var(--color-accent);
     color: var(--color-accent);
   }
 
+  /* On-dark idle */
+  .chip--idle-dark {
+    background-color: rgb(255 255 255 / 0.1);
+    border-color: rgb(255 255 255 / 0.15);
+    color: var(--color-text-on-dark);
+  }
+
+  .chip--idle-dark:hover {
+    border-color: var(--color-accent-glow);
+    color: var(--color-accent-glow);
+  }
+
+  /* Active state — same regardless of tone */
   .chip--active {
     background-color: var(--color-accent);
     border-color: var(--color-accent);

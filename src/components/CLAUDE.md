@@ -16,15 +16,15 @@ Generic taxonomy-driven filter bar. Any collection page (blog, events, case stud
 
 ### Props
 
-| Prop         | Type                           | Required | Default             | Notes                                                                      |
-| ------------ | ------------------------------ | -------- | ------------------- | -------------------------------------------------------------------------- |
-| `facets`     | `Facet[]`                      | yes      | —                   | Taxonomy groups; each becomes a row of chips.                              |
-| `selected`   | `Record<string, string[]>`     | yes      | —                   | Active selections keyed by facet key, built from `Astro.url.searchParams`. |
-| `lang`       | `Locale`                       | yes      | —                   | Drives i18n strings.                                                       |
-| `baseUrl`    | `string`                       | yes      | —                   | Pass `Astro.url.pathname`. Used as the base for all filter link hrefs.     |
-| `tone`       | `"on-light" \| "on-dark"`      | no       | `"on-light"`        | Adjusts idle chip appearance for light vs dark page sections.              |
-| `resetLabel` | `string`                       | no       | `t('filter.reset')` | Override the reset link text.                                              |
-| `class`      | `string`                       | no       | `""`                | Extra classes on the root `<nav>`.                                         |
+| Prop         | Type                       | Required | Default             | Notes                                                                      |
+| ------------ | -------------------------- | -------- | ------------------- | -------------------------------------------------------------------------- |
+| `facets`     | `Facet[]`                  | yes      | —                   | Taxonomy groups; each becomes a row of chips.                              |
+| `selected`   | `Record<string, string[]>` | yes      | —                   | Active selections keyed by facet key, built from `Astro.url.searchParams`. |
+| `lang`       | `Locale`                   | yes      | —                   | Drives i18n strings.                                                       |
+| `baseUrl`    | `string`                   | yes      | —                   | Pass `Astro.url.pathname`. Used as the base for all filter link hrefs.     |
+| `tone`       | `"on-light" \| "on-dark"`  | no       | `"on-light"`        | Adjusts idle chip appearance for light vs dark page sections.              |
+| `resetLabel` | `string`                   | no       | `t('filter.reset')` | Override the reset link text.                                              |
+| `class`      | `string`                   | no       | `""`                | Extra classes on the root `<nav>`.                                         |
 
 `Facet` shape:
 
@@ -56,7 +56,9 @@ const lang = (Astro.params.lang ?? "de") as Locale;
 const selectedTags = Astro.url.searchParams.getAll("tag");
 
 // Collect tag counts from the blog collection for this locale
-const posts = await getCollection("blog", ({ id }) => id.startsWith(`${lang}/`));
+const posts = await getCollection("blog", ({ id }) =>
+  id.startsWith(`${lang}/`),
+);
 const tagCounts = new Map<string, number>();
 for (const post of posts) {
   for (const tag of post.data.tags) {
@@ -86,12 +88,7 @@ const filtered = selectedTags.length
   : posts;
 ---
 
-<CollectionFilter
-  {facets}
-  {selected}
-  {lang}
-  baseUrl={Astro.url.pathname}
-/>
+<CollectionFilter {facets} {selected} {lang} baseUrl={Astro.url.pathname} />
 ```
 
 ### i18n keys added (`filter.*`)
