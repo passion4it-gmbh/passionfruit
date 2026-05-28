@@ -16,6 +16,7 @@ The "Greenleaf Digital" branding, the blog posts, the team members, the services
 - A new component pattern emerges → document it in STYLE_GUIDE.md
 - Routing changes → update the routing section below
 - New commands are added → update the commands table
+- A new component is added → create a sidecar `.md` next to it (the build fails without one)
 
 This is not optional. These files are the project's memory. If they drift from reality, future sessions will produce wrong code.
 
@@ -67,6 +68,7 @@ See CONTRIBUTING.md for full details. Summary:
 - Translation strings via `useTranslations(locale)` from `~/i18n`.
 - Images via `<Image>` component from `astro:assets`.
 - Always update both i18n JSON files when adding strings.
+- Every component has a sidecar `.md` (same name, sibling file). See `src/components/CLAUDE.md` for the catalog and `docs/superpowers/specs/2026-05-28-component-sidecar-docs-design.md` for the required frontmatter and section template.
 
 ## 8. Styling
 
@@ -92,7 +94,6 @@ You can run either, both, or neither. Most users want GA4 (familiar dashboard); 
 
 **Google Tag Manager** — `PUBLIC_GTM_CONTAINER_ID` (format `GTM-XXXXXXX`). Use this instead of GA4 direct when you need a tag-management layer (e.g. multiple tracking pixels, custom event triggers, A/B testing tools). Loads the GTM container only after analytics consent is granted; uses Consent Mode v2 with `analytics_storage` granted on consent and all ad\_\* signals permanently denied (passionfruit has no marketing category). GTM, GA4, and PostHog are all independent — each is env-var gated, so any combination works.
 
-
 ## 10. Routing
 
 - URL scheme: **apex-locale** — DE at root (`/`), EN under `/en/`.
@@ -113,6 +114,7 @@ Before committing:
 - [ ] New collection entries have `translationKey` in both locales
 - [ ] New i18n strings added to both `de.json` and `en.json`
 - [ ] Changes align with STYLE_GUIDE.md
+- [ ] New components have a sidecar `.md`
 
 ## 12. Image generation
 
@@ -209,26 +211,27 @@ The deploy job is gated on `CLOUDFLARE_PROJECT_NAME` being set — when unset, t
 
 ## 16. Commands
 
-| Command                     | Purpose                                                                        |
-| --------------------------- | ------------------------------------------------------------------------------ |
-| `pnpm dev`                  | Local dev server                                                               |
-| `pnpm build`                | Production build (sync + lint + typecheck + astro build)                       |
-| `pnpm preview`              | Preview built output                                                           |
-| `pnpm typecheck`            | `astro check` + `tsc --noEmit`                                                 |
-| `pnpm lint`                 | ESLint + Prettier with autofix                                                 |
-| `pnpm lint:a11y`            | Accessibility lint (alt-text = error, rest = warn)                             |
-| `pnpm test`                 | Bilingual + og-generator unit tests                                            |
-| `pnpm check:spelling`       | Spell check content markdown (DE + EN)                                         |
-| `pnpm check:links`          | Broken link check on built output                                              |
-| `pnpm check:all`            | Spelling + a11y + build + link check (full CI locally)                         |
-| `pnpm generate-og`          | Regenerate localized OG sharing images from project data                       |
-| `pnpm generate-image`       | Generate images via GPT Image (needs `OPENAI_API_KEY`)                         |
-| `/create-passionfruit-site` | Bootstrap a new passionfruit site from outside the template (plugin-only path) |
-| `/onboard`                  | Personalize a fresh template for a new business or migrate an existing site    |
-| `/brand`                    | Replace placeholder favicon and OG image with your own                         |
-| `/deploy`                   | Interactive Cloudflare Pages deployment setup                                  |
-| `/new-post`                 | Scaffold a bilingual blog post (DE + EN)                                       |
-| `/new-team-member`          | Scaffold a bilingual team member entry (DE + EN)                               |
+| Command                       | Purpose                                                                                       |
+| ----------------------------- | --------------------------------------------------------------------------------------------- |
+| `pnpm dev`                    | Local dev server                                                                              |
+| `pnpm build`                  | Production build (sync + lint + typecheck + astro build)                                      |
+| `pnpm preview`                | Preview built output                                                                          |
+| `pnpm typecheck`              | `astro check` + `tsc --noEmit`                                                                |
+| `pnpm lint`                   | ESLint + Prettier with autofix                                                                |
+| `pnpm lint:a11y`              | Accessibility lint (alt-text = error, rest = warn)                                            |
+| `pnpm test`                   | Bilingual + og-generator unit tests                                                           |
+| `pnpm check:spelling`         | Spell check content markdown (DE + EN)                                                        |
+| `pnpm check:links`            | Broken link check on built output                                                             |
+| `pnpm check:all`              | Spelling + a11y + build + link check (full CI locally)                                        |
+| `pnpm generate-og`            | Regenerate localized OG sharing images from project data                                      |
+| `pnpm generate-image`         | Generate images via GPT Image (needs `OPENAI_API_KEY`)                                        |
+| `pnpm sync:component-catalog` | Regenerate the component catalog block in `src/components/CLAUDE.md` from sidecar frontmatter |
+| `/create-passionfruit-site`   | Bootstrap a new passionfruit site from outside the template (plugin-only path)                |
+| `/onboard`                    | Personalize a fresh template for a new business or migrate an existing site                   |
+| `/brand`                      | Replace placeholder favicon and OG image with your own                                        |
+| `/deploy`                     | Interactive Cloudflare Pages deployment setup                                                 |
+| `/new-post`                   | Scaffold a bilingual blog post (DE + EN)                                                      |
+| `/new-team-member`            | Scaffold a bilingual team member entry (DE + EN)                                              |
 
 ## 17. Claude Code setup
 

@@ -113,6 +113,56 @@ After creating a new page, also:
 
 ---
 
+## Components
+
+Every `.astro` file under `src/components/` and `src/components/pages/` must have a sibling sidecar `.md` with the same basename. The prebuild check (`scripts/check-component-docs.mjs`) exits 1 if any component is missing its sidecar — the build fails.
+
+**File layout:**
+
+```
+src/components/
+  MyWidget.astro
+  MyWidget.md          ← sidecar
+  pages/
+    about.astro
+    about.md           ← sidecar
+```
+
+**Required frontmatter:**
+
+```yaml
+---
+component: MyWidget # PascalCase; must match the .astro filename
+oneLiner: "One sentence, ≤80 chars — used in the component catalog"
+status: stable # stable | beta | deprecated
+tags: ["ui"] # free-form; page sidecars include "page"
+---
+```
+
+**Required H2 sections** (all seven must be present; write `None` if empty):
+
+1. `## Purpose` — what problem the component solves (1–3 sentences)
+2. `## When to use` — bulleted positive triggers
+3. `## When NOT to use` — bulleted anti-triggers; name the right alternative
+4. `## Props` — table with columns `Prop | Type | Required | Default | Notes`
+5. `## Example` — minimal copy-paste-ready Astro snippet with imports
+6. `## i18n keys` — table of every `t('…')` call, or `None`
+7. `## Gotchas` — bulleted constraints that bite, or `None`
+
+See `docs/superpowers/specs/2026-05-28-component-sidecar-docs-design.md` for the canonical template and full contract.
+
+**Running the check manually:**
+
+```bash
+pnpm sync:component-catalog
+```
+
+This validates all sidecars and rewrites the auto-generated catalog block in `src/components/CLAUDE.md`. Run it after adding or renaming a component, or after editing sidecar frontmatter. The catalog is regenerated deterministically — commit the result.
+
+**Fixing a stale catalog:** If the build complains about a missing sidecar, create `<Component>.md` next to `<Component>.astro` with the frontmatter and seven H2 sections above, then run `pnpm sync:component-catalog` and commit both files together.
+
+---
+
 ## Careers (Job Postings)
 
 **Path:** `src/content/careers/{de,en}/<slug>.md`
@@ -161,21 +211,21 @@ Always create both `de/<slug>.md` and `en/<slug>.md` with a matching `translatio
 
 ```yaml
 ---
-translationKey: my-event        # Same value in both locale files
+translationKey: my-event # Same value in both locale files
 title: "Event title"
 summary: "Short description shown on cards and as meta description"
 startsAt: 2026-09-10T10:00:00
-endsAt: 2026-09-10T11:30:00    # Optional
-category: "Webinar"             # Open string — name your own categories
-tags: ["AI", "SME"]             # Optional, open string array for filtering
+endsAt: 2026-09-10T11:30:00 # Optional
+category: "Webinar" # Open string — name your own categories
+tags: ["AI", "SME"] # Optional, open string array for filtering
 location:
-  kind: "online"                # "online" | "in-person" | "hybrid"
-  venue: "Event Hall"           # Optional — for in-person/hybrid
-  city: "Berlin"                # Optional — for in-person/hybrid
-  url: "https://example.com"    # Optional — map or stream link
-registrationUrl: "https://example.com/register/my-event"  # Optional
-heroImage: "./_images/event-hero.jpg"  # Optional
-speakers:                       # Optional — references team collection entries
+  kind: "online" # "online" | "in-person" | "hybrid"
+  venue: "Event Hall" # Optional — for in-person/hybrid
+  city: "Berlin" # Optional — for in-person/hybrid
+  url: "https://example.com" # Optional — map or stream link
+registrationUrl: "https://example.com/register/my-event" # Optional
+heroImage: "./_images/event-hero.jpg" # Optional
+speakers: # Optional — references team collection entries
   - de/jane-doe
 ---
 ```
@@ -205,19 +255,19 @@ Always create both `de/<slug>.md` and `en/<slug>.md` with matching `translationK
 
 ```yaml
 ---
-translationKey: my-case-study          # Same value in both locale files
+translationKey: my-case-study # Same value in both locale files
 personName: "Maria Musterfrau"
-personRole: "Geschäftsführerin"        # or "CEO" etc.
+personRole: "Geschäftsführerin" # or "CEO" etc.
 clientName: "Muster GmbH"
-category: "Case Study"                 # Open string: "Testimonial", "Case Study", "Success Story"
+category: "Case Study" # Open string: "Testimonial", "Case Study", "Success Story"
 tags:
   - "E-Commerce"
   - "Conversion"
 quote: "Kurzes, prägnantes Zitat der Person über die Zusammenarbeit."
 portraitImage: "../../../assets/case-studies/portrait-musterfrau.png"
-portraitFit: "cover"                   # "contain" for logos, "cover" for portraits (default)
-videoId: "EXAMPLE0001"                 # Optional — 11-char YouTube ID
-publishedAt: "2026-01-15"              # Optional
+portraitFit: "cover" # "contain" for logos, "cover" for portraits (default)
+videoId: "EXAMPLE0001" # Optional — 11-char YouTube ID
+publishedAt: "2026-01-15" # Optional
 ---
 ```
 
@@ -256,3 +306,4 @@ Before committing:
 - [ ] New collection entries have `translationKey` in both locales
 - [ ] New i18n strings added to both `de.json` and `en.json`
 - [ ] Changes align with STYLE_GUIDE.md
+- [ ] New components have a sidecar `.md`
