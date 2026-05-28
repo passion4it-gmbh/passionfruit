@@ -1,6 +1,6 @@
 @import "@fontsource-variable/inter";
 @import "tailwindcss";
-@import "./scroll-animations.css";
+@import "./motion.css";
 
 @theme {
   /* Surfaces */

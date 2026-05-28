@@ -161,21 +161,21 @@ Always create both `de/<slug>.md` and `en/<slug>.md` with a matching `translatio
 
 ```yaml
 ---
-translationKey: my-event        # Same value in both locale files
+translationKey: my-event # Same value in both locale files
 title: "Event title"
 summary: "Short description shown on cards and as meta description"
 startsAt: 2026-09-10T10:00:00
-endsAt: 2026-09-10T11:30:00    # Optional
-category: "Webinar"             # Open string — name your own categories
-tags: ["AI", "SME"]             # Optional, open string array for filtering
+endsAt: 2026-09-10T11:30:00 # Optional
+category: "Webinar" # Open string — name your own categories
+tags: ["AI", "SME"] # Optional, open string array for filtering
 location:
-  kind: "online"                # "online" | "in-person" | "hybrid"
-  venue: "Event Hall"           # Optional — for in-person/hybrid
-  city: "Berlin"                # Optional — for in-person/hybrid
-  url: "https://example.com"    # Optional — map or stream link
-registrationUrl: "https://example.com/register/my-event"  # Optional
-heroImage: "./_images/event-hero.jpg"  # Optional
-speakers:                       # Optional — references team collection entries
+  kind: "online" # "online" | "in-person" | "hybrid"
+  venue: "Event Hall" # Optional — for in-person/hybrid
+  city: "Berlin" # Optional — for in-person/hybrid
+  url: "https://example.com" # Optional — map or stream link
+registrationUrl: "https://example.com/register/my-event" # Optional
+heroImage: "./_images/event-hero.jpg" # Optional
+speakers: # Optional — references team collection entries
   - de/jane-doe
 ---
 ```
@@ -205,19 +205,19 @@ Always create both `de/<slug>.md` and `en/<slug>.md` with matching `translationK
 
 ```yaml
 ---
-translationKey: my-case-study          # Same value in both locale files
+translationKey: my-case-study # Same value in both locale files
 personName: "Maria Musterfrau"
-personRole: "Geschäftsführerin"        # or "CEO" etc.
+personRole: "Geschäftsführerin" # or "CEO" etc.
 clientName: "Muster GmbH"
-category: "Case Study"                 # Open string: "Testimonial", "Case Study", "Success Story"
+category: "Case Study" # Open string: "Testimonial", "Case Study", "Success Story"
 tags:
   - "E-Commerce"
   - "Conversion"
 quote: "Kurzes, prägnantes Zitat der Person über die Zusammenarbeit."
 portraitImage: "../../../assets/case-studies/portrait-musterfrau.png"
-portraitFit: "cover"                   # "contain" for logos, "cover" for portraits (default)
-videoId: "EXAMPLE0001"                 # Optional — 11-char YouTube ID
-publishedAt: "2026-01-15"              # Optional
+portraitFit: "cover" # "contain" for logos, "cover" for portraits (default)
+videoId: "EXAMPLE0001" # Optional — 11-char YouTube ID
+publishedAt: "2026-01-15" # Optional
 ---
 ```
 

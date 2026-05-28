@@ -424,7 +424,12 @@ const selectedTags = Astro.url.searchParams.getAll("tag");
 const selected = { category: selectedCategories, tag: selectedTags };
 ---
 
-<EventsFilter entries={allEvents} {lang} {selected} baseUrl={Astro.url.pathname} />
+<EventsFilter
+  entries={allEvents}
+  {lang}
+  {selected}
+  baseUrl={Astro.url.pathname}
+/>
 ```
 
 ### i18n keys (`events.*`)
