@@ -167,12 +167,13 @@ Sibling navigation is derived at render time by querying all locale-matching ent
 
 Thin wrapper around `CollectionFilter`. Reads all case studies for the current locale, extracts unique `category` and `tag` values with counts, and passes them as `facets`. Only renders if there is at least one facet with values.
 
-| Prop       | Type                       | Required | Notes                                           |
-| ---------- | -------------------------- | -------- | ----------------------------------------------- |
-| `lang`     | `Locale`                   | yes      | Passed through to `CollectionFilter`.           |
-| `baseUrl`  | `string`                   | yes      | Pass `Astro.url.pathname`.                      |
-| `selected` | `Record<string, string[]>` | yes      | Keys: `"category"`, `"tag"`. Build from params. |
-| `class`    | `string`                   | no       | Extra classes on the root element.              |
+| Prop       | Type                       | Required | Default      | Notes                                                                                |
+| ---------- | -------------------------- | -------- | ------------ | ------------------------------------------------------------------------------------ |
+| `lang`     | `Locale`                   | yes      | —            | Passed through to `CollectionFilter`.                                                |
+| `baseUrl`  | `string`                   | yes      | —            | Pass `Astro.url.pathname`.                                                           |
+| `selected` | `Record<string, string[]>` | yes      | —            | Keys: `"category"`, `"tag"`. Build from URL search params.                           |
+| `tone`     | `"on-light" \| "on-dark"`  | no       | `"on-light"` | Pass `"on-dark"` when embedding in a dark-surface section (inverts idle chip style). |
+| `class`    | `string`                   | no       | `""`         | Extra classes on the root element.                                                   |
 
 Category facet is suppressed when all entries share the same category (single-facet collapses are noise).
 

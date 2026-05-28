@@ -11,7 +11,7 @@ tags:
 quote: "Since the relaunch with Greenleaf Digital, our online revenue has grown by 60% — and our customers can finally find what they're looking for."
 portraitImage: "../../../assets/case-studies/portrait-shopify.png"
 portraitFit: "cover"
-videoId: "dQw4w9WgXcQ"
+videoId: "EXAMPLE0001"
 publishedAt: "2026-03-10"
 ---
 

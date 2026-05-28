@@ -8,10 +8,17 @@ interface Props {
   lang: Locale;
   baseUrl: string;
   selected: Record<string, string[]>;
+  tone?: "on-light" | "on-dark";
   class?: string;
 }
 
-const { lang, baseUrl, selected, class: className = "" } = Astro.props;
+const {
+  lang,
+  baseUrl,
+  selected,
+  tone = "on-light",
+  class: className = "",
+} = Astro.props;
 const { t } = useTranslations(lang);
 
 const entries = await getCollection("caseStudies", (e) =>
@@ -60,6 +67,13 @@ if (tagCounts.size > 0) {
 
 {
   facets.length > 0 && (
-    <CollectionFilter {facets} {selected} {lang} {baseUrl} class={className} />
+    <CollectionFilter
+      {facets}
+      {selected}
+      {lang}
+      {baseUrl}
+      {tone}
+      class={className}
+    />
   )
 }

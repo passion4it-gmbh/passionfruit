@@ -11,7 +11,7 @@ tags:
 quote: "Seit dem Relaunch mit Greenleaf Digital ist unser Online-Umsatz um 60 % gestiegen – und unsere Kunden finden endlich, was sie suchen."
 portraitImage: "../../../assets/case-studies/portrait-shopify.png"
 portraitFit: "cover"
-videoId: "dQw4w9WgXcQ"
+videoId: "EXAMPLE0001"
 publishedAt: "2026-03-10"
 ---
 

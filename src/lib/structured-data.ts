@@ -158,6 +158,7 @@ export function buildReviewLd(
   lang: Locale,
 ): Record<string, unknown> {
   return {
+    "@context": "https://schema.org/",
     "@type": "Review",
     author: {
       "@type": "Person",
@@ -169,6 +170,11 @@ export function buildReviewLd(
       },
     },
     reviewBody: entry.data.quote,
+    reviewRating: {
+      "@type": "Rating",
+      ratingValue: 5,
+      bestRating: 5,
+    },
     itemReviewed: {
       "@type": "Organization",
       name: ORGANIZATION_LD.name,
