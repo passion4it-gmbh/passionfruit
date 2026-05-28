@@ -130,7 +130,7 @@ describe("one missing sidecar", () => {
 });
 
 // ---------------------------------------------------------------------------
-// 4. Two missing sidecars list both in stderr
+// 4. Three missing sidecars list all three in stderr
 // ---------------------------------------------------------------------------
 describe("three missing sidecars", () => {
   let tmpDir;
@@ -314,6 +314,38 @@ describe("schema: missing frontmatter exits 1", () => {
     const result = runScript(tmpDir);
     assert.match(result.stderr, /Badge\.md/);
     assert.match(result.stderr, /component/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 9b. Schema: malformed YAML frontmatter exits 1
+// ---------------------------------------------------------------------------
+describe("schema: malformed YAML frontmatter exits 1", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-schema-"));
+    // Seed a matching .astro so coverage passes, then write a sidecar with
+    // syntactically invalid YAML (unclosed double-quote).
+    mkdirSync(tmpDir, { recursive: true });
+    writeFileSync(join(tmpDir, "Badge.astro"), "---\n---\n<div />");
+    writeFileSync(
+      join(tmpDir, "Badge.md"),
+      '---\ncomponent: "unclosed\n---\nbody',
+    );
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 1", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 1, `stdout: ${result.stdout}`);
+  });
+
+  it("stderr contains 'could not parse' and the file basename", () => {
+    const result = runScript(tmpDir);
+    assert.match(result.stderr, /could not parse/i);
+    assert.match(result.stderr, /Badge\.md/);
   });
 });
 
@@ -628,7 +660,7 @@ None.
   it("stderr mentions file path and order", () => {
     const result = runScript(tmpDir);
     assert.match(result.stderr, /Badge\.md/);
-    assert.match(result.stderr, /order/i);
+    assert.match(result.stderr, /out of order/i);
   });
 });
 
