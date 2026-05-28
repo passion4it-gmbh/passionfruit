@@ -111,7 +111,7 @@ Replace all "Greenleaf Digital" references with the company name across:
 - `src/i18n/de.json` and `src/i18n/en.json` (site.name, site.tagline, site.description, footer.copyright)
 - `src/lib/structured-data.ts` (ORGANIZATION_LD name)
 - `src/layouts/BaseLayout.astro` (title suffix)
-- `README.md` (project description)
+- `README.md` — replace the upstream marketing content (banner, "What You Get", "Why Not WordPress", "Built With") with a short, business-specific README. **Keep** the "Staying Current" section verbatim — it tells the site owner how to pull in passionfruit improvements over time.
 
 Update `astro.config.mjs` site URL if provided.
 
