@@ -1,6 +1,6 @@
 ---
 name: passionfruit-content
-description: Use when the user wants to add, edit, translate, or remove content (blog posts, team members, pages, navigation, translation strings, or anything inside src/content/ or src/i18n/). Loads the bilingual rules, frontmatter shapes, and page-registry conventions so content edits don't silently break the build.
+description: Use when the user wants to add, edit, translate, or remove content (blog posts, team members, pages, navigation, translation strings, or anything inside src/content/, src/i18n/, or src/components/). Loads the bilingual rules, frontmatter shapes, page-registry conventions, and component sidecar rules so edits don't silently break the build.
 ---
 
 # passionfruit content rules
@@ -71,6 +71,16 @@ URL scheme is **apex-locale**: DE lives at the root (`/`), EN under `/en/`. Loca
 - Both `de.json` and `en.json` updated for any new i18n key.
 - `pnpm build` runs locally (it triggers the bilingual check, lint, typecheck, and astro build).
 - No hex literals in components — use Tailwind tokens that map to `@theme` values in `src/styles/global.css`.
+
+## Components
+
+Every `.astro` component under `src/components/` has a sidecar `.md` file next to it (same basename). The sidecar is the component's living doc: purpose, props, usage examples, and design rationale.
+
+- **Before editing or composing with a component, read its sidecar first.**
+- **When creating a new component, create the sidecar in the same commit.** The prebuild check (`scripts/check-component-sidecars.mjs`) exits 1 if any `.astro` file is missing its pair.
+- The canonical sidecar contract and template live in `docs/superpowers/specs/2026-05-28-component-sidecar-docs-design.md` § "Sidecar contract".
+- See `src/components/CollectionFilter.md` for a representative sidecar to understand the expected shape.
+- **`src/components/CLAUDE.md` is partially auto-generated.** The block between `<!-- catalog:start -->` and `<!-- catalog:end -->` is regenerated on every build and by `pnpm sync:component-catalog`. Never edit inside those markers — changes go in the individual sidecars.
 
 ## When you're stuck
 
