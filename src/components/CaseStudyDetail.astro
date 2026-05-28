@@ -1,0 +1,345 @@
+---
+import { Picture } from "astro:assets";
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import { ArrowLeft, ArrowRight } from "@lucide/astro";
+import { useTranslations, getLocalizedPath, type Locale } from "~/i18n";
+import { findPageByKey } from "~/lib/page-registry";
+import YouTubeFacade from "~/components/YouTubeFacade.astro";
+import Badge from "~/components/Badge.astro";
+import "~/styles/blog-prose.css";
+
+interface Props {
+  entry: CollectionEntry<"caseStudies">;
+  lang: Locale;
+}
+
+const { entry, lang } = Astro.props;
+const { t } = useTranslations(lang);
+
+const parentSlug =
+  findPageByKey("case-studies-index")?.slug[lang] ??
+  (lang === "de" ? "referenzen" : "case-studies");
+const caseStudiesPath = getLocalizedPath(parentSlug, lang);
+
+// Prev/next siblings in the same locale, sorted newest-first.
+const allEntries = await getCollection("caseStudies", (e) =>
+  e.id.startsWith(`${lang}/`),
+);
+const sorted = [...allEntries].sort((a, b) => {
+  const da = a.data.publishedAt ? a.data.publishedAt.getTime() : 0;
+  const db = b.data.publishedAt ? b.data.publishedAt.getTime() : 0;
+  if (db !== da) return db - da;
+  return a.id.localeCompare(b.id);
+});
+const currentIdx = sorted.findIndex((e) => e.id === entry.id);
+const prevEntry = currentIdx > 0 ? sorted[currentIdx - 1] : undefined;
+const nextEntry =
+  currentIdx >= 0 && currentIdx < sorted.length - 1
+    ? sorted[currentIdx + 1]
+    : undefined;
+
+function entryHref(e: CollectionEntry<"caseStudies">): string {
+  const slug = e.id.slice(e.id.indexOf("/") + 1);
+  return `${caseStudiesPath}${slug}/`;
+}
+
+const { Content } = await render(entry);
+---
+
+<article class="case-study-detail">
+  <nav class="back-link" aria-label={t("caseStudies.backToCaseStudies")}>
+    <a href={caseStudiesPath} class="back-anchor">
+      <ArrowLeft class="w-4 h-4" />
+      {t("caseStudies.backToCaseStudies")}
+    </a>
+  </nav>
+
+  <header class="hero">
+    <span class="category">{entry.data.category}</span>
+    <h1 class="quote">„{entry.data.quote}"</h1>
+  </header>
+
+  <div class="layout">
+    <div
+      class:list={[
+        "portrait",
+        entry.data.portraitFit === "contain" && "portrait--contain",
+      ]}
+    >
+      <Picture
+        src={entry.data.portraitImage}
+        alt={`${entry.data.personName} | ${entry.data.clientName}`}
+        formats={["avif", "webp"]}
+        widths={[400, 640, 819]}
+        sizes="(max-width: 768px) 100vw, 50vw"
+        class="portrait-img"
+        loading="eager"
+      />
+    </div>
+
+    <div class="meta">
+      <dl class="person">
+        <dt class="sr-only">{t("caseStudies.srName")}</dt>
+        <dd class="name">{entry.data.personName}</dd>
+        <dt class="sr-only">{t("caseStudies.srRole")}</dt>
+        <dd class="role">{entry.data.personRole}</dd>
+        <dt class="sr-only">{t("caseStudies.srCompany")}</dt>
+        <dd class="firma">{entry.data.clientName}</dd>
+      </dl>
+
+      {
+        entry.data.tags.length > 0 && (
+          <ul class="tags" aria-label={t("caseStudies.tagsLabel")}>
+            {entry.data.tags.map((tag) => (
+              <li>
+                <Badge>{tag}</Badge>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </div>
+
+  {
+    entry.data.videoId && (
+      <div class="video">
+        <YouTubeFacade
+          lang={lang}
+          videoId={entry.data.videoId}
+          poster={entry.data.portraitImage}
+          posterAlt={`${entry.data.personName} | ${entry.data.clientName}`}
+          title={`${t("caseStudies.watchInterview")} – ${entry.data.personName}`}
+        />
+      </div>
+    )
+  }
+
+  <div class="body blog-prose">
+    <Content />
+  </div>
+
+  <nav class="siblings" aria-label={t("caseStudies.siblingNav")}>
+    {
+      prevEntry ? (
+        <a href={entryHref(prevEntry)} class="sibling sibling-prev">
+          <ArrowLeft class="w-5 h-5" aria-hidden="true" />
+          <span class="sibling-label">
+            {t("caseStudies.previousReference")}
+          </span>
+          <span class="sibling-name">{prevEntry.data.personName}</span>
+        </a>
+      ) : (
+        <span />
+      )
+    }
+    {
+      nextEntry ? (
+        <a href={entryHref(nextEntry)} class="sibling sibling-next">
+          <span class="sibling-label">{t("caseStudies.nextReference")}</span>
+          <span class="sibling-name">{nextEntry.data.personName}</span>
+          <ArrowRight class="w-5 h-5" aria-hidden="true" />
+        </a>
+      ) : (
+        <span />
+      )
+    }
+  </nav>
+</article>
+
+<style>
+  .case-study-detail {
+    max-width: 64rem;
+    margin: 0 auto;
+  }
+
+  .back-link {
+    margin-bottom: 1.5rem;
+  }
+
+  .back-anchor {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .back-anchor:hover {
+    color: var(--color-accent);
+  }
+
+  .hero {
+    margin-bottom: 2.5rem;
+  }
+
+  .category {
+    display: inline-block;
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .quote {
+    font-family: var(--font-heading);
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-text-heading);
+    margin: 0;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 3rem;
+      align-items: start;
+    }
+  }
+
+  .portrait {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+  }
+
+  .portrait-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .portrait--contain {
+    background: var(--color-surface-elevated);
+    padding: 2rem;
+  }
+
+  .portrait--contain .portrait-img {
+    object-fit: contain;
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .person {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .person dd {
+    margin: 0;
+  }
+
+  .name {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-heading);
+  }
+
+  .role,
+  .firma {
+    color: var(--color-muted);
+    font-size: 1rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .video {
+    max-width: 56rem;
+    margin: 0 auto 2.5rem;
+  }
+
+  .body {
+    max-width: 48rem;
+    margin: 0 auto 3rem;
+  }
+
+  .siblings {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .sibling {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem 1.25rem;
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    text-decoration: none;
+    color: inherit;
+    transition:
+      border-color var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  .sibling:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+  }
+
+  .sibling:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .sibling-next {
+    text-align: right;
+  }
+
+  .sibling-label {
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--color-accent);
+  }
+
+  .sibling-name {
+    font-size: 1rem;
+    color: var(--color-text-heading);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

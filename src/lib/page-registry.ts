@@ -7,6 +7,7 @@ export type PageKey =
   | "about"
   | "services"
   | "blog-index"
+  | "case-studies-index"
   | "team"
   | "events-index"
   | "contact"
@@ -14,7 +15,13 @@ export type PageKey =
   | "imprint"
   | "careers-index";
 
-export type CollectionName = "blog" | "team" | "pages" | "careers" | "events";
+export type CollectionName =
+  | "blog"
+  | "team"
+  | "pages"
+  | "careers"
+  | "events"
+  | "caseStudies";
 
 export interface PageEntry {
   key: PageKey;
@@ -36,7 +43,8 @@ export type CollectionDetailMatch = {
     | CollectionEntry<"blog">
     | CollectionEntry<"pages">
     | CollectionEntry<"careers">
-    | CollectionEntry<"events">;
+    | CollectionEntry<"events">
+    | CollectionEntry<"caseStudies">;
 };
 
 export type RouteMatch = StaticPageMatch | CollectionDetailMatch;
@@ -65,6 +73,11 @@ export const PAGES = [
     key: "events-index" as const,
     slug: { de: "veranstaltungen", en: "events" },
     component: () => import("~/components/pages/events-index.astro"),
+  },
+  {
+    key: "case-studies-index" as const,
+    slug: { de: "referenzen", en: "case-studies" },
+    component: () => import("~/components/pages/case-studies-index.astro"),
   },
   {
     key: "team" as const,
@@ -103,6 +116,7 @@ const COLLECTION_REGISTRY_KEY: Record<CollectionName, PageKey> = {
   pages: "about", // pages collection detail routes nest under about
   careers: "careers-index",
   events: "events-index",
+  caseStudies: "case-studies-index",
 };
 
 // ---------------------------------------------------------------------------
@@ -128,7 +142,8 @@ type AnyCollectionEntry =
   | CollectionEntry<"blog">
   | CollectionEntry<"pages">
   | CollectionEntry<"careers">
-  | CollectionEntry<"events">;
+  | CollectionEntry<"events">
+  | CollectionEntry<"caseStudies">;
 
 type CollectionDetailPath = {
   params: { path: string };
@@ -198,6 +213,9 @@ export async function getCollectionDetailPaths(): Promise<
 
   const eventsEntries = await getCollection("events");
   pushDetailPaths(paths, "events", eventsEntries, locales);
+
+  const caseStudies = await getCollection("caseStudies");
+  pushDetailPaths(paths, "caseStudies", caseStudies, locales);
 
   return paths;
 }

@@ -9,6 +9,7 @@
     "about": "About",
     "services": "Services",
     "blog": "Blog",
+    "caseStudies": "Case Studies",
     "team": "Team",
     "contact": "Contact"
   },
@@ -199,5 +200,23 @@
       "category": "Category",
       "tag": "Topic"
     }
+  },
+  "caseStudies": {
+    "title": "Case Studies",
+    "description": "See how our clients benefit from working with Greenleaf Digital.",
+    "noResults": "No case studies found.",
+    "readMore": "Read more",
+    "watchInterview": "Watch interview",
+    "videoAvailable": "Video available",
+    "tagsLabel": "Topics",
+    "filterCategory": "Category",
+    "filterTag": "Topic",
+    "backToCaseStudies": "Back to case studies",
+    "siblingNav": "More case studies",
+    "previousReference": "Previous",
+    "nextReference": "Next",
+    "srName": "Name",
+    "srRole": "Role",
+    "srCompany": "Company"
   }
 }

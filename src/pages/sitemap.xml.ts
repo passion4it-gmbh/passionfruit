@@ -58,7 +58,8 @@ type AnyEntry =
   | CollectionEntry<"team">
   | CollectionEntry<"pages">
   | CollectionEntry<"careers">
-  | CollectionEntry<"events">;
+  | CollectionEntry<"events">
+  | CollectionEntry<"caseStudies">;
 
 const COLLECTION_REGISTRY_KEY: Record<CollectionName, PageKey> = {
   blog: "blog-index",
@@ -66,6 +67,7 @@ const COLLECTION_REGISTRY_KEY: Record<CollectionName, PageKey> = {
   pages: "about",
   careers: "careers-index",
   events: "events-index",
+  caseStudies: "case-studies-index",
 };
 
 function collectCollectionBlocks(
@@ -133,11 +135,12 @@ function collectCollectionBlocks(
 export const GET: APIRoute = async ({ site }) => {
   const siteUrl = site ?? new URL("https://greenleaf.digital");
 
-  const [blog, team, careers, events] = await Promise.all([
+  const [blog, team, careers, events, caseStudies] = await Promise.all([
     getCollection("blog"),
     getCollection("team"),
     getCollection("careers"),
     getCollection("events"),
+    getCollection("caseStudies"),
   ]);
 
   const urlBlocks: string[] = [
@@ -146,6 +149,7 @@ export const GET: APIRoute = async ({ site }) => {
     ...collectCollectionBlocks(siteUrl, "team", team),
     ...collectCollectionBlocks(siteUrl, "careers", careers),
     ...collectCollectionBlocks(siteUrl, "events", events),
+    ...collectCollectionBlocks(siteUrl, "caseStudies", caseStudies),
   ];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

@@ -9,6 +9,7 @@
     "about": "Über uns",
     "services": "Leistungen",
     "blog": "Blog",
+    "caseStudies": "Referenzen",
     "team": "Team",
     "contact": "Kontakt"
   },
@@ -199,5 +200,23 @@
       "category": "Kategorie",
       "tag": "Thema"
     }
+  },
+  "caseStudies": {
+    "title": "Referenzen",
+    "description": "Erfahren Sie, wie unsere Kunden von der Zusammenarbeit mit Greenleaf Digital profitieren.",
+    "noResults": "Keine Referenzen gefunden.",
+    "readMore": "Mehr lesen",
+    "watchInterview": "Interview ansehen",
+    "videoAvailable": "Video verfügbar",
+    "tagsLabel": "Themen",
+    "filterCategory": "Kategorie",
+    "filterTag": "Thema",
+    "backToCaseStudies": "Zurück zu den Referenzen",
+    "siblingNav": "Weitere Referenzen",
+    "previousReference": "Vorherige Referenz",
+    "nextReference": "Nächste Referenz",
+    "srName": "Name",
+    "srRole": "Position",
+    "srCompany": "Unternehmen"
   }
 }

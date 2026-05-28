@@ -11,11 +11,13 @@ import BlogPost from "~/components/BlogPost.astro";
 import PageContent from "~/components/PageContent.astro";
 import CareerPost from "~/components/CareerPost.astro";
 import EventDetail from "~/components/EventDetail.astro";
+import CaseStudyDetail from "~/components/CaseStudyDetail.astro";
 import StructuredData from "~/components/StructuredData.astro";
 import {
   buildBlogPostingLd,
   buildJobPostingLd,
   buildEventLd,
+  buildReviewLd,
 } from "~/lib/structured-data";
 
 export async function getStaticPaths() {
@@ -33,7 +35,8 @@ type Props =
         | CollectionEntry<"blog">
         | CollectionEntry<"pages">
         | CollectionEntry<"careers">
-        | CollectionEntry<"events">;
+        | CollectionEntry<"events">
+        | CollectionEntry<"caseStudies">;
     };
 
 const props = Astro.props as Props;
@@ -48,20 +51,29 @@ let collectionAlternateSlug: string | undefined;
 let blogPostingLd: Record<string, unknown> | undefined;
 let jobPostingLd: Record<string, unknown> | undefined;
 let eventLd: Record<string, unknown> | undefined;
+let reviewLd: Record<string, unknown> | undefined;
 let StaticComponent: AstroPageDefault | undefined;
 
 if (props.kind === "collection-detail") {
   const data = props.entry.data as Record<string, unknown>;
 
+  // title: blog/careers/events/pages — quote-based title: caseStudies
   collectionTitle =
-    typeof data["title"] === "string" ? data["title"] : props.entry.id;
-  // Events and careers use `summary` as the meta description; blog/pages use `description`.
+    typeof data["title"] === "string"
+      ? data["title"]
+      : typeof data["quote"] === "string"
+        ? `${data["personName"] as string} | ${data["clientName"] as string}`
+        : props.entry.id;
+
+  // description: prefer explicit description, then summary (events/careers), then quote (caseStudies)
   collectionDescription =
     typeof data["description"] === "string"
       ? data["description"]
       : typeof data["summary"] === "string"
         ? data["summary"]
-        : "";
+        : typeof data["quote"] === "string"
+          ? (data["quote"] as string)
+          : "";
 
   const { translationKey } = data as { translationKey: string };
   collectionAlternateSlug = await getAlternateCollectionSlug(
@@ -93,6 +105,12 @@ if (props.kind === "collection-detail") {
     const eventEntry = props.entry as CollectionEntry<"events">;
     const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     eventLd = buildEventLd(eventEntry, canonicalUrl, lang);
+  }
+
+  if (props.collection === "caseStudies") {
+    const csEntry = props.entry as CollectionEntry<"caseStudies">;
+    const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
+    reviewLd = buildReviewLd(csEntry, canonicalUrl, lang);
   }
 } else {
   const pageEntry = findPageBySlug(lang, slug);
@@ -130,6 +148,9 @@ if (props.kind === "collection-detail") {
       {eventLd && (
         <StructuredData slot="structured-data" type="Event" data={eventLd} />
       )}
+      {reviewLd && (
+        <StructuredData slot="structured-data" type="Review" data={reviewLd} />
+      )}
       {props.collection === "blog" && (
         <BlogPost entry={props.entry as CollectionEntry<"blog">} lang={lang} />
       )}
@@ -148,6 +169,12 @@ if (props.kind === "collection-detail") {
       {props.collection === "events" && (
         <EventDetail
           entry={props.entry as CollectionEntry<"events">}
+          lang={lang}
+        />
+      )}
+      {props.collection === "caseStudies" && (
+        <CaseStudyDetail
+          entry={props.entry as CollectionEntry<"caseStudies">}
           lang={lang}
         />
       )}

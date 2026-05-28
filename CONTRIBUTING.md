@@ -197,6 +197,42 @@ Always create both `de/<slug>.md` and `en/<slug>.md` with matching `translationK
 
 ---
 
+## Case Studies
+
+**Paths:** `src/content/caseStudies/{de,en}/<slug>.md`
+
+**Frontmatter:**
+
+```yaml
+---
+translationKey: my-case-study          # Same value in both locale files
+personName: "Maria Musterfrau"
+personRole: "Geschäftsführerin"        # or "CEO" etc.
+clientName: "Muster GmbH"
+category: "Case Study"                 # Open string: "Testimonial", "Case Study", "Success Story"
+tags:
+  - "E-Commerce"
+  - "Conversion"
+quote: "Kurzes, prägnantes Zitat der Person über die Zusammenarbeit."
+portraitImage: "../../../assets/case-studies/portrait-musterfrau.png"
+portraitFit: "cover"                   # "contain" for logos, "cover" for portraits (default)
+videoId: "EXAMPLE0001"                 # Optional — 11-char YouTube ID
+publishedAt: "2026-01-15"              # Optional
+---
+```
+
+**Image placement:** Put portrait images in `src/assets/case-studies/`. Use `.png` or `.webp`. Portraits should be square or 4:5 ratio. Logos should be square — set `portraitFit: "contain"` so they are not cropped.
+
+**translationKey rule:** Both locale files must share the same `translationKey`. The `check-bilingual.mjs` script (runs as `prebuild`) will fail if any key is missing from either locale.
+
+**optional videoId:** When set, `CaseStudyDetail` embeds a `YouTubeFacade` below the portrait layout, using `portraitImage` as the video poster. For fixture/development purposes, any valid 11-character YouTube ID works even if the video is not publicly accessible — the facade only loads the iframe on click.
+
+**Routing:** Case study detail pages are served from the catch-all `src/pages/[...path].astro`. The index page lives at `/referenzen/` (DE) and `/en/case-studies/` (EN). No additional route files are needed — `getCollectionDetailPaths()` in `page-registry.ts` handles path generation.
+
+After adding a new entry, run `pnpm build` to verify the bilingual check, types, and image resolution all pass.
+
+---
+
 ## Translations (i18n)
 
 **Files:** `src/i18n/de.json` and `src/i18n/en.json`

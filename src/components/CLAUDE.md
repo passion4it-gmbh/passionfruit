@@ -135,6 +135,61 @@ Slot: the markdown `<Content />` from the page collection entry.
 
 Adding a new legal page: create `src/content/pages/{de,en}/<slug>.md` with matching `translationKey`, wire up a page component in `src/components/pages/`, add the route to `src/lib/page-registry.ts`. The `legal.lastUpdated` i18n key is already in both `de.json` and `en.json`.
 
+## Case Studies
+
+Three components handle the case studies collection end-to-end. All three are locale-aware and use brand tokens exclusively.
+
+### `CaseStudyCard.astro`
+
+Grid card for the index page. Portrait image on top (4:5 aspect ratio), pull-quote + person info below. An optional Play badge indicates a video is available. Tags render as `Badge` chips. The entire card is wrapped in an invisible full-bleed anchor for keyboard and pointer access.
+
+| Prop    | Type                             | Required | Notes                                       |
+| ------- | -------------------------------- | -------- | ------------------------------------------- |
+| `entry` | `CollectionEntry<"caseStudies">` | yes      | Drives image, quote, person, tags, videoId. |
+| `lang`  | `Locale`                         | yes      | Used for link generation and i18n strings.  |
+
+The card href is built from `findPageByKey("case-studies-index")` + the entry slug. `portraitFit: "contain"` adds padding around the image (use for logos).
+
+### `CaseStudyDetail.astro`
+
+Full-page detail view. Renders a hero quote, a two-column layout (portrait left, person meta right), optional `YouTubeFacade` embed, markdown body via `<slot />`, and prev/next sibling navigation.
+
+| Prop    | Type                             | Required | Notes                                        |
+| ------- | -------------------------------- | -------- | -------------------------------------------- |
+| `entry` | `CollectionEntry<"caseStudies">` | yes      | Full entry including rendered body content.  |
+| `lang`  | `Locale`                         | yes      | Drives back-link, sibling nav, i18n strings. |
+
+When `videoId` is set, `YouTubeFacade` is embedded using `portraitImage` as the poster. Pass `lang` so the aria-label is localised.
+
+Sibling navigation is derived at render time by querying all locale-matching entries sorted newest-first — no static data required.
+
+### `CaseStudiesFilter.astro`
+
+Thin wrapper around `CollectionFilter`. Reads all case studies for the current locale, extracts unique `category` and `tag` values with counts, and passes them as `facets`. Only renders if there is at least one facet with values.
+
+| Prop       | Type                       | Required | Notes                                           |
+| ---------- | -------------------------- | -------- | ----------------------------------------------- |
+| `lang`     | `Locale`                   | yes      | Passed through to `CollectionFilter`.           |
+| `baseUrl`  | `string`                   | yes      | Pass `Astro.url.pathname`.                      |
+| `selected` | `Record<string, string[]>` | yes      | Keys: `"category"`, `"tag"`. Build from params. |
+| `class`    | `string`                   | no       | Extra classes on the root element.              |
+
+Category facet is suppressed when all entries share the same category (single-facet collapses are noise).
+
+#### YouTubeFacade integration
+
+Case studies with a `videoId` embed via the existing `YouTubeFacade`. The `portraitImage` is reused as poster — no separate `posterImage` field needed. The `title` prop is built from `t("caseStudies.watchInterview")` + the person name.
+
+```astro
+<YouTubeFacade
+  videoId={entry.data.videoId}
+  poster={entry.data.portraitImage}
+  posterAlt={`${entry.data.personName} | ${entry.data.clientName}`}
+  title={`${t("caseStudies.watchInterview")} – ${entry.data.personName}`}
+  lang={lang}
+/>
+```
+
 ## Media facades
 
 Privacy-friendly click-to-load embeds — static poster + Play button until the user opts in. See [`../../STYLE_GUIDE.md`](../../STYLE_GUIDE.md) §10 for the design rationale and provider rules.

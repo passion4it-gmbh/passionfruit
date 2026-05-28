@@ -119,4 +119,30 @@ const events = defineCollection({
     }),
 });
 
-export const collections = { blog, team, pages, careers, events };
+const caseStudies = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/caseStudies" }),
+  schema: ({ image }) =>
+    z.object({
+      /** Bilingual pairing key — must match across DE and EN variants. */
+      translationKey: z.string().min(1),
+      personName: z.string(),
+      personRole: z.string(),
+      clientName: z.string(),
+      /** Open string: e.g. "Testimonial", "Case Study", "Success Story" */
+      category: z.string(),
+      /** Open string array for filtering by topic or industry */
+      tags: z.array(z.string()).default([]),
+      quote: z.string(),
+      portraitImage: image(),
+      /** Use 'contain' for square logos that should not be cropped by the 4:5 portrait frame. */
+      portraitFit: z.enum(["cover", "contain"]).default("cover"),
+      /** YouTube video ID (11 chars) for the customer interview embed. */
+      videoId: z
+        .string()
+        .regex(/^[A-Za-z0-9_-]{11}$/, "Must be an 11-char YouTube video ID")
+        .optional(),
+      publishedAt: z.coerce.date().optional(),
+    }),
+});
+
+export const collections = { blog, team, pages, careers, events, caseStudies };

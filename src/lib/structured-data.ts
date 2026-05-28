@@ -152,6 +152,36 @@ export function buildEventLd(
   };
 }
 
+export function buildReviewLd(
+  entry: CollectionEntry<"caseStudies">,
+  canonicalUrl: string,
+  lang: Locale,
+): Record<string, unknown> {
+  return {
+    "@type": "Review",
+    author: {
+      "@type": "Person",
+      name: entry.data.personName,
+      jobTitle: entry.data.personRole,
+      worksFor: {
+        "@type": "Organization",
+        name: entry.data.clientName,
+      },
+    },
+    reviewBody: entry.data.quote,
+    itemReviewed: {
+      "@type": "Organization",
+      name: ORGANIZATION_LD.name,
+      url: ORGANIZATION_LD.url,
+    },
+    ...(entry.data.publishedAt
+      ? { datePublished: entry.data.publishedAt.toISOString() }
+      : {}),
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
+    inLanguage: lang === "de" ? "de-DE" : "en-US",
+  };
+}
+
 export function buildBlogPostingLd(
   entry: CollectionEntry<"blog">,
   author: BlogAuthor | undefined,
