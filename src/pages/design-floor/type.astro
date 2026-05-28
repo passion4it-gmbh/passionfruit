@@ -1,0 +1,150 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import Prose from "~/components/Prose.astro";
+
+if (!import.meta.env.DEV) {
+  return Astro.redirect("/");
+}
+---
+
+<BaseLayout
+  title="Chapter 1 — Editorial Type"
+  description="Dev-only fixture for the editorial type system"
+  lang="en"
+  noindex={true}
+>
+  <div class="container" style="padding-block: 4rem;">
+    <header style="margin-block-end: 4rem;">
+      <p class="eyebrow">Design Floor / Chapter 1</p>
+      <h1>Editorial type system</h1>
+      <p style="color: var(--color-muted); max-inline-size: 60ch;">
+        Verify opsz axis, OpenType features, vertical rhythm, hierarchical
+        tracking. Each block below should look intentional.
+      </p>
+    </header>
+
+    <section style="margin-block-end: 4rem;">
+      <p class="eyebrow">Heading levels</p>
+      <div class="text-display">Display headline weight</div>
+      <h1>Heading 1 — Crafting clear interfaces</h1>
+      <h2>Heading 2 — A workshop on type design</h2>
+      <h3>Heading 3 — Section title, mid-emphasis</h3>
+      <h4>Heading 4 — Subsection lead-in</h4>
+      <h5>Heading 5 — Inline group label</h5>
+      <h6>Heading 6 — The smallest heading slot</h6>
+    </section>
+
+    <section style="margin-block-end: 4rem;">
+      <p class="eyebrow">Prose — default measure, no drop cap</p>
+      <Prose>
+        <p>
+          Typography is the craft of arranging type to make written language
+          legible, readable, and appealing when displayed. Good typography
+          rewards attention. It carries weight without shouting, and it leaves
+          space for the reader to think.
+        </p>
+        <p>
+          A second paragraph here exercises the paragraph rhythm rule — adjacent
+          paragraphs should breathe, not collide. The leading and spacing tokens
+          are tuned to make stacked prose feel deliberate rather than dense.
+        </p>
+      </Prose>
+    </section>
+
+    <section style="margin-block-end: 4rem;">
+      <p class="eyebrow">Prose — with drop cap</p>
+      <Prose dropCap>
+        <p>
+          When a publication wants to invite the reader in, it leans on a drop
+          cap. The oversized first letter anchors the eye to the start of the
+          piece and signals that this is a long-form read. We use
+          <code>::first-letter</code> so the markup stays semantic and screen readers
+          ignore the visual flourish.
+        </p>
+        <p>
+          The second paragraph in a drop-cap block should resume the normal
+          measure cleanly. No special handling required — only the first
+          paragraph's first letter is targeted.
+        </p>
+      </Prose>
+    </section>
+
+    <section style="margin-block-end: 4rem;">
+      <p class="eyebrow">Oldstyle figures in flowing prose</p>
+      <Prose>
+        <p>
+          Founded in 1985, with 247 employees and €3.2M in revenue, the firm has
+          shipped over 1,420 features across 32 product lines. Notice that the
+          digits drop below the baseline — these are oldstyle figures, which
+          belong in body copy where they harmonize with lowercase letters.
+        </p>
+      </Prose>
+    </section>
+
+    <section style="margin-block-end: 4rem;">
+      <p class="eyebrow">Tabular figures — numeric table</p>
+      <table
+        class="tabular"
+        style="border-collapse: collapse; max-inline-size: 40rem;"
+      >
+        <thead>
+          <tr>
+            <th
+              style="text-align: start; padding: 0.5rem 1rem; border-block-end: 1px solid var(--color-border);"
+              >Quarter</th
+            >
+            <th
+              style="text-align: end; padding: 0.5rem 1rem; border-block-end: 1px solid var(--color-border);"
+              >Revenue</th
+            >
+            <th
+              style="text-align: end; padding: 0.5rem 1rem; border-block-end: 1px solid var(--color-border);"
+              >Customers</th
+            >
+            <th
+              style="text-align: end; padding: 0.5rem 1rem; border-block-end: 1px solid var(--color-border);"
+              >Growth</th
+            >
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 0.5rem 1rem;">Q1 2025</td>
+            <td style="text-align: end; padding: 0.5rem 1rem;">€1,247,890</td>
+            <td style="text-align: end; padding: 0.5rem 1rem;">1,032</td>
+            <td style="text-align: end; padding: 0.5rem 1rem;">+12.4%</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.5rem 1rem;">Q2 2025</td>
+            <td style="text-align: end; padding: 0.5rem 1rem;">€1,489,210</td>
+            <td style="text-align: end; padding: 0.5rem 1rem;">1,184</td>
+            <td style="text-align: end; padding: 0.5rem 1rem;">+19.3%</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.5rem 1rem;">Q3 2025</td>
+            <td style="text-align: end; padding: 0.5rem 1rem;">€1,732,055</td>
+            <td style="text-align: end; padding: 0.5rem 1rem;">1,401</td>
+            <td style="text-align: end; padding: 0.5rem 1rem;">+16.3%</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.5rem 1rem;">Q4 2025</td>
+            <td style="text-align: end; padding: 0.5rem 1rem;">€2,108,374</td>
+            <td style="text-align: end; padding: 0.5rem 1rem;">1,673</td>
+            <td style="text-align: end; padding: 0.5rem 1rem;">+21.7%</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section style="margin-block-end: 4rem;">
+      <p class="eyebrow">Code — ligatures off</p>
+      <pre
+        style="background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 1rem; overflow-x: auto;"><code>{`function compose(...fns) {
+  return (x) => fns.reduceRight((acc, fn) => fn(acc), x);
+}
+
+// Ligatures like !=, ==, =>, ->, <= should NOT fuse here.
+const result = compose(double, addOne)(3); // => 8`}</code></pre>
+    </section>
+  </div>
+</BaseLayout>
