@@ -1,6 +1,6 @@
 {
   "name": "passionfruit",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Everyone can cook. Professional websites for everyone, powered by Claude Code.",
   "private": true,
   "type": "module",

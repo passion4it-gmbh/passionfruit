@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/passion4it-gmbh/passionfruit/compare/v0.3.0...v0.4.0) (2026-05-28)
+
+
+### Features
+
+* **security:** add Cloudflare _headers with HSTS + CSP ([#8](https://github.com/passion4it-gmbh/passionfruit/issues/8)) ([f61884e](https://github.com/passion4it-gmbh/passionfruit/commit/f61884ec45a7972720ac2d178d2823b1031f9fc1))
+
 ## [0.3.0](https://github.com/passion4it-gmbh/passionfruit/compare/v0.2.0...v0.3.0) (2026-05-28)
 
 
