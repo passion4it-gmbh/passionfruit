@@ -78,7 +78,13 @@ Key rules:
 
 ## 9. Analytics and consent
 
-`vanilla-cookieconsent` dispatches `passionfruit:consent-changed` events. PostHog listens for that event and loads on demand. PostHog is env-var-gated (`PUBLIC_POSTHOG_KEY`, `PUBLIC_POSTHOG_HOST`); it no-ops when the env vars are absent.
+`vanilla-cookieconsent` dispatches `passionfruit:consent-changed` events. Both analytics providers listen for that event and load on demand once `window.hasAnalyticsConsent()` returns true. Both are env-var-gated and no-op when their key is absent.
+
+**PostHog (EU)** — `PUBLIC_POSTHOG_API_KEY`, `PUBLIC_POSTHOG_HOST` (defaults to `https://eu.i.posthog.com` — ingest endpoint), `PUBLIC_POSTHOG_UI_HOST` (defaults to `https://eu.posthog.com` — dashboard for toolbar/heatmap links).
+
+**Google Analytics 4** — `PUBLIC_GA_MEASUREMENT_ID` (format `G-XXXXXXXXXX`). Uses Consent Mode v2 with `analytics_storage: granted` only after the user accepts; ad cookies stay denied. IP anonymization on.
+
+You can run either, both, or neither. Most users want GA4 (familiar dashboard); PostHog is for those who want session replay, funnels, and feature flags.
 
 ## 10. Routing
 

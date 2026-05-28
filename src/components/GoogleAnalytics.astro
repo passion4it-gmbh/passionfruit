@@ -1,0 +1,67 @@
+---
+const GA_MEASUREMENT_ID = import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? '';
+
+const isEnabled = Boolean(GA_MEASUREMENT_ID);
+---
+
+{isEnabled && (
+<script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
+	function initGoogleAnalytics() {
+		const hasConsent =
+			typeof window.hasAnalyticsConsent === 'function' && window.hasAnalyticsConsent();
+
+		if (!hasConsent) return;
+		if (window.__gaLoaded) return;
+		window.__gaLoaded = true;
+
+		// dataLayer + gtag stub (must exist before script loads)
+		window.dataLayer = window.dataLayer || [];
+		window.gtag = function () {
+			window.dataLayer.push(arguments);
+		};
+
+		window.gtag('js', new Date());
+		// Consent Mode v2: all denied until user opts in via cookie banner.
+		// We only call this when hasAnalyticsConsent() is true, so grant analytics + storage.
+		window.gtag('consent', 'default', {
+			ad_storage: 'denied',
+			ad_user_data: 'denied',
+			ad_personalization: 'denied',
+			analytics_storage: 'granted',
+			functionality_storage: 'granted',
+			security_storage: 'granted',
+		});
+		window.gtag('config', GA_MEASUREMENT_ID, {
+			anonymize_ip: true,
+			send_page_view: true,
+		});
+
+		const script = document.createElement('script');
+		script.async = true;
+		script.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(GA_MEASUREMENT_ID);
+		document.head.appendChild(script);
+	}
+
+	if ('requestIdleCallback' in window) {
+		requestIdleCallback(initGoogleAnalytics, { timeout: 3000 });
+	} else {
+		setTimeout(initGoogleAnalytics, 200);
+	}
+
+	window.addEventListener('passionfruit:consent-changed', () => {
+		initGoogleAnalytics();
+	});
+
+	document.addEventListener('astro:after-swap', () => {
+		if (window.__gaLoaded && typeof window.gtag === 'function') {
+			window.gtag('event', 'page_view', {
+				page_location: window.location.href,
+				page_path: window.location.pathname,
+				page_title: document.title,
+			});
+		} else {
+			initGoogleAnalytics();
+		}
+	});
+</script>
+)}

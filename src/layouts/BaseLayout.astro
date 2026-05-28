@@ -6,6 +6,7 @@ import Header from '~/components/Header.astro';
 import Footer from '~/components/Footer.astro';
 import CookieConsent from '~/components/CookieConsent.astro';
 import PostHogAnalytics from '~/components/PostHogAnalytics.astro';
+import GoogleAnalytics from '~/components/GoogleAnalytics.astro';
 
 interface Props {
 	title: string;
@@ -119,5 +120,6 @@ const pageTitle = title.includes('Greenleaf Digital') ? title : `${title} | Gree
 
 		<CookieConsent lang={lang} />
 		<PostHogAnalytics />
+		<GoogleAnalytics />
 	</body>
 </html>
