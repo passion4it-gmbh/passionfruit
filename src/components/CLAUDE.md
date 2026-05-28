@@ -71,4 +71,73 @@ Embeds via `open.spotify.com/embed/{kind}/{id}`. Defaults to podcast episodes bu
 ### Rules for both facades
 
 - **Always pass `lang`** when the surrounding page is locale-aware — the aria-label is built from `t('video.play', { title })` / `t('podcast.play', { title })`. Adding a new locale means adding both keys in `de.json` and `en.json`.
-- **Don't bypass the facade.** If you find yourself reaching for `<iframe src="https://youtube.com/...">`, stop — see STYLE_GUIDE §10.
+- **Don't bypass the facade.** If you find yourself reaching for `<iframe src="https://youtube.com/...">`, stop — see STYLE_GUIDE §11.
+
+## Social proof
+
+### `TrustSection.astro`
+
+Horizontal strip of partner/client logos with an optional eyebrow heading. Logos are grayscale at rest and reveal color on hover — a low-noise way to signal credibility without visual shouting.
+
+| Prop      | Type                                                        | Required | Default | Notes                                                                  |
+| --------- | ----------------------------------------------------------- | -------- | ------- | ---------------------------------------------------------------------- |
+| `logos`   | `Array<{ src: ImageMetadata; alt: string; href?: string }>` | yes      | —       | Local image imports only. Pass meaningful `alt` — logo name is enough. |
+| `eyebrow` | `string`                                                    | no       | —       | Short label above the logo row (e.g., "Trusted by"). Sentence case.    |
+| `class`   | `string`                                                    | no       | —       | Extra classes appended to the root `<section>`.                        |
+
+- `href` wraps the logo in an `<a target="_blank" rel="noopener noreferrer">`. When set, the `alt` text moves to `aria-label` on the anchor and the `<Image>` gets `alt=""` (decorative). When absent, `alt` goes on the image directly.
+- Images are rendered via `<Image>` at `height={40}` (`h-10`). Don't pass width — it is derived from the source aspect ratio.
+- The section already has `border-y border-border` and `py-16`. Don't wrap it in another section with the same treatment.
+
+```astro
+---
+import logoAcme from "~/assets/logos/acme.svg";
+import logoWidget from "~/assets/logos/widget.png";
+import TrustSection from "~/components/TrustSection.astro";
+---
+
+<TrustSection
+  eyebrow="Trusted by"
+  logos={[
+    { src: logoAcme, alt: "Acme Corp", href: "https://acme.example.com" },
+    { src: logoWidget, alt: "Widget GmbH" },
+  ]}
+/>
+```
+
+### `ComparisonTable.astro`
+
+Two-or-three-column feature comparison grid (e.g., "Us vs. Them" or "Free vs. Pro vs. Enterprise"). On desktop it renders as a semantic `<table>`; on mobile it collapses into per-column cards so no horizontal scrolling is required.
+
+| Prop      | Type                                                        | Required | Default | Notes                                                                                            |
+| --------- | ----------------------------------------------------------- | -------- | ------- | ------------------------------------------------------------------------------------------------ |
+| `columns` | `Array<{ name: string; highlight?: boolean }>`              | yes      | —       | Column headers. Set `highlight: true` on the column you want to call out.                        |
+| `rows`    | `Array<{ feature: string; values: (boolean \| string)[] }>` | yes      | —       | `values` must have the same length as `columns`. `boolean` renders icons; `string` renders text. |
+| `lang`    | `Locale`                                                    | no       | `"de"`  | Drives the screen-reader labels for Check/X icons (`comparison.yes` / `comparison.no`).          |
+| `class`   | `string`                                                    | no       | —       | Extra classes on the root `<div>`.                                                               |
+
+- `boolean` values: `true` → `<Check>` in `text-accent`; `false` → `<X>` in `text-muted`.
+- `string` values: rendered as plain text in `text-text`.
+- `highlight` column: `bg-accent/5` cells + `ring-1 ring-inset ring-accent/20` border on both desktop and mobile.
+- Feature/value strings come from the **caller** — no new i18n keys needed for content. The only template-owned keys are `comparison.feature`, `comparison.yes`, `comparison.no` (already in `de.json` / `en.json`).
+
+```astro
+---
+import ComparisonTable from "~/components/ComparisonTable.astro";
+---
+
+<ComparisonTable
+  lang={lang}
+  columns={[
+    { name: "Basis" },
+    { name: "Pro", highlight: true },
+    { name: "Konkurrenz" },
+  ]}
+  rows={[
+    { feature: "SSL-Zertifikat", values: [true, true, true] },
+    { feature: "Eigene Domain", values: [false, true, true] },
+    { feature: "Support", values: ["E-Mail", "24/7", "E-Mail"] },
+    { feature: "Speicher", values: ["1 GB", "50 GB", "10 GB"] },
+  ]}
+/>
+```

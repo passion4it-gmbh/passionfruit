@@ -148,5 +148,10 @@
   },
   "video": {
     "play": "Video abspielen: {title}"
+  },
+  "comparison": {
+    "feature": "Merkmal",
+    "yes": "Ja",
+    "no": "Nein"
   }
 }

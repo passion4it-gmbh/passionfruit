@@ -243,7 +243,30 @@ Icon container: `w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-cen
 
 ---
 
-## 10. Media embeds
+## 10. Social proof
+
+### Logo strips (`TrustSection`)
+
+Partner/client logos use a **grayscale-rest / color-hover** pattern:
+
+- Default state: `opacity-50 grayscale` — logos recede into the background, reducing visual noise.
+- Hover/focus state: `opacity-100 grayscale-0` with `transition-all duration-300` — logos snap to full color on interaction.
+- Keep logo height uniform at `h-10` (40px) so the strip reads as a cohesive band regardless of aspect ratio.
+- Never add decorative borders or drop-shadows to logos — let the grayscale treatment do the work.
+
+### Comparison tables (`ComparisonTable`)
+
+Feature comparison grids follow a **semantic table on desktop, per-column cards on mobile** pattern:
+
+- Desktop: `<table>` with `scope` attributes, `border-collapse`, `rounded-xl border border-border` container.
+- Mobile (`md:hidden`): one card per column, rows repeated inside each card — no horizontal scroll ever.
+- Highlighted column: `bg-accent/5` fill + `ring-1 ring-inset ring-accent/20` border. One highlight max per table.
+- Boolean cells: `<Check class="text-accent">` for true, `<X class="text-muted">` for false — never raw "Yes/No" text without a screen-reader label.
+- Zebra striping on desktop rows: even rows `bg-surface-elevated`, odd rows `bg-surface`.
+
+---
+
+## 11. Media embeds
 
 Third-party video and audio embeds load through **facade components** — a static poster + Play button, with the real iframe injected only on click. Two reasons:
 
