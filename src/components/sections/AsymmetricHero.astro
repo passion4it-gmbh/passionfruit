@@ -147,9 +147,9 @@ const buttonTone = tone === "dark" || isFullbleed ? "on-dark" : "on-light";
     inset: calc(var(--space-section-lg) * -1) calc(var(--space-section-lg) * -1);
     background: linear-gradient(
       to right,
-      rgba(0, 0, 0, 0.65),
-      rgba(0, 0, 0, 0.25) 60%,
-      rgba(0, 0, 0, 0) 100%
+      var(--color-overlay-scrim-strong),
+      var(--color-overlay-scrim-mid) 60%,
+      var(--color-overlay-scrim-clear) 100%
     );
     z-index: -1;
     pointer-events: none;

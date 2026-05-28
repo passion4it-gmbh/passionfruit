@@ -47,7 +47,14 @@ export interface EditorialQuoteAttribution {
   avatarAlt?: string;
 }
 
-export interface EditorialQuoteProps extends SectionProps {
+export interface EditorialQuoteProps extends Omit<SectionProps, "headline"> {
+  /**
+   * Override: EditorialQuote uses the `quote` as the focal text and does not
+   * render a separate headline, so the inherited `SectionProps.headline`
+   * required-ness is loosened here. `Omit` is required because TS does not
+   * permit widening a required field to optional via a sub-interface alone.
+   */
+  headline?: string;
   quote: string;
   attribution: EditorialQuoteAttribution;
 }

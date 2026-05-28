@@ -1,6 +1,6 @@
 # Components
 
-This directory holds Astro components shared across pages. **One component per content type** — don't introduce a generic `<Card>` or `<Section>`; create `BlogCard`, `TeamCard`, etc. instead. See [`../../STYLE_GUIDE.md`](../../STYLE_GUIDE.md) for design rules (colors, typography, cards, animations); this file is for component-specific usage.
+This directory holds Astro components shared across pages. **One component per content type** — don't introduce generic content components like `<Card>`; create `BlogCard`, `TeamCard`, etc. instead. The deliberate exception is `<Section>`: a tone + padding + container frame that every section archetype in `sections/` consumes (see "Architectural primitives" below). See [`../../STYLE_GUIDE.md`](../../STYLE_GUIDE.md) for design rules (colors, typography, cards, animations); this file is for component-specific usage.
 
 ## Conventions
 
@@ -10,7 +10,22 @@ This directory holds Astro components shared across pages. **One component per c
 - **i18n:** `useTranslations(locale)` from `~/i18n`. Adding a new string means updating both `src/i18n/de.json` and `src/i18n/en.json` in the same commit.
 - **Images:** `<Image>` from `astro:assets`. Alt text is mandatory (ESLint enforces `jsx-a11y/alt-text` as error).
 
-## Long-form content
+## Architectural primitives
+
+These are the two deliberate generic components in this directory. Everything else is content-specific. `Section.astro` frames every page section archetype; `Prose.astro` frames every rendered Markdown body. Both are consumed by purpose-built wrappers — don't reach for them ad-hoc on a page when a `sections/`-prefixed archetype or a Markdown-bodied component already covers the case.
+
+### `Section.astro`
+
+The tone + padding + container frame that every `sections/*` archetype wraps with. Pages don't usually instantiate it directly — they compose archetypes (`AsymmetricHero`, `MagazineGrid`, `StickyStory`, `EditorialQuote`, `SplitFeature`, `Trust`, `Comparison`, `FAQ`) which already wrap themselves in a `<Section>`. Reach for `<Section>` directly only when building a new archetype or a true one-off section that doesn't fit any archetype.
+
+| Prop        | Type                                                 | Required | Default     | Notes                                                                            |
+| ----------- | ---------------------------------------------------- | -------- | ----------- | -------------------------------------------------------------------------------- |
+| `tone`      | `"surface" \| "elevated" \| "dark" \| "accent-wash"` | no       | `"surface"` | Background colour + matching text colour. Drives the dark/light rhythm.          |
+| `padding`   | `"sm" \| "md" \| "lg"`                               | no       | `"md"`      | Vertical padding from `--space-section-{sm,md,lg}`.                              |
+| `container` | `"narrow" \| "default" \| "wide" \| "full"`          | no       | `"default"` | Inner max-width: 48rem / 72rem / 80rem / none. Inline padding scales with `4vw`. |
+| `as`        | `"section" \| "article" \| "aside" \| "div"`         | no       | `"section"` | Semantic root element.                                                           |
+
+See `~/types/sections` for the shared `SectionProps` interface that archetype components extend (`eyebrow`, `headline`, `lede`, `tone`, `padding`, `align`).
 
 ### `Prose.astro`
 

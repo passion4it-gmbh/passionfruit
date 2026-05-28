@@ -111,6 +111,13 @@
   --color-state-error: #dc2626;
   --color-state-info: var(--color-accent);
 
+  /* Overlay scrim tokens — used to keep text legible over photographic
+     backgrounds (e.g. AsymmetricHero fullbleed). Tokenised so dark-mode
+     work can swap the ramp without touching components. */
+  --color-overlay-scrim-strong: rgba(0, 0, 0, 0.65);
+  --color-overlay-scrim-mid: rgba(0, 0, 0, 0.25);
+  --color-overlay-scrim-clear: rgba(0, 0, 0, 0);
+
   /* 12-col grid utility tokens */
   --grid-cols-12: repeat(12, minmax(0, 1fr));
   --grid-gap-sm: var(--space-2);
