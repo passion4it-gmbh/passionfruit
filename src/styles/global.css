@@ -32,17 +32,16 @@
   --font-body: "Inter Variable", system-ui, sans-serif;
   --font-mono: ui-monospace, "Cascadia Code", "Fira Code", monospace;
 
-  /* Type scale: perfect fourth (1.333). Existing token values regenerated from ratio. */
-  /* Anchor: --text-body = 1.0625rem..1.25rem. Each step × 1.333 up / ÷ 1.333 down. */
-  --text-display: clamp(3.375rem, 6vw + 0.75rem, 5.625rem);
-  --text-h1: clamp(2.531rem, 4vw + 0.75rem, 3.75rem);
-  --text-h2: clamp(1.898rem, 3vw + 0.4rem, 2.813rem);
-  --text-h3: clamp(1.423rem, 1.5vw + 0.55rem, 1.875rem);
-  --text-body-lg: clamp(1.0625rem, 0.5vw + 0.9rem, 1.25rem);
-  --text-body: clamp(1.0625rem, 0.5vw + 0.9rem, 1.25rem);
-  --text-body-sm: clamp(0.797rem, 0.3vw + 0.7rem, 0.938rem);
-  --text-caption: clamp(0.598rem, 0.2vw + 0.52rem, 0.703rem);
-  --text-eyebrow: clamp(0.508rem, 0.15vw + 0.45rem, 0.598rem);
+  /* Type scale: perfect fourth (1.333) anchored at body. text-body-lg is a half-step bump for lead paragraphs. */
+  --text-display: clamp(3.157rem, 5vw + 1.75rem, 4rem);
+  --text-h1: clamp(2.369rem, 3vw + 1.5rem, 3rem);
+  --text-h2: clamp(1.777rem, 2vw + 1.25rem, 2.25rem);
+  --text-h3: clamp(1.333rem, 1vw + 1.1rem, 1.5rem);
+  --text-body-lg: clamp(1.125rem, 0.5vw + 1rem, 1.25rem);
+  --text-body: clamp(1rem, 0.25vw + 0.95rem, 1.0625rem);
+  --text-body-sm: clamp(0.875rem, 0.1vw + 0.85rem, 0.9rem);
+  --text-caption: clamp(0.75rem, 0.05vw + 0.72rem, 0.8rem);
+  --text-eyebrow: clamp(0.6875rem, 0.05vw + 0.65rem, 0.7rem);
 
   /* Leading (line-height) tokens */
   --leading-display: 1.05;
@@ -82,7 +81,8 @@
   --duration-base: 240ms;
   --duration-slow: 400ms;
 
-  /* Back-compat aliases for existing consumers */
+  /* Back-compat aliases for legacy consumers; values redirected to new semantic tokens.
+     Note: --transition-normal: 300ms → 240ms, --transition-slow: 500ms → 400ms. */
   --transition-fast: var(--duration-quick);
   --transition-normal: var(--duration-base);
   --transition-slow: var(--duration-slow);
@@ -103,12 +103,12 @@
   --space-section-md: clamp(4rem, 7vw, 6rem);
   --space-section-lg: clamp(6rem, 10vw, 9rem);
 
-  /* State surface tokens */
-  --color-skeleton-base: #e2e4eb;
-  --color-skeleton-shimmer: #f0f0f5;
-  --color-state-warning: #f59e0b;
+  /* State surface tokens — alias palette where a match exists */
+  --color-skeleton-base: var(--color-border);
+  --color-skeleton-shimmer: var(--color-text-on-dark);
+  --color-state-warning: var(--color-warm);
   --color-state-error: #dc2626;
-  --color-state-info: #6366f1;
+  --color-state-info: var(--color-accent);
 
   /* 12-col grid utility tokens */
   --grid-cols-12: repeat(12, minmax(0, 1fr));
