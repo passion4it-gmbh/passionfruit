@@ -17,6 +17,8 @@
   Create a repo, type <code>/onboard</code>, answer a few questions — done. No coding required.
 </p>
 
+> **Looking at the template source?** This repo (`passion4it-gmbh/passionfruit`) is the template itself. The Greenleaf Digital content you see is fixture/example data — downstream users replace it via `/onboard`. If you want to _use_ the template, click **Use this template** above. If you want to _contribute to_ the template, see [`CLAUDE.md`](./CLAUDE.md) §1.
+
 ---
 
 ## Quick Start

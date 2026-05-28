@@ -1,8 +1,12 @@
-# passionfruit — Greenleaf Digital
+# passionfruit
 
 ## 1. Project
 
-This is a passionfruit website for Greenleaf Digital. passionfruit is a template for building professional, bilingual marketing websites with Claude Code. Non-technical users describe what they want; Claude builds it.
+**This repo is the passionfruit template itself, not a site built from it.** passionfruit is a template that turns Claude Code into a web developer for non-technical users: they describe what they want, Claude builds it.
+
+The "Greenleaf Digital" branding, the blog posts, the team members, the services copy — all of that is **fixture content** that downstream consumers replace via `/onboard` and `/brand`. Treat it as example data, not customer content. When evaluating changes, ask "does this improve the template?", not "does Greenleaf need this?"
+
+The sibling repo at `/Users/mordras/dev/passion4it/website` is the real customer site (Greenleaf's actual passion4it website) — patterns proven there are good candidates to port back into this template.
 
 ## 2. Self-improvement rule
 
@@ -17,9 +21,9 @@ This is a passionfruit website for Greenleaf Digital. passionfruit is a template
 
 This is not optional. These files are the project's memory. If they drift from reality, future sessions will produce wrong code.
 
-## 3. First-time setup
+## 3. First-time setup (downstream users only)
 
-If the site still shows "Greenleaf Digital", run `/onboard` to personalize it for your business. After onboarding, run `/brand` to replace the placeholder favicon and social sharing image with your own logo.
+**This section is for users who created a repo from the template, not for template maintainers.** If the site still shows "Greenleaf Digital", run `/onboard` to personalize it for your business. After onboarding, run `/brand` to replace the placeholder favicon and social sharing image with your own logo. In the template source repo itself, the Greenleaf fixtures stay — they're the example data shipped to new users.
 
 ## 4. Tech stack
 
