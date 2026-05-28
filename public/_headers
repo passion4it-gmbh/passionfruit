@@ -20,5 +20,8 @@
 /favicon.svg
   Cache-Control: public, max-age=86400
 
-/og-default.png
+/og-default-de.png
+  Cache-Control: public, max-age=86400
+
+/og-default-en.png
   Cache-Control: public, max-age=86400
