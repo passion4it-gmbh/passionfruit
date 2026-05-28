@@ -47,17 +47,18 @@ const sorted = events.sort(
 
 ## i18n keys
 
-| Key                        | DE              | EN           |
-| -------------------------- | --------------- | ------------ |
-| `events.register`          | Jetzt anmelden  | Register now |
-| `events.details`           | Details ansehen | View details |
-| `events.location.online`   | Online          | Online       |
-| `events.location.inPerson` | Vor Ort         | In person    |
+| Key                        | DE                        | EN                          |
+| -------------------------- | ------------------------- | --------------------------- |
+| `events.register`          | Jetzt anmelden            | Register now                |
+| `events.details`           | Details ansehen           | View details                |
+| `events.location.online`   | Online                    | Online                      |
+| `events.location.inPerson` | Vor Ort                   | In person                   |
+| `events.location.hybrid`   | Hybrid (Vor Ort + Online) | Hybrid (in person + online) |
 
 ## Gotchas
 
 - **Hero image is optional.** When `entry.data.heroImage` is absent, an accent-gradient placeholder with a `Calendar` icon is shown. Alt text for the hero image is the event title.
 - **CTA logic:** when `registrationUrl` is set, a `Button` component with `variant="secondary"` opens in a new tab. When absent, a plain text link navigates to the detail page. The detail-page link uses `findPageByKey("events-index")` — that key must be registered in `page-registry.ts`.
-- **`location.kind` drives the icons.** `online` and `hybrid` show a Globe icon + "Online" label; `in-person` and `hybrid` show a MapPin icon + venue/city. All three modes are handled — ensure every event entry sets `location.kind`.
+- **`location.kind` drives icon rendering.** `online` → Globe + "Online" label only; `in-person` → MapPin + venue/city only; `hybrid` → **both indicators in the same row** (Globe + "Online" AND MapPin + venue/city). All three modes are handled — ensure every event entry sets `location.kind`.
 - **Date formatting uses `startsAt`.** The date badge always shows the start date only. Full start/end datetime display is handled by `EventDetail`.
 - **`events-index` page key must exist.** `findPageByKey("events-index")!.slug[lang]` is called without a null check — the route registration in `page-registry.ts` is mandatory.

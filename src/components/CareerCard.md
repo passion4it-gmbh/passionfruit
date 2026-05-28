@@ -31,7 +31,7 @@ For the full job posting detail view, use `CareerPost` instead. Do not use this 
 import { getCollection } from "astro:content";
 import CareerCard from "~/components/CareerCard.astro";
 
-const lang = "de";
+const lang = "en";
 const jobs = await getCollection("careers", ({ id }) =>
   id.startsWith(`${lang}/`),
 );
