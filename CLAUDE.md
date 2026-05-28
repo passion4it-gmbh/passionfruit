@@ -88,6 +88,8 @@ Key rules:
 
 You can run either, both, or neither. Most users want GA4 (familiar dashboard); PostHog is for those who want session replay, funnels, and feature flags.
 
+**Google Tag Manager** — `PUBLIC_GTM_CONTAINER_ID` (format `GTM-XXXXXXX`). Use this instead of GA4 direct when you need a tag-management layer (e.g. multiple tracking pixels, custom event triggers, A/B testing tools). Loads the GTM container only after analytics consent is granted; uses Consent Mode v2 with `analytics_storage` granted on consent and all ad_* signals permanently denied (passionfruit has no marketing category). GTM, GA4, and PostHog are all independent — each is env-var gated, so any combination works.
+
 ## 10. Routing
 
 - URL scheme: **apex-locale** — DE at root (`/`), EN under `/en/`.

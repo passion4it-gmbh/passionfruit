@@ -1,0 +1,96 @@
+---
+/**
+ * Google Tag Manager — consent-gated (analytics category).
+ *
+ * Loads the GTM container only after the user grants analytics consent via the
+ * passionfruit:consent-changed event. Uses Google Consent Mode v2 so individual
+ * tags inside the container honour the granted categories.
+ *
+ * Consent mapping (passionfruit banner → Google Consent Mode v2):
+ *   analytics  → analytics_storage, functionality_storage, security_storage
+ *   (none)     → ad_storage, ad_user_data, ad_personalization (always denied —
+ *                passionfruit has no marketing category)
+ *
+ * On revocation, pushes a consent update with analytics_storage: denied —
+ * running tags inside the container stop firing. The GTM script itself stays in
+ * memory (no clean unload API).
+ *
+ * Env vars used:
+ *   PUBLIC_GTM_CONTAINER_ID — GTM container ID, e.g. GTM-XXXXXXX
+ */
+
+const GTM_CONTAINER_ID = import.meta.env.PUBLIC_GTM_CONTAINER_ID ?? "";
+
+const isEnabled = Boolean(GTM_CONTAINER_ID);
+---
+
+{isEnabled && (
+<script is:inline define:vars={{ GTM_CONTAINER_ID }}>
+	function initGTM() {
+		const hasConsent =
+			typeof window.hasAnalyticsConsent === "function" && window.hasAnalyticsConsent();
+
+		if (!hasConsent) return;
+		if (window.__gtmLoaded) return;
+		window.__gtmLoaded = true;
+
+		// dataLayer + gtag stub must exist before the GTM script loads.
+		window.dataLayer = window.dataLayer || [];
+		window.gtag = function () {
+			window.dataLayer.push(arguments);
+		};
+
+		// Consent Mode v2 defaults — deny everything not covered by the single
+		// analytics category; grant analytics + storage signals when loading.
+		window.gtag("consent", "default", {
+			ad_storage: "denied",
+			ad_user_data: "denied",
+			ad_personalization: "denied",
+			analytics_storage: "denied",
+			functionality_storage: "denied",
+			security_storage: "denied",
+		});
+		window.gtag("consent", "update", {
+			analytics_storage: "granted",
+			functionality_storage: "granted",
+			security_storage: "granted",
+		});
+
+		window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+
+		const script = document.createElement("script");
+		script.async = true;
+		script.src =
+			"https://www.googletagmanager.com/gtm.js?id=" + encodeURIComponent(GTM_CONTAINER_ID);
+		document.head.appendChild(script);
+	}
+
+	if ("requestIdleCallback" in window) {
+		requestIdleCallback(initGTM, { timeout: 3000 });
+	} else {
+		setTimeout(initGTM, 200);
+	}
+
+	window.addEventListener("passionfruit:consent-changed", function (event) {
+		var detail = event.detail;
+		if (detail && detail.analytics) {
+			initGTM();
+		} else if (window.__gtmLoaded && window.gtag) {
+			// Consent revoked — update consent mode so tags inside GTM stop firing.
+			window.gtag("consent", "update", {
+				analytics_storage: "denied",
+				functionality_storage: "denied",
+				security_storage: "denied",
+			});
+		}
+	});
+
+	document.addEventListener("astro:after-swap", function () {
+		if (window.__gtmLoaded && window.dataLayer) {
+			window.dataLayer.push({ event: "astro:after-swap" });
+		} else {
+			initGTM();
+		}
+	});
+</script>
+)}
