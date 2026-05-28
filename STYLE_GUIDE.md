@@ -245,50 +245,16 @@ Icon container: `w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-cen
 
 ## 10. Media embeds
 
-Third-party video and audio embeds load through **facade components** — a static poster + Play button, with the real iframe injected only on click. Two reasons: privacy (no third-party requests, cookies, or tracking pixels before user intent), and performance (the heavy iframe never touches the critical path).
+Third-party video and audio embeds load through **facade components** — a static poster + Play button, with the real iframe injected only on click. Two reasons:
 
-### Components
-
-| Component             | Use for                                                         | Embed target                                                     |
-| --------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `YouTubeFacade.astro` | YouTube videos                                                  | `youtube-nocookie.com/embed/{videoId}` (privacy-enhanced domain) |
-| `SpotifyFacade.astro` | Spotify episodes, tracks, shows, playlists, albums (via `kind`) | `open.spotify.com/embed/{kind}/{id}`                             |
-
-Both expect a **local poster image** as `ImageMetadata` (not a remote URL) so the LCP image is optimized by `astro:assets` and served from the same origin.
-
-### YouTube usage
-
-```astro
----
-import poster from "~/assets/blog/intro-talk.jpg";
-import YouTubeFacade from "~/components/YouTubeFacade.astro";
----
-
-<YouTubeFacade
-  videoId="dQw4w9WgXcQ"
-  poster={poster}
-  posterAlt="Speaker on stage, conference lighting"
-  title="Intro talk — Greenleaf 2026"
-  lang={lang}
-/>
-```
-
-### Spotify usage
-
-```astro
-<SpotifyFacade
-  episodeId="EPISODE_ID"
-  kind="episode"
-  title="Episode 12 — Bilingual marketing in practice"
-  cover={cover}
-  coverAlt="Podcast cover, microphone over green leaves"
-  lang={lang}
-/>
-```
+- **Privacy:** no third-party requests, cookies, or tracking pixels fire before user intent — nothing to consent-gate on a passive page view.
+- **Performance:** the heavy iframe and its sub-resources never touch the critical path; LCP stays a local image.
 
 ### Rules
 
-- **Always pass `lang`** — the aria-label is built from `t('video.play', { title })` or `t('podcast.play', { title })`. Adding a new locale means adding both keys in `de.json` and `en.json`.
-- **Never embed YouTube/Spotify directly** with `<iframe>`. The facades exist precisely to keep third-party connections gated behind user intent.
-- **CSP is scoped** to these two providers (`frame-src` for `youtube-nocookie.com` + `open.spotify.com`, `img-src` for `i.ytimg.com` + `i.scdn.co`, `media-src` for `*.scdn.co` in `public/_headers`). Embedding a new provider (Vimeo, SoundCloud, etc.) means updating the CSP **and** adding a new facade — don't loosen the policy to "fix" a blocked embed in DevTools.
+- **Never embed YouTube, Spotify, Vimeo, etc. with a raw `<iframe>`.** Facades exist precisely to keep third-party connections gated behind user intent — bypassing them defeats both reasons above.
 - **`youtube-nocookie.com` is non-negotiable** for YouTube. Don't switch back to `youtube.com/embed` — it sets cookies before consent.
+- **CSP is scoped per provider** in `public/_headers`. Adding a new provider (Vimeo, SoundCloud, …) means a new facade **and** a CSP update for that provider's `frame-src`/`img-src`/`media-src` — never loosen the policy to "fix" a blocked embed in DevTools.
+- **Posters are local `ImageMetadata`**, not remote URLs — `astro:assets` optimizes them and serves from the same origin.
+
+Component usage (props, examples, locale wiring) lives in [`src/components/CLAUDE.md`](./src/components/CLAUDE.md) — Claude Code auto-loads it when working in that directory.
