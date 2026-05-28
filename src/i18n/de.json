@@ -60,6 +60,37 @@
     "notFoundDescription": "Die gesuchte Seite existiert leider nicht.",
     "backHome": "Zurück zur Startseite"
   },
+  "state": {
+    "404": {
+      "title": "Diese Seite gibt es nicht (mehr)",
+      "body": "Vielleicht ist sie umgezogen, vielleicht hat sie nie existiert. Zurück auf bekanntem Terrain:",
+      "cta": "Zur Startseite"
+    },
+    "500": {
+      "title": "Etwas ist schiefgelaufen — auf unserer Seite",
+      "body": "Wir wissen davon und arbeiten daran. Bitte versuchen Sie es in einem Moment erneut, oder kehren Sie zur Startseite zurück.",
+      "cta": "Zur Startseite"
+    },
+    "empty": {
+      "posts": {
+        "headline": "Noch keine Beiträge",
+        "body": "Hier entsteht in Kürze etwas. Bis dahin lohnt sich ein Blick auf unsere Leistungen.",
+        "cta": "Zu den Leistungen"
+      },
+      "filters": {
+        "headline": "Keine Treffer für diese Auswahl",
+        "body": "Mit den aktuellen Filtern finden wir nichts. Setzen Sie sie zurück und stöbern Sie weiter.",
+        "cta": "Filter zurücksetzen"
+      }
+    },
+    "error": {
+      "generic": {
+        "headline": "Da ist etwas schiefgelaufen",
+        "body": "Wir konnten Ihre Anfrage gerade nicht verarbeiten. Bitte versuchen Sie es erneut."
+      },
+      "retry": "Erneut versuchen"
+    }
+  },
   "cookie": {
     "title": "Diese Website verwendet Cookies",
     "description": "Wir verwenden Cookies, um Ihr Erlebnis zu verbessern und den Website-Traffic zu analysieren.",

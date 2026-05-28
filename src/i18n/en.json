@@ -60,6 +60,37 @@
     "notFoundDescription": "The page you're looking for doesn't exist.",
     "backHome": "Back to home"
   },
+  "state": {
+    "404": {
+      "title": "This page is missing",
+      "body": "It may have moved, or it may never have existed. Let's get you back to familiar ground:",
+      "cta": "Back to home"
+    },
+    "500": {
+      "title": "Something went wrong on our end",
+      "body": "We've been notified and are looking into it. Please try again in a moment, or head back to the homepage.",
+      "cta": "Back to home"
+    },
+    "empty": {
+      "posts": {
+        "headline": "No posts yet",
+        "body": "Something will land here soon. In the meantime, take a look at what we offer.",
+        "cta": "See our services"
+      },
+      "filters": {
+        "headline": "No matches for this selection",
+        "body": "Nothing fits the current filters. Clear them and keep browsing.",
+        "cta": "Reset filters"
+      }
+    },
+    "error": {
+      "generic": {
+        "headline": "Something went wrong",
+        "body": "We couldn't complete your request just now. Please try again."
+      },
+      "retry": "Try again"
+    }
+  },
   "cookie": {
     "title": "This website uses cookies",
     "description": "We use cookies to improve your experience and analyze website traffic.",
