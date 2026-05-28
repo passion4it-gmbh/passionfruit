@@ -1,0 +1,267 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import Motion from "~/components/motion/Motion.astro";
+import FadeUp from "~/components/motion/FadeUp.astro";
+import FadeIn from "~/components/motion/FadeIn.astro";
+
+if (!import.meta.env.DEV) {
+  return Astro.redirect("/");
+}
+
+const effects = [
+  {
+    name: "fade",
+    title: "Fade — opacity only",
+    body: "The quietest entrance. Use for elements where movement would distract from the content itself.",
+  },
+  {
+    name: "fade-up",
+    title: "Fade-up — default entrance",
+    body: "The workhorse. 8px upward translate + crossfade. Used for cards, headlines, and most section blocks.",
+  },
+  {
+    name: "fade-down",
+    title: "Fade-down — top-down emphasis",
+    body: "Mirror of fade-up. Use when an element is conceptually 'descending' into view — toast banners, dropdowns.",
+  },
+  {
+    name: "scale-in",
+    title: "Scale-in — focal arrival",
+    body: "A small 4% scale + crossfade. Reserved for hero badges, key callouts, and modals.",
+  },
+] as const;
+
+const cards = [
+  {
+    title: "Strategy",
+    body: "Map the brief, the audience, and the win condition before any pixel lands on the canvas.",
+  },
+  {
+    title: "Composition",
+    body: "Archetypes carry structural decisions so the team spends attention on copy and hierarchy.",
+  },
+  {
+    title: "Refinement",
+    body: "The last 20% of the work is 80% of the feeling. Type rhythm, spacing, micro-motion.",
+  },
+];
+---
+
+<BaseLayout
+  title="Chapter 3 — Motion Language"
+  description="Dev-only fixture for the motion primitives"
+  lang="en"
+  noindex={true}
+>
+  <div class="container" style="padding-block: 4rem;">
+    <header style="margin-block-end: 4rem; max-inline-size: 64ch;">
+      <p class="eyebrow">Design Floor / Chapter 3</p>
+      <h1>Motion language</h1>
+      <p style="color: var(--color-muted);">
+        Toggle <code>prefers-reduced-motion</code> in DevTools (Rendering tab) to
+        verify the static-fallback state. Every primitive should either animate cleanly
+        into view or render at its target state immediately under reduced motion.
+        View transitions cross-fade the body when you navigate between pages.
+      </p>
+    </header>
+
+    <section style="margin-block-end: 4rem;">
+      <p class="eyebrow">Motion effects</p>
+      <h2>Four named entrances</h2>
+      <p style="color: var(--color-muted); max-inline-size: 60ch;">
+        Each card below uses a different <code>effect</code> on the
+        <code>&lt;Motion&gt;</code> primitive. Scroll slowly to watch them flip on.
+      </p>
+
+      <div style="display: grid; gap: 1.5rem; margin-block-start: 2rem;">
+        {
+          effects.map((eff) => (
+            <Motion effect={eff.name}>
+              <article
+                class="card"
+                style="display: grid; gap: 0.5rem; max-inline-size: 64ch;"
+              >
+                <p class="eyebrow">{eff.name}</p>
+                <h3 style="margin: 0;">{eff.title}</h3>
+                <p style="margin: 0; color: var(--color-muted);">{eff.body}</p>
+              </article>
+            </Motion>
+          ))
+        }
+      </div>
+    </section>
+
+    <section style="margin-block-end: 4rem;">
+      <p class="eyebrow">Sugar primitives</p>
+      <h2>FadeUp and FadeIn</h2>
+      <p style="color: var(--color-muted); max-inline-size: 60ch;">
+        Same shape, less typing. Reach for these when you're not customising the
+        effect.
+      </p>
+
+      <div style="display: grid; gap: 1.5rem; margin-block-start: 2rem;">
+        <FadeUp>
+          <article
+            class="card"
+            style="display: grid; gap: 0.5rem; max-inline-size: 64ch;"
+          >
+            <p class="eyebrow">FadeUp</p>
+            <h3 style="margin: 0;">The default entrance, named.</h3>
+            <p style="margin: 0; color: var(--color-muted);">
+              Identical to <code>&lt;Motion effect="fade-up"&gt;</code> — the syntactic
+              sugar carries the intent at the call site.
+            </p>
+          </article>
+        </FadeUp>
+
+        <FadeIn>
+          <article
+            class="card"
+            style="display: grid; gap: 0.5rem; max-inline-size: 64ch;"
+          >
+            <p class="eyebrow">FadeIn</p>
+            <h3 style="margin: 0;">Opacity, nothing else.</h3>
+            <p style="margin: 0; color: var(--color-muted);">
+              For elements where any movement would be a distraction.
+            </p>
+          </article>
+        </FadeIn>
+      </div>
+    </section>
+
+    <section style="margin-block-end: 4rem;">
+      <p class="eyebrow">Micro-interactions / press</p>
+      <h2>Button depression</h2>
+      <p style="color: var(--color-muted); max-inline-size: 60ch;">
+        Press any button below to verify the 1px translate-y on <code
+          >:active</code
+        >.
+      </p>
+
+      <div
+        style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block-start: 1.5rem;"
+      >
+        <button
+          type="button"
+          class="btn"
+          style="padding: 0.75rem 1.25rem; background: var(--color-accent); color: white; border: none; border-radius: var(--radius-button); font-weight: 600;"
+        >
+          Primary action
+        </button>
+        <button
+          type="button"
+          style="padding: 0.75rem 1.25rem; background: transparent; color: var(--color-text-heading); border: 1px solid var(--color-border); border-radius: var(--radius-button); font-weight: 600;"
+        >
+          Secondary
+        </button>
+        <button
+          type="submit"
+          style="padding: 0.75rem 1.25rem; background: var(--color-surface-elevated); color: var(--color-text-heading); border: 1px solid var(--color-border); border-radius: var(--radius-button); font-weight: 600;"
+        >
+          Submit-style
+        </button>
+      </div>
+    </section>
+
+    <section style="margin-block-end: 4rem;">
+      <p class="eyebrow">Micro-interactions / hover</p>
+      <h2>Card lift</h2>
+      <p style="color: var(--color-muted); max-inline-size: 60ch;">
+        Hover any card to verify the 2px lift and shadow.
+      </p>
+
+      <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-block-start: 1.5rem;"
+      >
+        {
+          cards.map((c) => (
+            <article class="card" style="display: grid; gap: 0.5rem;">
+              <h3 style="margin: 0;">{c.title}</h3>
+              <p style="margin: 0; color: var(--color-muted);">{c.body}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section style="margin-block-end: 4rem;">
+      <p class="eyebrow">Micro-interactions / focus</p>
+      <h2>Input focus glow</h2>
+      <p style="color: var(--color-muted); max-inline-size: 60ch;">
+        Tab through the form to verify the transitioned focus ring.
+      </p>
+
+      <form
+        id="motion-fixture-form"
+        style="display: grid; gap: 1rem; max-inline-size: 36rem; margin-block-start: 1.5rem;"
+      >
+        <label style="display: grid; gap: 0.375rem;">
+          <span class="eyebrow">Name</span>
+          <input
+            type="text"
+            placeholder="Anna Schmidt"
+            style="padding: 0.625rem 0.875rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-elevated); color: var(--color-text); font: inherit;"
+          />
+        </label>
+
+        <label style="display: grid; gap: 0.375rem;">
+          <span class="eyebrow">Message</span>
+          <textarea
+            rows="3"
+            placeholder="What's on your mind?"
+            style="padding: 0.625rem 0.875rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-elevated); color: var(--color-text); font: inherit; resize: vertical;"
+          ></textarea>
+        </label>
+
+        <label style="display: grid; gap: 0.375rem;">
+          <span class="eyebrow">Topic</span>
+          <select
+            style="padding: 0.625rem 0.875rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-elevated); color: var(--color-text); font: inherit;"
+          >
+            <option>General</option>
+            <option>Design system</option>
+            <option>Editorial</option>
+          </select>
+        </label>
+      </form>
+    </section>
+
+    <section style="margin-block-end: 4rem;">
+      <p class="eyebrow">View transitions</p>
+      <h2>Cross-page motion</h2>
+      <p style="color: var(--color-muted); max-inline-size: 60ch;">
+        Navigate between the design-floor fixtures to verify the body
+        crossfade-slide while the header stays in place.
+      </p>
+
+      <nav
+        aria-label="Design floor fixtures"
+        style="display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block-start: 1.5rem;"
+      >
+        <a
+          href="/design-floor/type/"
+          style="padding: 0.625rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); text-decoration: none;"
+          >Chapter 1 — Type</a
+        >
+        <a
+          href="/design-floor/sections/"
+          style="padding: 0.625rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); text-decoration: none;"
+          >Chapter 2 — Sections</a
+        >
+      </nav>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  // Prevent the demo form from navigating away during fixture testing.
+  function wireFixtureForm(): void {
+    const form = document.getElementById("motion-fixture-form");
+    if (form instanceof HTMLFormElement) {
+      form.addEventListener("submit", (event) => event.preventDefault());
+    }
+  }
+
+  wireFixtureForm();
+  document.addEventListener("astro:page-load", wireFixtureForm);
+</script>
