@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/passion4it-gmbh/passionfruit/compare/v0.2.0...v0.3.0) (2026-05-28)
+
+
+### Features
+
+* **analytics:** fix PostHog host + add GA4 (gtag) component ([#2](https://github.com/passion4it-gmbh/passionfruit/issues/2)) ([4ccec68](https://github.com/passion4it-gmbh/passionfruit/commit/4ccec68128dffa6362fdd7616bd33b7f32f2c715))
+
 ## [0.2.0](https://github.com/passion4it-gmbh/passionfruit/compare/v0.1.0...v0.2.0) (2026-05-28)
 
 
