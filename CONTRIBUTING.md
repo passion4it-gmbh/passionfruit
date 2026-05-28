@@ -26,6 +26,10 @@ Process-discipline plugins like `superpowers` are deliberately not enabled at pr
 
 The project skills (`passionfruit-content`, `/onboard`, `/brand`, `/deploy`, `/new-post`, `/new-team-member`) ship in `.claude/skills/` and load automatically — no install needed.
 
+### Bootstrapping from the plugin marketplace
+
+For users who installed the passionfruit plugin without cloning the template first, `/create-passionfruit-site` does the equivalent of `pnpm create passionfruit my-site`: clones the template into a new directory, initializes git, runs `pnpm install`, and hands off to `/onboard`. This is the plugin-marketplace-first install path.
+
 ### Astro Docs MCP (recommended)
 
 Add the first-party Astro Docs MCP for current Astro 6 docs without web search:

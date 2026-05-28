@@ -190,24 +190,25 @@ The deploy job is gated on `CLOUDFLARE_PROJECT_NAME` being set — when unset, t
 
 ## 16. Commands
 
-| Command               | Purpose                                                                     |
-| --------------------- | --------------------------------------------------------------------------- |
-| `pnpm dev`            | Local dev server                                                            |
-| `pnpm build`          | Production build (sync + lint + typecheck + astro build)                    |
-| `pnpm preview`        | Preview built output                                                        |
-| `pnpm typecheck`      | `astro check` + `tsc --noEmit`                                              |
-| `pnpm lint`           | ESLint + Prettier with autofix                                              |
-| `pnpm lint:a11y`      | Accessibility lint (alt-text = error, rest = warn)                          |
-| `pnpm test`           | Bilingual check unit tests                                                  |
-| `pnpm check:spelling` | Spell check content markdown (DE + EN)                                      |
-| `pnpm check:links`    | Broken link check on built output                                           |
-| `pnpm check:all`      | Spelling + a11y + build + link check (full CI locally)                      |
-| `pnpm generate-image` | Generate images via GPT Image (needs `OPENAI_API_KEY`)                      |
-| `/onboard`            | Personalize a fresh template for a new business or migrate an existing site |
-| `/brand`              | Replace placeholder favicon and OG image with your own                      |
-| `/deploy`             | Interactive Cloudflare Pages deployment setup                               |
-| `/new-post`           | Scaffold a bilingual blog post (DE + EN)                                    |
-| `/new-team-member`    | Scaffold a bilingual team member entry (DE + EN)                            |
+| Command                     | Purpose                                                                        |
+| --------------------------- | ------------------------------------------------------------------------------ |
+| `pnpm dev`                  | Local dev server                                                               |
+| `pnpm build`                | Production build (sync + lint + typecheck + astro build)                       |
+| `pnpm preview`              | Preview built output                                                           |
+| `pnpm typecheck`            | `astro check` + `tsc --noEmit`                                                 |
+| `pnpm lint`                 | ESLint + Prettier with autofix                                                 |
+| `pnpm lint:a11y`            | Accessibility lint (alt-text = error, rest = warn)                             |
+| `pnpm test`                 | Bilingual check unit tests                                                     |
+| `pnpm check:spelling`       | Spell check content markdown (DE + EN)                                         |
+| `pnpm check:links`          | Broken link check on built output                                              |
+| `pnpm check:all`            | Spelling + a11y + build + link check (full CI locally)                         |
+| `pnpm generate-image`       | Generate images via GPT Image (needs `OPENAI_API_KEY`)                         |
+| `/create-passionfruit-site` | Bootstrap a new passionfruit site from outside the template (plugin-only path) |
+| `/onboard`                  | Personalize a fresh template for a new business or migrate an existing site    |
+| `/brand`                    | Replace placeholder favicon and OG image with your own                         |
+| `/deploy`                   | Interactive Cloudflare Pages deployment setup                                  |
+| `/new-post`                 | Scaffold a bilingual blog post (DE + EN)                                       |
+| `/new-team-member`          | Scaffold a bilingual team member entry (DE + EN)                               |
 
 ## 17. Claude Code setup
 
@@ -215,14 +216,15 @@ The template ships its own Claude Code configuration. Two layers cooperate.
 
 **Project-local skills** live in `.claude/skills/` and auto-load when the repo is opened. They cover the things downstream users actually do:
 
-| Skill                  | Trigger                                                                                       |
-| ---------------------- | --------------------------------------------------------------------------------------------- |
-| `passionfruit-content` | Auto-loads on any content/i18n edit — bilingual rules, frontmatter shapes, page-registry care |
-| `onboard`              | `/onboard` or "Greenleaf Digital" still present in the repo                                   |
-| `brand`                | `/brand`                                                                                      |
-| `deploy`               | `/deploy`                                                                                     |
-| `new-post`             | `/new-post`                                                                                   |
-| `new-team-member`      | `/new-team-member`                                                                            |
+| Skill                      | Trigger                                                                                       |
+| -------------------------- | --------------------------------------------------------------------------------------------- |
+| `create-passionfruit-site` | Triggers outside any passionfruit repo when the user asks to start a new passionfruit site    |
+| `passionfruit-content`     | Auto-loads on any content/i18n edit — bilingual rules, frontmatter shapes, page-registry care |
+| `onboard`                  | `/onboard` or "Greenleaf Digital" still present in the repo                                   |
+| `brand`                    | `/brand`                                                                                      |
+| `deploy`                   | `/deploy`                                                                                     |
+| `new-post`                 | `/new-post`                                                                                   |
+| `new-team-member`          | `/new-team-member`                                                                            |
 
 **Plugins** are declared in `.claude/settings.json` under `enabledPlugins`. The template enables four from the default `claude-plugins-official` marketplace:
 
@@ -235,7 +237,7 @@ The template ships its own Claude Code configuration. Two layers cooperate.
 
 Process-discipline plugins like `superpowers` are intentionally **not** enabled at project level — its TDD/spec/review loop is overkill for downstream non-technical users. Maintainers who want it should enable it at user level (`~/.claude/settings.json`).
 
-**Plugin manifest** (`.claude-plugin/marketplace.json` + `plugin.json`) declares this repo as an installable Claude Code plugin. Other projects can pull in the skills via `/plugin marketplace add passion4it-gmbh/passionfruit` — useful only outside the template, since downstream clones get the skills automatically via `.claude/skills/`.
+**Plugin manifest** (`.claude-plugin/marketplace.json` + `plugin.json`) declares this repo as an installable Claude Code plugin. Users can `/plugin marketplace add passion4it-gmbh/passionfruit` from any directory and then run `/create-passionfruit-site` to bootstrap a fresh site without ever cloning the template manually. Downstream clones still get the skills automatically via `.claude/skills/`.
 
 **MCP servers** to recommend to downstream users:
 
