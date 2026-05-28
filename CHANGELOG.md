@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/passion4it-gmbh/passionfruit/compare/v0.4.0...v0.5.0) (2026-05-28)
+
+
+### Features
+
+* **security:** add HTML cache header + opt-in CSP violation reporting ([#11](https://github.com/passion4it-gmbh/passionfruit/issues/11)) ([bfe0e24](https://github.com/passion4it-gmbh/passionfruit/commit/bfe0e243765829675d4966a78b9bdbec92795c32))
+
 ## [0.4.0](https://github.com/passion4it-gmbh/passionfruit/compare/v0.3.0...v0.4.0) (2026-05-28)
 
 
