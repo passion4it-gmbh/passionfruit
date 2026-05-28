@@ -6,6 +6,7 @@ import { useTranslations, getLocalizedPath, type Locale } from "~/i18n";
 import { findPageByKey } from "~/lib/page-registry";
 import YouTubeFacade from "~/components/YouTubeFacade.astro";
 import Badge from "~/components/Badge.astro";
+import Prose from "~/components/Prose.astro";
 import "~/styles/blog-prose.css";
 
 interface Props {
@@ -120,7 +121,9 @@ const { Content } = await render(entry);
   }
 
   <div class="body blog-prose">
-    <Content />
+    <Prose>
+      <Content />
+    </Prose>
   </div>
 
   <nav class="siblings" aria-label={t("caseStudies.siblingNav")}>

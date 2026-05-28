@@ -8,6 +8,7 @@ import { findPageByKey } from "~/lib/page-registry";
 import { formatDate } from "~/lib/format-date";
 import Button from "~/components/Button.astro";
 import Badge from "~/components/Badge.astro";
+import Prose from "~/components/Prose.astro";
 import "~/styles/blog-prose.css";
 
 interface Props {
@@ -115,7 +116,9 @@ const formattedClosesAt = entry.data.closesAt
 <section class="py-16 md:py-24">
   <div class="container">
     <article class="blog-prose max-w-3xl mx-auto">
-      <Content />
+      <Prose>
+        <Content />
+      </Prose>
     </article>
 
     <!-- Apply CTA -->

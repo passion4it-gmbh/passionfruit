@@ -10,6 +10,41 @@ This directory holds Astro components shared across pages. **One component per c
 - **i18n:** `useTranslations(locale)` from `~/i18n`. Adding a new string means updating both `src/i18n/de.json` and `src/i18n/en.json` in the same commit.
 - **Images:** `<Image>` from `astro:assets`. Alt text is mandatory (ESLint enforces `jsx-a11y/alt-text` as error).
 
+## Long-form content
+
+### `Prose.astro`
+
+The editorial wrapper for any rendered Markdown body. Caps the reading measure, centers the column within its parent, enables `hanging-punctuation`, and optionally renders a drop cap on the first paragraph. Pair it with the editorial type system in `src/styles/typography.css` — heading tracking, OpenType features, leading, and the `p + p` paragraph rhythm flow from there.
+
+| Prop      | Type                             | Required | Default     | Notes                                                                       |
+| --------- | -------------------------------- | -------- | ----------- | --------------------------------------------------------------------------- |
+| `dropCap` | `boolean`                        | no       | `false`     | Renders `::first-letter` of the first `<p>` as a drop cap.                  |
+| `measure` | `"tight" \| "default" \| "wide"` | no       | `"default"` | Inline-size cap: 60ch / 70ch / 80ch desktop; collapses to 100% below 640px. |
+
+**Consumers** (wrap any rendered `<Content />` from a Markdown collection entry):
+
+- `BlogPost.astro` → `<Prose dropCap>` (blog posts get the editorial flourish)
+- `LegalDocument.astro` → `<Prose measure="wide">` (legal copy reads in detail; wider measure)
+- `PageContent.astro` → `<Prose>` (default)
+- `CareerPost.astro` → `<Prose>` (default)
+- `EventDetail.astro` → `<Prose>` (default)
+- `CaseStudyDetail.astro` → `<Prose>` (default)
+- `src/components/pages/contact.astro` → `<Prose>` (default; Markdown sits beside structured contact info)
+
+The drop-cap rule lives unscoped in `src/styles/typography.css` because slotted Markdown `<p>` elements do not carry Astro's component-scoped data attribute. The class application (`.has-drop-cap`) stays in `Prose.astro`.
+
+```astro
+---
+import Prose from "~/components/Prose.astro";
+import { render } from "astro:content";
+const { Content } = await render(entry);
+---
+
+<Prose dropCap>
+  <Content />
+</Prose>
+```
+
 ## `CollectionFilter.astro`
 
 Generic taxonomy-driven filter bar. Any collection page (blog, events, case studies, careers…) passes its facet data; the component renders anchor-link chips that update URL query params. The page re-renders server-side with the filtered collection — **no client JS required for core filtering**.
@@ -112,7 +147,7 @@ const filtered = selectedTags.length
 
 ### `LegalDocument.astro`
 
-Reusable wrapper for legal pages (imprint, privacy, future terms/AGB). Renders a constrained-width prose container with the page title, an optional last-updated timestamp, and a slot for the markdown body. Uses `blog-prose` typography.
+Reusable wrapper for legal pages (imprint, privacy, future terms/AGB). Renders a constrained-width prose container with the page title, an optional last-updated timestamp, and a slot for the markdown body. Wraps the body in `<Prose measure="wide">` so legal copy reads at the wider 80ch measure (legal text rewards detail). `blog-prose` still owns blog-specific typography (links, lists, blockquote, code) until the editorial type system replaces it.
 
 | Prop          | Type     | Required | Default | Notes                                                                     |
 | ------------- | -------- | -------- | ------- | ------------------------------------------------------------------------- |

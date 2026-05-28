@@ -13,6 +13,7 @@ import { useTranslations, getLocalizedPath, type Locale } from "~/i18n";
 import { findPageByKey } from "~/lib/page-registry";
 import { formatDateTime } from "~/lib/format-date";
 import Button from "~/components/Button.astro";
+import Prose from "~/components/Prose.astro";
 import "~/styles/blog-prose.css";
 
 interface Props {
@@ -214,7 +215,9 @@ const { Content } = await render(entry);
 
   <!-- Body -->
   <div class="blog-prose max-w-3xl mx-auto">
-    <Content />
+    <Prose>
+      <Content />
+    </Prose>
   </div>
 
   <!-- Registration CTA -->
