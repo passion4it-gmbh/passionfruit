@@ -65,6 +65,8 @@ heroImage: "./_images/about-hero.jpg" # Optional
 ---
 ```
 
+When `heroImage` is set, the matching static page component (`about.astro`, `services.astro`, `contact.astro`) automatically renders it as a split-layout hero — text on the left, optimized `<Image>` on the right. Drop the field to fall back to the single-column hero. `imprint.astro` and `privacy.astro` are legal pages and intentionally ignore `heroImage` — adding a glamour shot to a privacy policy is tasteless. New page components can opt in by looking up the entry: `(await getCollection('pages')).find(p => p.id.startsWith(\`${lang}/\`) && p.data.translationKey === '<key>')?.data.heroImage`.
+
 After creating a new page, also:
 
 1. Add a component in `src/components/pages/`

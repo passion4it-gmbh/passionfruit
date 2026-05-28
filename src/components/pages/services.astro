@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
 import type { Locale } from "~/i18n";
 import { useTranslations, getLocalizedPath } from "~/i18n";
 import BaseLayout from "~/layouts/BaseLayout.astro";
@@ -29,6 +31,11 @@ const contactHref = getLocalizedPath(
   lang === "de" ? "kontakt" : "contact",
   lang,
 );
+
+const pagesEntries = await getCollection("pages");
+const heroImage = pagesEntries.find(
+  (p) => p.id.startsWith(`${lang}/`) && p.data.translationKey === "services",
+)?.data.heroImage;
 
 const services = [
   {
@@ -106,22 +113,46 @@ const services = [
       class="glow-orb absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2 -translate-x-1/3"
     >
     </div>
-    <div class="container relative z-10 pt-48 pb-24 md:pt-56 md:pb-32">
-      <p class="eyebrow hero-stagger" style="--delay: 100ms">
-        {t("site.name")}
-      </p>
-      <h1
-        class="text-display text-text-on-dark mt-6 max-w-3xl hero-stagger"
-        style="--delay: 200ms"
+    <div class="container relative z-10 pt-40 pb-20 md:pt-48 md:pb-24">
+      <div
+        class:list={[
+          "grid items-center gap-12 lg:gap-16",
+          heroImage && "lg:grid-cols-2",
+        ]}
       >
-        {t("services.title")}
-      </h1>
-      <p
-        class="text-body-lg text-text-on-dark/60 mt-6 max-w-2xl hero-stagger"
-        style="--delay: 400ms"
-      >
-        {t("services.description")}
-      </p>
+        <div>
+          <p class="eyebrow hero-stagger" style="--delay: 100ms">
+            {t("site.name")}
+          </p>
+          <h1
+            class="text-display text-text-on-dark mt-6 max-w-3xl hero-stagger"
+            style="--delay: 200ms"
+          >
+            {t("services.title")}
+          </h1>
+          <p
+            class="text-body-lg text-text-on-dark/60 mt-6 max-w-2xl hero-stagger"
+            style="--delay: 400ms"
+          >
+            {t("services.description")}
+          </p>
+        </div>
+        {
+          heroImage && (
+            <div class="relative hero-stagger" style="--delay: 500ms">
+              <div class="absolute -inset-8 rounded-[2rem] bg-gradient-to-br from-accent/20 via-transparent to-warm/20 blur-2xl" />
+              <Image
+                src={heroImage}
+                alt=""
+                class="relative rounded-2xl shadow-2xl shadow-accent/10 ring-1 ring-white/10"
+                widths={[400, 600, 800, 1200]}
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                loading="eager"
+              />
+            </div>
+          )
+        }
+      </div>
     </div>
   </section>
 
