@@ -1,10 +1,18 @@
 /**
  * Project-data discovery layer for the OG image generator.
  *
- * Reads three project artifacts synchronously and returns a narrow
- * SiteData shape that downstream layers (template, renderer, CLI) can rely on.
+ * Splits into two reads:
+ *  - `loadGlobalAssets(projectRoot)` — accent + dark-surface + on-dark text
+ *    colors (from `global.css`) and the favicon SVG. Runs once per CLI invocation.
+ *  - `loadSiteText(projectRoot, lang)` — `site.name` + `site.tagline` from the
+ *    locale's i18n JSON. Runs once per locale.
  *
- * No top-level side effects. No async. No `any`.
+ * `loadSiteData` composes the two for callers that want the full bundle for
+ * one locale. The split exists so the CLI can hoist global asset reads out of
+ * the per-locale loop — without it, a malformed `--color-*` value emits its
+ * `[warn]` line twice.
+ *
+ * Synchronous, ESM, no `any`, no top-level side effects.
  */
 
 import { readFileSync } from "node:fs";
@@ -12,12 +20,23 @@ import { join } from "node:path";
 
 export type Locale = "de" | "en";
 
-export interface SiteData {
-  name: string;
-  tagline: string;
+export interface GlobalAssets {
+  /** Accent colour pulled from `--color-accent` in `global.css`. */
   accent: string;
+  /** Dark surface colour pulled from `--color-surface-dark`. */
+  surface: string;
+  /** On-dark text colour pulled from `--color-text-on-dark`. */
+  textOnDark: string;
+  /** Raw contents of `public/favicon.svg`. */
   logoSvg: string;
 }
+
+export interface SiteText {
+  name: string;
+  tagline: string;
+}
+
+export interface SiteData extends GlobalAssets, SiteText {}
 
 /**
  * Discriminator error so callers can distinguish discovery failures
@@ -30,11 +49,13 @@ export class OgDiscoverError extends Error {
   }
 }
 
-const DEFAULT_ACCENT = "#6366f1";
+const DEFAULTS = {
+  accent: "#6366f1",
+  surface: "#0c0c1d",
+  textOnDark: "#f0f0f5",
+} as const;
+
 const HEX_RE = /^#[0-9a-fA-F]{6}$/;
-// Match the first `--color-accent: <value>;` declaration anywhere in the file.
-// Non-greedy capture between the colon and the semicolon.
-const ACCENT_DECL_RE = /--color-accent:\s*(.*?);/;
 
 interface I18nShape {
   site?: {
@@ -43,22 +64,81 @@ interface I18nShape {
   };
 }
 
-function readSiteI18n(
-  projectRoot: string,
-  lang: Locale,
-): {
-  name: string;
-  tagline: string;
-} {
-  const path = join(projectRoot, "src", "i18n", `${lang}.json`);
-
-  let raw: string;
+function readFileOrThrow(path: string, label: string): string {
   try {
-    raw = readFileSync(path, "utf8");
+    return readFileSync(path, "utf8");
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err);
-    throw new OgDiscoverError(`Cannot read i18n file at ${path}: ${reason}`);
+    throw new OgDiscoverError(`Cannot read ${label} at ${path}: ${reason}`);
   }
+}
+
+/**
+ * Pull a `--<token>: <value>;` declaration out of a CSS string. Returns the
+ * value if it is a strict `#rrggbb` literal; otherwise emits a single `[warn]`
+ * line to stderr and returns `fallback`.
+ */
+function readColorToken(
+  css: string,
+  cssPath: string,
+  token: string,
+  fallback: string,
+): string {
+  const decl = new RegExp(`--${token}:\\s*(.*?);`);
+  const match = css.match(decl);
+  if (!match) {
+    process.stderr.write(
+      `[warn] og-discover: no --${token} declaration in ${cssPath}, falling back to ${fallback}\n`,
+    );
+    return fallback;
+  }
+
+  const value = match[1].trim();
+  if (!HEX_RE.test(value)) {
+    process.stderr.write(
+      `[warn] og-discover: --${token} value "${value}" in ${cssPath} is not a #rrggbb hex literal, falling back to ${fallback}\n`,
+    );
+    return fallback;
+  }
+
+  return value;
+}
+
+/**
+ * Read the locale-independent assets (brand colours + favicon). Call once
+ * per CLI invocation, not per locale.
+ */
+export function loadGlobalAssets(projectRoot: string): GlobalAssets {
+  const cssPath = join(projectRoot, "src", "styles", "global.css");
+  const css = readFileOrThrow(cssPath, "CSS file");
+
+  const accent = readColorToken(css, cssPath, "color-accent", DEFAULTS.accent);
+  const surface = readColorToken(
+    css,
+    cssPath,
+    "color-surface-dark",
+    DEFAULTS.surface,
+  );
+  const textOnDark = readColorToken(
+    css,
+    cssPath,
+    "color-text-on-dark",
+    DEFAULTS.textOnDark,
+  );
+
+  const logoPath = join(projectRoot, "public", "favicon.svg");
+  const logoSvg = readFileOrThrow(logoPath, "favicon");
+
+  return { accent, surface, textOnDark, logoSvg };
+}
+
+/**
+ * Read the locale-specific site text. Throws `OgDiscoverError` if the file
+ * is missing or required keys are absent/wrong-typed.
+ */
+export function loadSiteText(projectRoot: string, lang: Locale): SiteText {
+  const path = join(projectRoot, "src", "i18n", `${lang}.json`);
+  const raw = readFileOrThrow(path, "i18n file");
 
   let parsed: I18nShape;
   try {
@@ -85,56 +165,13 @@ function readSiteI18n(
   return { name, tagline };
 }
 
-function readAccent(projectRoot: string): string {
-  const path = join(projectRoot, "src", "styles", "global.css");
-
-  let raw: string;
-  try {
-    raw = readFileSync(path, "utf8");
-  } catch (err) {
-    const reason = err instanceof Error ? err.message : String(err);
-    throw new OgDiscoverError(`Cannot read CSS file at ${path}: ${reason}`);
-  }
-
-  const match = raw.match(ACCENT_DECL_RE);
-  if (!match) {
-    process.stderr.write(
-      `[warn] og-discover: no --color-accent declaration in ${path}, falling back to ${DEFAULT_ACCENT}\n`,
-    );
-    return DEFAULT_ACCENT;
-  }
-
-  const value = match[1].trim();
-  if (!HEX_RE.test(value)) {
-    process.stderr.write(
-      `[warn] og-discover: --color-accent value "${value}" in ${path} is not a #rrggbb hex literal, falling back to ${DEFAULT_ACCENT}\n`,
-    );
-    return DEFAULT_ACCENT;
-  }
-
-  return value;
-}
-
-function readLogo(projectRoot: string): string {
-  const path = join(projectRoot, "public", "favicon.svg");
-  try {
-    return readFileSync(path, "utf8");
-  } catch (err) {
-    const reason = err instanceof Error ? err.message : String(err);
-    throw new OgDiscoverError(`Cannot read favicon at ${path}: ${reason}`);
-  }
-}
-
 /**
- * Load the SiteData bundle for a given locale, rooted at `projectRoot`.
- *
- * Throws `OgDiscoverError` for missing/unreadable files and for missing
- * required i18n keys. Falls back to a default accent (with a `[warn]` line
- * on stderr) when the CSS declaration is absent or malformed.
+ * Convenience composition: load global assets + per-locale text in one call.
+ * The CLI uses the split functions directly to avoid duplicate reads/warnings
+ * across locales; tests and one-shot callers can use this.
  */
 export function loadSiteData(projectRoot: string, lang: Locale): SiteData {
-  const { name, tagline } = readSiteI18n(projectRoot, lang);
-  const accent = readAccent(projectRoot);
-  const logoSvg = readLogo(projectRoot);
-  return { name, tagline, accent, logoSvg };
+  const globals = loadGlobalAssets(projectRoot);
+  const text = loadSiteText(projectRoot, lang);
+  return { ...globals, ...text };
 }

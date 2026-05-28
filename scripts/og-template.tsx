@@ -22,6 +22,10 @@ export interface OgTemplateProps {
   tagline: string;
   /** `#rrggbb` brand accent — used for the radial background glow. */
   accent: string;
+  /** `#rrggbb` dark surface colour — outer-container background. */
+  surface: string;
+  /** `#rrggbb` on-dark text colour — name + tagline foreground. */
+  textOnDark: string;
   /** Raw SVG markup, inlined as a data URI on the lockup <img>. */
   logoSvg: string;
   lang: Locale;
@@ -42,7 +46,7 @@ function hexToRgba(hex: string, alpha: number): string {
 }
 
 export function OgTemplate(props: OgTemplateProps): JSX.Element {
-  const { name, tagline, accent, logoSvg, lang } = props;
+  const { name, tagline, accent, surface, textOnDark, logoSvg, lang } = props;
 
   const glowStop = hexToRgba(accent, 0.18);
   const logoDataUri = "data:image/svg+xml;utf8," + encodeURIComponent(logoSvg);
@@ -57,8 +61,8 @@ export function OgTemplate(props: OgTemplateProps): JSX.Element {
         width: 1200,
         height: 630,
         padding: "64px 96px",
-        backgroundColor: "#0c0c1d",
-        color: "#f0f0f5",
+        backgroundColor: surface,
+        color: textOnDark,
         fontFamily: "Inter",
       }}
     >

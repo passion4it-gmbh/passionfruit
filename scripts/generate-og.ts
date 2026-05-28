@@ -22,9 +22,11 @@ import type { SatoriOptions } from "satori";
 
 import {
   type Locale,
-  type SiteData,
+  type GlobalAssets,
+  type SiteText,
   OgDiscoverError,
-  loadSiteData,
+  loadGlobalAssets,
+  loadSiteText,
 } from "./og-discover.ts";
 import { renderOg } from "./og-render.ts";
 
@@ -118,6 +120,17 @@ function parseArgs(argv: string[]): ParseResult {
       continue;
     }
 
+    // `--key=value` not supported — generate-image.ts also doesn't, and a
+    // clear hint beats a generic "unknown option".
+    if (arg.startsWith("--") && arg.includes("=")) {
+      const [key] = arg.split("=", 1);
+      return {
+        ok: false,
+        help: false,
+        message: `Unknown option: ${arg} (use "${key} <value>" — "=" syntax is not supported)`,
+      };
+    }
+
     return {
       ok: false,
       help: false,
@@ -190,15 +203,26 @@ async function main(argv: string[]): Promise<number> {
     return 1;
   }
 
-  // Resolve all site data up-front so a discovery failure in one locale
+  // Load globals once — same accent / surface / text / favicon for every locale.
+  // Resolving here (before the per-locale loop) means any [warn] from a bad
+  // colour token fires exactly once, not once per locale.
+  let globals: GlobalAssets;
+  try {
+    globals = loadGlobalAssets(projectRoot);
+  } catch (err) {
+    if (err instanceof OgDiscoverError) {
+      process.stderr.write(`${err.message}\n`);
+      return 1;
+    }
+    throw err;
+  }
+
+  // Resolve all per-locale text up-front so a discovery failure in one locale
   // aborts before any file is written (no partial outputs).
-  const bundles: Array<{
-    lang: Locale;
-    data: SiteData;
-  }> = [];
+  const bundles: Array<{ lang: Locale; text: SiteText }> = [];
   for (const lang of locales) {
     try {
-      bundles.push({ lang, data: loadSiteData(projectRoot, lang) });
+      bundles.push({ lang, text: loadSiteText(projectRoot, lang) });
     } catch (err) {
       if (err instanceof OgDiscoverError) {
         process.stderr.write(`${err.message}\n`);
@@ -210,9 +234,9 @@ async function main(argv: string[]): Promise<number> {
 
   mkdirSync(outDir, { recursive: true });
 
-  for (const { lang, data } of bundles) {
+  for (const { lang, text } of bundles) {
     const buffer = await renderOg({
-      props: { ...data, lang },
+      props: { ...globals, ...text, lang },
       fonts,
     });
     const filename = `og-default-${lang}.png`;

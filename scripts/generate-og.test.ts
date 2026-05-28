@@ -291,6 +291,14 @@ test("7.7 bad accent color falls back with [warn] and still writes png", () => {
       /\[warn\]/,
       `stderr should contain "[warn]": ${result.stderr}`,
     );
+    // Pin the warn content: it must name the actual bad value so a future
+    // regression (e.g. swallowing the value or printing a generic message)
+    // is caught — not just any [warn] line.
+    assert.match(
+      result.stderr,
+      /not-a-color/,
+      `stderr [warn] should name the bad value: ${result.stderr}`,
+    );
 
     const dePath = join(outDir, "og-default-de.png");
     assert.ok(existsSync(dePath), "expected og-default-de.png to exist");
