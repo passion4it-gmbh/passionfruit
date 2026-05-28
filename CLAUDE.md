@@ -151,6 +151,8 @@ The deploy job is gated on `CLOUDFLARE_PROJECT_NAME` being set — when unset, t
 
 **Site URL:** Update `site` in `astro.config.mjs` after deployment. This affects canonical URLs, sitemap, and OG meta tags.
 
+**Security headers + caching** live in `public/_headers` (Cloudflare Pages auto-picks this up). Includes HSTS, CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and long-cache rules for `/_astro/*`. The CSP is scoped to what's actually used (PostHog + GA4); **if you add a new third-party script, iframe, or asset host, update the CSP or it will be blocked silently in the browser console.**
+
 ## 15. Git workflow
 
 **Never push directly to `main`.** Every change goes through a pull request, even if it's just you.
