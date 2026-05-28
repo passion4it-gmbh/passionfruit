@@ -1,0 +1,136 @@
+---
+import { Image } from "astro:assets";
+import Section from "~/components/Section.astro";
+import type { StickyStoryProps } from "~/types/sections";
+
+type Props = StickyStoryProps;
+
+const {
+  eyebrow,
+  headline,
+  lede,
+  chapters,
+  tone = "surface",
+  padding = "lg",
+} = Astro.props;
+---
+
+<Section tone={tone} padding={padding}>
+  {
+    (eyebrow || headline || lede) && (
+      <header class="pf-story__header">
+        {eyebrow && (
+          <span class="text-eyebrow pf-story__eyebrow">{eyebrow}</span>
+        )}
+        <h2 class="text-h1 pf-story__title">{headline}</h2>
+        {lede && <p class="text-body-lg pf-story__lede">{lede}</p>}
+      </header>
+    )
+  }
+
+  <div class="pf-story__grid">
+    <div class="pf-story__copy">
+      {
+        chapters.map((chapter) => (
+          <div class="pf-story__chapter-copy">
+            <h3 class="text-h2 pf-story__chapter-heading">
+              {chapter.headline}
+            </h3>
+            <p class="pf-story__chapter-body">{chapter.body}</p>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="pf-story__media">
+      {
+        chapters.map((chapter, idx) => (
+          <div class="pf-story__chapter-media">
+            <Image
+              src={chapter.image}
+              alt={chapter.imageAlt}
+              loading={idx === 0 ? "eager" : "lazy"}
+              class="pf-story__image"
+            />
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</Section>
+
+<style>
+  /* Motion adapter wires reduced-motion handling and active-chapter
+     tracking in Phase 3. */
+  .pf-story__header {
+    margin-bottom: var(--space-12);
+    max-width: 48rem;
+  }
+
+  .pf-story__eyebrow {
+    display: inline-block;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+    color: var(--color-accent);
+  }
+
+  .pf-story__title {
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .pf-story__lede {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .pf-story__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-section-md);
+  }
+
+  .pf-story__chapter-copy,
+  .pf-story__chapter-media {
+    margin-bottom: var(--space-section-md);
+  }
+
+  .pf-story__chapter-copy:last-child,
+  .pf-story__chapter-media:last-child {
+    margin-bottom: 0;
+  }
+
+  .pf-story__chapter-heading {
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .pf-story__chapter-body {
+    margin: 0;
+  }
+
+  .pf-story__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-card);
+  }
+
+  @media (min-width: 768px) {
+    .pf-story__grid {
+      grid-template-columns: var(--grid-cols-12);
+      gap: var(--grid-gap-lg);
+    }
+
+    .pf-story__copy {
+      grid-column: 1 / span 5;
+      position: sticky;
+      top: 4rem;
+      align-self: start;
+      height: fit-content;
+    }
+
+    .pf-story__media {
+      grid-column: 6 / span 7;
+    }
+  }
+</style>
