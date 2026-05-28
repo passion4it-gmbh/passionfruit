@@ -116,7 +116,21 @@ Before committing:
 
 ## 12. Image generation
 
-Generate images for blog heroes, page backgrounds, and assets using GPT Image models:
+### Social sharing (OG) image — `pnpm generate-og`
+
+Produces the site's bilingual OG sharing image from project data (no API key, runs in <1 second). Inputs are auto-discovered: `site.name` + `site.tagline` from `src/i18n/{de,en}.json`, accent color from `src/styles/global.css`, logo from `public/favicon.svg`. Outputs land at `public/og-default-de.png` and `public/og-default-en.png` (1200×630). `BaseLayout` picks the locale-specific file per page.
+
+```bash
+pnpm generate-og              # regenerate both locales
+pnpm generate-og --lang de    # only DE
+pnpm generate-og --lang en    # only EN
+```
+
+Re-run after `/onboard` (which changes i18n strings) or when the favicon / accent color changes. For an art-directed AI alternative, use `pnpm generate-image` (below) targeting `public/og-default-{de,en}.png` directly.
+
+### Content images — `pnpm generate-image`
+
+Generate hero / background / decorative images using GPT Image models:
 
 ```bash
 pnpm generate-image "your prompt here" -o src/assets/blog/my-image.png
@@ -203,10 +217,11 @@ The deploy job is gated on `CLOUDFLARE_PROJECT_NAME` being set — when unset, t
 | `pnpm typecheck`            | `astro check` + `tsc --noEmit`                                                 |
 | `pnpm lint`                 | ESLint + Prettier with autofix                                                 |
 | `pnpm lint:a11y`            | Accessibility lint (alt-text = error, rest = warn)                             |
-| `pnpm test`                 | Bilingual check unit tests                                                     |
+| `pnpm test`                 | Bilingual + og-generator unit tests                                            |
 | `pnpm check:spelling`       | Spell check content markdown (DE + EN)                                         |
 | `pnpm check:links`          | Broken link check on built output                                              |
 | `pnpm check:all`            | Spelling + a11y + build + link check (full CI locally)                         |
+| `pnpm generate-og`          | Regenerate localized OG sharing images from project data                       |
 | `pnpm generate-image`       | Generate images via GPT Image (needs `OPENAI_API_KEY`)                         |
 | `/create-passionfruit-site` | Bootstrap a new passionfruit site from outside the template (plugin-only path) |
 | `/onboard`                  | Personalize a fresh template for a new business or migrate an existing site    |
