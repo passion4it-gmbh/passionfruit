@@ -32,6 +32,12 @@ import { renderOg } from "./og-render.ts";
 
 const LOCALES: readonly Locale[] = ["de", "en"];
 
+const KNOWN_FLAGS: ReadonlySet<string> = new Set([
+  "--lang",
+  "--out-dir",
+  "--project-root",
+]);
+
 interface Args {
   lang: Locale | null;
   outDir: string | null;
@@ -144,12 +150,6 @@ function parseArgs(argv: string[]): ParseResult {
 
   return { ok: true, args };
 }
-
-const KNOWN_FLAGS: ReadonlySet<string> = new Set([
-  "--lang",
-  "--out-dir",
-  "--project-root",
-]);
 
 function loadFonts(projectRoot: string): SatoriOptions["fonts"] {
   const baseDir = join(
