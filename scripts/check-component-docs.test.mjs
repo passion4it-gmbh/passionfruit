@@ -7,7 +7,13 @@
 import { describe, it, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
+import {
+  mkdtempSync,
+  mkdirSync,
+  writeFileSync,
+  readFileSync,
+  rmSync,
+} from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
@@ -43,20 +49,42 @@ function seedComponent(rootDir, name, options = {}) {
 /**
  * Runs the check-component-docs script against the given rootDir.
  * @param {string} rootDir
- * @param {...string} extraArgs
+ * @param {string[]} extraArgs
+ * @param {{ env?: NodeJS.ProcessEnv }} [options]
  * @returns {{ status: number, stdout: string, stderr: string }}
  */
-function runScript(rootDir, ...extraArgs) {
+function runScript(rootDir, extraArgs = [], options = {}) {
   const result = spawnSync(
     "node",
     [SCRIPT, `--root=${rootDir}`, ...extraArgs],
-    { encoding: "utf8" },
+    {
+      encoding: "utf8",
+      env: options.env ?? { ...process.env, CI: undefined },
+    },
   );
   return {
     status: result.status,
     stdout: result.stdout,
     stderr: result.stderr,
   };
+}
+
+/**
+ * Writes a CLAUDE.md file in the root dir (simulates the project-level file).
+ * @param {string} rootDir
+ * @param {string} content
+ */
+function writeIndex(rootDir, content) {
+  writeFileSync(join(rootDir, "CLAUDE.md"), content, "utf8");
+}
+
+/**
+ * Reads the CLAUDE.md file from the root dir.
+ * @param {string} rootDir
+ * @returns {string}
+ */
+function readIndex(rootDir) {
+  return readFileSync(join(rootDir, "CLAUDE.md"), "utf8");
 }
 
 // ---------------------------------------------------------------------------
@@ -741,5 +769,424 @@ None.
   it("exits 0", () => {
     const result = runScript(tmpDir);
     assert.equal(result.status, 0, `stderr: ${result.stderr}`);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Catalog helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Builds valid frontmatter for a component with custom tags and status.
+ * @param {string} name
+ * @param {string[]} tags
+ * @param {{ status?: string, oneLiner?: string }} [opts]
+ */
+function catalogFrontmatter(name, tags, opts = {}) {
+  const status = opts.status ?? "stable";
+  const oneLiner =
+    opts.oneLiner ?? `A concise description of the ${name} component.`;
+  const tagLines = tags.map((t) => `  - ${t}`).join("\n");
+  return `---\ncomponent: ${name}\noneLiner: "${oneLiner}"\nstatus: ${status}\ntags:\n${tagLines}\n---\n`;
+}
+
+// ---------------------------------------------------------------------------
+// 21. Catalog: fresh CLAUDE.md gets catalog block appended
+// ---------------------------------------------------------------------------
+describe("catalog: fresh CLAUDE.md gets catalog block appended", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-catalog-"));
+    seedComponent(tmpDir, "Alpha", {
+      withDoc: true,
+      frontmatter: catalogFrontmatter("Alpha", ["card"]),
+      body: VALID_BODY,
+    });
+    seedComponent(tmpDir, "Beta", {
+      withDoc: true,
+      frontmatter: catalogFrontmatter("Beta", ["layout"]),
+      body: VALID_BODY,
+    });
+    seedComponent(tmpDir, "Gamma", {
+      withDoc: true,
+      frontmatter: catalogFrontmatter("Gamma", ["card"]),
+      body: VALID_BODY,
+    });
+    writeIndex(
+      tmpDir,
+      "# Conventions\n\nShared component conventions go here.\n",
+    );
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 0", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 0, `stderr: ${result.stderr}`);
+  });
+
+  it("CLAUDE.md contains CATALOG:START marker", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    assert.ok(
+      content.includes("<!-- CATALOG:START -->"),
+      "missing CATALOG:START",
+    );
+  });
+
+  it("CLAUDE.md contains CATALOG:END marker", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    assert.ok(content.includes("<!-- CATALOG:END -->"), "missing CATALOG:END");
+  });
+
+  it("original top region is preserved unchanged", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    assert.ok(content.startsWith("# Conventions\n"), "top region was modified");
+  });
+
+  it("catalog lists all three components", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    assert.ok(content.includes("Alpha"), "Alpha missing from catalog");
+    assert.ok(content.includes("Beta"), "Beta missing from catalog");
+    assert.ok(content.includes("Gamma"), "Gamma missing from catalog");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 22. Catalog: existing catalog block is replaced, not appended
+// ---------------------------------------------------------------------------
+describe("catalog: existing block is replaced, not appended", () => {
+  let tmpDir;
+  const STALE = "<!-- CATALOG:START -->\nSTALE CONTENT\n<!-- CATALOG:END -->";
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-catalog-"));
+    seedComponent(tmpDir, "Widget", {
+      withDoc: true,
+      frontmatter: catalogFrontmatter("Widget", ["ui"]),
+      body: VALID_BODY,
+    });
+    writeIndex(tmpDir, `# Header\n\n${STALE}\n`);
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 0", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 0, `stderr: ${result.stderr}`);
+  });
+
+  it("stale content is replaced", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    assert.ok(
+      !content.includes("STALE CONTENT"),
+      "stale content still present",
+    );
+  });
+
+  it("prefix before CATALOG:START is unchanged (byte-compare)", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    const startIdx = content.indexOf("<!-- CATALOG:START -->");
+    const prefix = content.slice(0, startIdx);
+    assert.equal(prefix, "# Header\n\n");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 23. Catalog: row format contains component name, status, oneLiner, link
+// ---------------------------------------------------------------------------
+describe("catalog: row format contains required fields", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-catalog-"));
+    seedComponent(tmpDir, "Badge", {
+      withDoc: true,
+      frontmatter: catalogFrontmatter("Badge", ["ui"], {
+        oneLiner: "Small label to annotate content.",
+      }),
+      body: VALID_BODY,
+    });
+    seedComponent(tmpDir, "pages/about", {
+      withDoc: true,
+      frontmatter: catalogFrontmatter("about", ["page"], {
+        oneLiner: "About page template.",
+      }),
+      body: VALID_BODY,
+    });
+    writeIndex(tmpDir, "# Components\n");
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("row contains component name", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    assert.ok(content.includes("Badge"), "component name missing");
+  });
+
+  it("row contains status", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    assert.ok(content.includes("stable"), "status missing");
+  });
+
+  it("row contains oneLiner", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    assert.ok(
+      content.includes("Small label to annotate content."),
+      "oneLiner missing",
+    );
+  });
+
+  it("top-level sidecar link uses ./Badge.md format", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    assert.ok(
+      content.includes("[Badge.md](./Badge.md)"),
+      "top-level link format wrong",
+    );
+  });
+
+  it("nested sidecar link uses ./pages/about.md format", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    assert.ok(
+      content.includes("[about.md](./pages/about.md)"),
+      "nested link format wrong",
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 24. Catalog: grouping by first tag, alphabetical sort
+// ---------------------------------------------------------------------------
+describe("catalog: grouping by first tag, alphabetical sort within group", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-catalog-"));
+    // card group: two components, alphabetical order should be Apple < Zebra
+    seedComponent(tmpDir, "Zebra", {
+      withDoc: true,
+      frontmatter: catalogFrontmatter("Zebra", ["card"]),
+      body: VALID_BODY,
+    });
+    seedComponent(tmpDir, "Apple", {
+      withDoc: true,
+      frontmatter: catalogFrontmatter("Apple", ["card"]),
+      body: VALID_BODY,
+    });
+    // layout group: multi-tag (layout, primitive) — grouped under first tag "layout"
+    seedComponent(tmpDir, "Row", {
+      withDoc: true,
+      frontmatter: catalogFrontmatter("Row", ["layout", "primitive"]),
+      body: VALID_BODY,
+    });
+    writeIndex(tmpDir, "# Components\n");
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 0", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 0, `stderr: ${result.stderr}`);
+  });
+
+  it("card group appears before layout group (alphabetical tag order)", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    const cardIdx = content.indexOf("### card");
+    const layoutIdx = content.indexOf("### layout");
+    assert.ok(cardIdx !== -1, "card group missing");
+    assert.ok(layoutIdx !== -1, "layout group missing");
+    assert.ok(
+      cardIdx < layoutIdx,
+      "card group should come before layout group",
+    );
+  });
+
+  it("within card group, Apple appears before Zebra (alphabetical component order)", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    const appleIdx = content.indexOf("Apple");
+    const zebraIdx = content.indexOf("Zebra");
+    assert.ok(appleIdx < zebraIdx, "Apple should come before Zebra");
+  });
+
+  it("Row appears only in layout group (first tag), no primitive group", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    assert.ok(content.includes("### layout"), "layout group missing");
+    assert.ok(
+      !content.includes("### primitive"),
+      "primitive group should not exist",
+    );
+    const layoutSection = content.slice(content.indexOf("### layout"));
+    assert.ok(layoutSection.includes("Row"), "Row missing from layout group");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 25. Catalog: local mode rewrites file and exits 0
+// ---------------------------------------------------------------------------
+describe("catalog: local mode rewrites file and exits 0", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-catalog-"));
+    seedComponent(tmpDir, "Card", {
+      withDoc: true,
+      frontmatter: catalogFrontmatter("Card", ["ui"]),
+      body: VALID_BODY,
+    });
+    writeIndex(tmpDir, "# Components\n\nNo catalog yet.\n");
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 0 in local mode", () => {
+    const result = runScript(tmpDir, [], {
+      env: { ...process.env, CI: undefined },
+    });
+    assert.equal(result.status, 0, `stderr: ${result.stderr}`);
+  });
+
+  it("stdout includes catalog updated notice", () => {
+    writeIndex(tmpDir, "# Components\n\nNo catalog yet.\n");
+    const result = runScript(tmpDir, [], {
+      env: { ...process.env, CI: undefined },
+    });
+    assert.match(result.stdout, /catalog updated/i);
+  });
+
+  it("CLAUDE.md is written with catalog block", () => {
+    writeIndex(tmpDir, "# Components\n\nNo catalog yet.\n");
+    runScript(tmpDir, [], { env: { ...process.env, CI: undefined } });
+    const content = readIndex(tmpDir);
+    assert.ok(
+      content.includes("<!-- CATALOG:START -->"),
+      "catalog block missing after local run",
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 26. Catalog: CI mode fails when catalog out of date
+// ---------------------------------------------------------------------------
+describe("catalog: CI mode fails when catalog out of date", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-catalog-"));
+    seedComponent(tmpDir, "Card", {
+      withDoc: true,
+      frontmatter: catalogFrontmatter("Card", ["ui"]),
+      body: VALID_BODY,
+    });
+    writeIndex(tmpDir, "# Components\n\nNo catalog here.\n");
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 1 when catalog out of date in CI", () => {
+    const result = runScript(tmpDir, [], {
+      env: { ...process.env, CI: "true" },
+    });
+    assert.equal(result.status, 1, `stdout: ${result.stdout}`);
+  });
+
+  it("stderr includes the fix command", () => {
+    const result = runScript(tmpDir, [], {
+      env: { ...process.env, CI: "true" },
+    });
+    assert.match(
+      result.stderr,
+      /Run pnpm sync:component-catalog locally and commit\./,
+    );
+  });
+
+  it("file on disk is unchanged after CI run", () => {
+    const before = readIndex(tmpDir);
+    runScript(tmpDir, [], { env: { ...process.env, CI: "true" } });
+    const after = readIndex(tmpDir);
+    assert.equal(after, before, "CI mode must not write to disk");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 27. Catalog: CI mode exits 0 when catalog is in sync
+// ---------------------------------------------------------------------------
+describe("catalog: CI mode exits 0 when catalog in sync", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-catalog-"));
+    seedComponent(tmpDir, "Card", {
+      withDoc: true,
+      frontmatter: catalogFrontmatter("Card", ["ui"]),
+      body: VALID_BODY,
+    });
+    // Run in local mode first to write the correct catalog
+    writeIndex(tmpDir, "# Components\n");
+    runScript(tmpDir, [], { env: { ...process.env, CI: undefined } });
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 0 when catalog is already in sync", () => {
+    const result = runScript(tmpDir, [], {
+      env: { ...process.env, CI: "true" },
+    });
+    assert.equal(result.status, 0, `stderr: ${result.stderr}`);
+  });
+
+  it("stdout includes catalog in sync", () => {
+    const result = runScript(tmpDir, [], {
+      env: { ...process.env, CI: "true" },
+    });
+    assert.match(result.stdout, /catalog in sync/i);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 28. Catalog: deprecated status renders distinguishably
+// ---------------------------------------------------------------------------
+describe("catalog: deprecated status renders distinguishably", () => {
+  let tmpDir;
+
+  before(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "comp-docs-catalog-"));
+    seedComponent(tmpDir, "OldCard", {
+      withDoc: true,
+      frontmatter: catalogFrontmatter("OldCard", ["ui"], {
+        status: "deprecated",
+      }),
+      body: VALID_BODY,
+    });
+    writeIndex(tmpDir, "# Components\n");
+  });
+
+  after(() => rmSync(tmpDir, { recursive: true, force: true }));
+
+  it("exits 0", () => {
+    const result = runScript(tmpDir);
+    assert.equal(result.status, 0, `stderr: ${result.stderr}`);
+  });
+
+  it("catalog row contains deprecated literally", () => {
+    runScript(tmpDir);
+    const content = readIndex(tmpDir);
+    assert.ok(
+      content.includes("deprecated"),
+      "deprecated status not in catalog row",
+    );
   });
 });

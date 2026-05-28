@@ -1,23 +1,48 @@
 #!/usr/bin/env node
 /**
- * Component sidecar documentation coverage check.
+ * Component sidecar documentation coverage check + catalog regeneration.
  *
- * Walks src/components (or --root) recursively and enforces that every
- * .astro file has a sibling .md sidecar. Also flags orphaned .md files
- * that have no matching .astro component.
+ * Three responsibilities, in order:
+ *   1. Coverage check — every .astro must have a sibling .md sidecar.
+ *   2. Schema check  — validate frontmatter keys, oneLiner length, status
+ *                      enum, and the seven required H2 sections.
+ *   3. Catalog sync  — regenerate the <!-- CATALOG:START --> / <!-- CATALOG:END -->
+ *                      block in <root>/CLAUDE.md from validated sidecar frontmatter.
  *
  * Usage:
- *   node scripts/check-component-docs.mjs [--root=<path>]
+ *   node scripts/check-component-docs.mjs [--root=<path>] [--strict]
  *
  * Exit codes:
- *   0 — all components have sidecars, no orphans
- *   1 — missing sidecars and/or orphaned .md files found
+ *   0 — all checks pass, catalog in sync (or updated in local mode)
+ *   1 — missing sidecars, schema errors, or catalog drift (in CI/strict mode)
  *
  * --root defaults to ./src/components
+ * --strict forces CI behavior (fail on catalog drift) regardless of $CI env var
+ *
+ * Catalog behavior:
+ *   - Local mode ($CI unset, --strict absent): catalog drift → write file in
+ *     place, exit 0. Acts as an autoformatter.
+ *   - CI / strict mode ($CI set or --strict): catalog drift → print diff,
+ *     print "Run pnpm sync:component-catalog locally and commit.", exit 1.
+ *     File on disk is NOT modified.
+ *
+ * Trailing newline policy: the catalog block is always appended with a
+ * leading "\n\n" when no markers exist. When markers exist, the region
+ * between them is replaced verbatim. The file's trailing newline after
+ * <!-- CATALOG:END --> is always a single "\n".
+ *
+ * Multi-tag components: the first tag is used for grouping. Subsequent tags
+ * are ignored for catalog placement (deferred-pain choice from the spec).
  */
 
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { basename, join, relative } from "node:path";
+import {
+  existsSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
+import { basename, dirname, join, relative } from "node:path";
 import matter from "gray-matter";
 import { styleText } from "node:util";
 
@@ -26,6 +51,8 @@ import { styleText } from "node:util";
 // ---------------------------------------------------------------------------
 const rootArg = process.argv.find((a) => a.startsWith("--root="));
 const root = rootArg ? rootArg.slice("--root=".length) : "./src/components";
+const strictMode = process.argv.includes("--strict");
+const ciMode = strictMode || Boolean(process.env.CI);
 
 // ---------------------------------------------------------------------------
 // Colour helpers — degrade gracefully when not a TTY
@@ -51,13 +78,19 @@ const REQUIRED_H2S = [
 // ---------------------------------------------------------------------------
 // Schema validator
 // ---------------------------------------------------------------------------
+
+/**
+ * @typedef {{ path: string, name: string, status: string, oneLiner: string, tags: string[] }} SidecarInfo
+ */
+
 /**
  * Validates a sidecar .md file's frontmatter and body shape.
- * Returns an array of human-readable error strings (empty = valid).
+ * Returns an object with errors (empty array = valid) and, when valid, the
+ * parsed sidecar info needed for catalog generation.
  *
  * @param {string} mdPath       - Absolute path to the .md file
  * @param {string} expectedName - Basename of the file without extension (e.g. "Button")
- * @returns {string[]}
+ * @returns {{ errors: string[], info: SidecarInfo | null }}
  */
 function validateSidecar(mdPath, expectedName) {
   /** @type {string[]} */
@@ -69,7 +102,7 @@ function validateSidecar(mdPath, expectedName) {
     parsed = matter(readFileSync(mdPath, "utf8"));
   } catch (e) {
     errors.push(`${label}: could not parse frontmatter — ${e.message}`);
-    return errors;
+    return { errors, info: null };
   }
 
   const data = parsed.data;
@@ -134,7 +167,153 @@ function validateSidecar(mdPath, expectedName) {
     }
   }
 
-  return errors;
+  /** @type {SidecarInfo | null} */
+  const info =
+    errors.length === 0
+      ? {
+          path: mdPath,
+          name: data.component,
+          status: data.status,
+          oneLiner: data.oneLiner,
+          tags: data.tags,
+        }
+      : null;
+
+  return { errors, info };
+}
+
+// ---------------------------------------------------------------------------
+// Catalog generator
+// ---------------------------------------------------------------------------
+
+const CATALOG_START = "<!-- CATALOG:START -->";
+const CATALOG_END = "<!-- CATALOG:END -->";
+
+/**
+ * Renders the catalog block (including markers) from a list of validated sidecars.
+ *
+ * Grouping: by the first tag in `tags`. Tags sorted alphabetically. Within each
+ * group, components sorted alphabetically by name.
+ *
+ * Link format: relative from the CLAUDE.md directory to each sidecar. Always
+ * prefixed with "./" for markdown-link compatibility.
+ *
+ * @param {SidecarInfo[]} sidecars
+ * @param {string} claudeDir - Directory containing CLAUDE.md (used for relative links)
+ * @returns {string} — the full block including markers, no trailing newline
+ */
+function renderCatalogBlock(sidecars, claudeDir) {
+  // Group by first tag
+  /** @type {Map<string, SidecarInfo[]>} */
+  const groups = new Map();
+  for (const s of sidecars) {
+    const tag = s.tags[0];
+    if (!groups.has(tag)) groups.set(tag, []);
+    groups.get(tag).push(s);
+  }
+
+  // Sort tag names alphabetically; sort components within each group alphabetically
+  const sortedTags = [...groups.keys()].sort((a, b) => a.localeCompare(b));
+  for (const tag of sortedTags) {
+    groups.get(tag).sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  const lines = [
+    CATALOG_START,
+    "Auto-generated by `scripts/check-component-docs.mjs`. Do not edit between markers.",
+    "",
+  ];
+
+  for (const tag of sortedTags) {
+    lines.push(`### ${tag}`, "");
+    lines.push("| Component | Status | One-liner | Docs |");
+    lines.push("| --- | --- | --- | --- |");
+    for (const s of groups.get(tag)) {
+      const rel = relative(claudeDir, s.path);
+      // Ensure link starts with "./" for markdown convention
+      const link = rel.startsWith(".") ? rel : `./${rel}`;
+      const filename = basename(s.path);
+      const docsCell = `[${filename}](${link})`;
+      lines.push(`| ${s.name} | ${s.status} | ${s.oneLiner} | ${docsCell} |`);
+    }
+    lines.push("");
+  }
+
+  lines.push(CATALOG_END);
+  return lines.join("\n");
+}
+
+/**
+ * Computes current and desired CLAUDE.md content given a catalog block.
+ *
+ * If markers exist: replace everything from CATALOG:START to CATALOG:END
+ * (inclusive) with the new block.
+ * If markers do not exist: append "\n\n<block>\n" to the existing content.
+ *
+ * @param {string} currentContent
+ * @param {string} catalogBlock - rendered block including markers
+ * @returns {string} — desired file content
+ */
+function applyBlock(currentContent, catalogBlock) {
+  const startIdx = currentContent.indexOf(CATALOG_START);
+  const endIdx = currentContent.indexOf(CATALOG_END);
+
+  if (startIdx !== -1 && endIdx !== -1) {
+    // Replace the region from CATALOG:START through CATALOG:END
+    const before = currentContent.slice(0, startIdx);
+    const after = currentContent.slice(endIdx + CATALOG_END.length);
+    return `${before}${catalogBlock}${after}`;
+  }
+
+  // No markers — append block with a leading blank line separator
+  const trimmed = currentContent.replace(/\n+$/, "");
+  return `${trimmed}\n\n${catalogBlock}\n`;
+}
+
+/**
+ * Generates a minimal line-by-line diff string (for CI output).
+ * Lines only present in `prev` are prefixed with "-"; only in `next` with "+".
+ *
+ * @param {string} prev
+ * @param {string} next
+ * @returns {string}
+ */
+function minimalDiff(prev, next) {
+  const prevLines = prev.split("\n");
+  const nextLines = next.split("\n");
+  const out = [];
+
+  // Simple approach: find the catalog block region in each and diff it
+  const prevStart = prevLines.findIndex((l) => l === CATALOG_START);
+  const nextStart = nextLines.findIndex((l) => l === CATALOG_START);
+  const prevEnd = prevLines.findIndex((l) => l === CATALOG_END);
+  const nextEnd = nextLines.findIndex((l) => l === CATALOG_END);
+
+  // If either has no catalog block, just show the would-be-written lines
+  if (nextStart === -1 || nextEnd === -1) {
+    return "(no catalog block in desired content — unexpected)";
+  }
+
+  if (prevStart === -1 || prevEnd === -1) {
+    out.push("(current file has no catalog block)");
+    out.push("Would write:");
+    for (const l of nextLines.slice(nextStart, nextEnd + 1)) {
+      out.push(`+ ${l}`);
+    }
+    return out.join("\n");
+  }
+
+  const prevBlock = prevLines.slice(prevStart, prevEnd + 1);
+  const nextBlock = nextLines.slice(nextStart, nextEnd + 1);
+
+  for (const l of prevBlock) {
+    if (!nextBlock.includes(l)) out.push(`- ${l}`);
+  }
+  for (const l of nextBlock) {
+    if (!prevBlock.includes(l)) out.push(`+ ${l}`);
+  }
+
+  return out.length > 0 ? out.join("\n") : "(no line-level diff)";
 }
 
 // ---------------------------------------------------------------------------
@@ -249,11 +428,17 @@ if (missing.length > 0 || orphans.length > 0) {
 /** @type {string[]} */
 const schemaErrors = [];
 
+/** @type {SidecarInfo[]} */
+const validSidecars = [];
+
 for (const key of docKeys) {
   const mdPath = docPaths.get(key);
   const name = basename(mdPath, ".md");
-  const fileErrors = validateSidecar(mdPath, name);
+  const { errors: fileErrors, info } = validateSidecar(mdPath, name);
   schemaErrors.push(...fileErrors);
+  if (info !== null) {
+    validSidecars.push(info);
+  }
 }
 
 if (schemaErrors.length > 0) {
@@ -267,7 +452,36 @@ if (schemaErrors.length > 0) {
 }
 
 // ---------------------------------------------------------------------------
-// All checks passed
+// Catalog sync — only runs if coverage + schema passed
 // ---------------------------------------------------------------------------
-process.stdout.write(green(`component docs: ${total} components OK\n`));
-process.exit(0);
+const claudeMdPath = join(root, "CLAUDE.md");
+const claudeDir = dirname(claudeMdPath);
+const catalogBlock = renderCatalogBlock(validSidecars, claudeDir);
+
+let currentContent = "";
+if (existsSync(claudeMdPath)) {
+  currentContent = readFileSync(claudeMdPath, "utf8");
+}
+
+const desiredContent = applyBlock(currentContent, catalogBlock);
+
+if (currentContent === desiredContent) {
+  process.stdout.write(green(`component docs: ${total} components OK\n`));
+  process.stdout.write("catalog in sync\n");
+  process.exit(0);
+}
+
+// Catalog is out of date
+if (ciMode) {
+  const diff = minimalDiff(currentContent, desiredContent);
+  process.stderr.write(`catalog drift detected:\n${diff}\n\n`);
+  process.stderr.write(`Run pnpm sync:component-catalog locally and commit.\n`);
+  process.exit(1);
+} else {
+  writeFileSync(claudeMdPath, desiredContent, "utf8");
+  process.stdout.write(green(`component docs: ${total} components OK\n`));
+  process.stdout.write(
+    green(`catalog updated: ${relative(process.cwd(), claudeMdPath)}\n`),
+  );
+  process.exit(0);
+}
