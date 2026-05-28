@@ -279,29 +279,20 @@ import Trust from "~/components/sections/Trust.astro";
 />
 ```
 
-### `ComparisonTable.astro`
+### `sections/Comparison.astro`
 
 Two-or-three-column feature comparison grid (e.g., "Us vs. Them" or "Free vs. Pro vs. Enterprise"). On desktop it renders as a semantic `<table>`; on mobile it collapses into per-column cards so no horizontal scrolling is required.
 
-| Prop      | Type                                                        | Required | Default | Notes                                                                                            |
-| --------- | ----------------------------------------------------------- | -------- | ------- | ------------------------------------------------------------------------------------------------ |
-| `columns` | `Array<{ name: string; highlight?: boolean }>`              | yes      | —       | Column headers. Set `highlight: true` on the column you want to call out.                        |
-| `rows`    | `Array<{ feature: string; values: (boolean \| string)[] }>` | yes      | —       | `values` must have the same length as `columns`. `boolean` renders icons; `string` renders text. |
-| `lang`    | `Locale`                                                    | no       | `"de"`  | Drives the screen-reader labels for Check/X icons (`comparison.yes` / `comparison.no`).          |
-| `class`   | `string`                                                    | no       | —       | Extra classes on the root `<div>`.                                                               |
-
-- `boolean` values: `true` → `<Check>` in `text-accent`; `false` → `<X>` in `text-muted`.
-- `string` values: rendered as plain text in `text-text`.
-- `highlight` column: `bg-accent/5` cells + `ring-1 ring-inset ring-accent/20` border on both desktop and mobile.
-- Feature/value strings come from the **caller** — no new i18n keys needed for content. The only template-owned keys are `comparison.feature`, `comparison.yes`, `comparison.no` (already in `de.json` / `en.json`).
+Props are typed by `ComparisonProps` in `~/types/sections`. Accepts the standard `SectionProps` (`eyebrow`, `headline`, `lede`, `tone`, `padding`, `align`) plus `columns`, `rows`, and `lang` (drives screen-reader labels via `comparison.yes` / `comparison.no`).
 
 ```astro
 ---
-import ComparisonTable from "~/components/ComparisonTable.astro";
+import Comparison from "~/components/sections/Comparison.astro";
 ---
 
-<ComparisonTable
+<Comparison
   lang={lang}
+  headline="Was uns unterscheidet"
   columns={[
     { name: "Basis" },
     { name: "Pro", highlight: true },

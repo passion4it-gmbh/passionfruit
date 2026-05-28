@@ -37,13 +37,7 @@ const { dropCap = false, measure = "default" } = Astro.props;
     }
   }
 
-  .has-drop-cap > p:first-of-type::first-letter {
-    font-size: var(--text-display);
-    float: inline-start;
-    line-height: 0.85;
-    margin-inline-end: 0.1em;
-    padding-block-start: 0.05em;
-    color: var(--color-text-heading);
-    font-weight: 700;
-  }
+  /* NOTE: .has-drop-cap rule lives in src/styles/typography.css because
+     slotted markdown <p> elements don't carry this component's scoped
+     data attribute. Keeping the class application here, the styling there. */
 </style>
