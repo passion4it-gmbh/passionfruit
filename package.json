@@ -22,7 +22,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "prebuild": "node scripts/check-bilingual.mjs",
+    "prebuild": "node scripts/check-bilingual.mjs && node scripts/check-component-docs.mjs --root=src/components",
     "build": "astro sync && pnpm lint && pnpm typecheck && astro build && node --env-file-if-exists=.env scripts/postbuild-headers.mjs",
     "preview": "astro preview",
     "typecheck": "astro check --minimumSeverity warning && tsc --noEmit",
