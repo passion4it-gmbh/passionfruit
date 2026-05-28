@@ -142,5 +142,11 @@
       "technologies": "Technologien",
       "languages": "Sprachen"
     }
+  },
+  "podcast": {
+    "play": "{title} auf Spotify abspielen"
+  },
+  "video": {
+    "play": "Video abspielen: {title}"
   }
 }

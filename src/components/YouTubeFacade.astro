@@ -1,0 +1,89 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import { Play } from "@lucide/astro";
+import { useTranslations, type Locale } from "~/i18n";
+
+interface Props {
+  videoId: string;
+  poster: ImageMetadata;
+  posterAlt: string;
+  title?: string;
+  lang?: Locale;
+  class?: string;
+}
+
+const {
+  videoId,
+  poster,
+  posterAlt,
+  title,
+  lang = "de",
+  class: className = "",
+} = Astro.props;
+const { t } = useTranslations(lang);
+const ariaLabel = t("video.play", { title: title ?? "" });
+---
+
+<div
+  class:list={[
+    "youtube-facade group relative block w-full overflow-hidden rounded-[var(--radius-card)]",
+    className,
+  ]}
+  data-youtube-facade
+  data-video-id={videoId}
+  data-title={title ?? ""}
+>
+  <button
+    type="button"
+    class="relative block w-full appearance-none cursor-pointer border-0 bg-transparent p-0"
+    aria-label={ariaLabel}
+    data-youtube-play
+  >
+    <div class="aspect-video w-full">
+      <Image
+        src={poster}
+        alt={posterAlt}
+        widths={[640, 960, 1280]}
+        sizes="(max-width: 768px) 100vw, 50vw"
+        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        loading="lazy"
+      />
+    </div>
+    <span
+      class="absolute inset-0 flex items-center justify-center bg-black/20 transition-colors duration-300 group-hover:bg-black/30"
+    >
+      <span
+        class="flex h-16 w-16 items-center justify-center rounded-full bg-red-600 text-white shadow-lg transition-transform duration-300 group-hover:scale-110 sm:h-20 sm:w-20"
+      >
+        <Play size={32} fill="currentColor" aria-hidden="true" />
+      </span>
+    </span>
+  </button>
+</div>
+
+<script>
+  const facades = document.querySelectorAll<HTMLElement>(
+    "[data-youtube-facade]",
+  );
+  facades.forEach((root) => {
+    const btn = root.querySelector<HTMLButtonElement>("[data-youtube-play]");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      const videoId = root.getAttribute("data-video-id");
+      if (!videoId) return;
+      const title = root.getAttribute("data-title") ?? "";
+      const iframe = document.createElement("iframe");
+      iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`;
+      iframe.title = title;
+      iframe.allow =
+        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+      iframe.allowFullscreen = true;
+      iframe.className = "absolute inset-0 h-full w-full";
+      const wrap = document.createElement("div");
+      wrap.className = "aspect-video w-full relative";
+      wrap.appendChild(iframe);
+      root.replaceChildren(wrap);
+    });
+  });
+</script>

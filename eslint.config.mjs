@@ -13,6 +13,7 @@ export default tseslint.config(
       "**/node_modules/**",
       "**/dist/**",
       "**/.astro/**",
+      ".claude/**",
       "**/*.js",
       "**/*.cjs",
       "**/*.mjs",

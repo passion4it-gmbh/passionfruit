@@ -8,6 +8,9 @@ node_modules
 .cache
 .release-please-manifest.json
 
+# Git worktrees created by Claude Code
+.claude
+
 # `define:vars` inline scripts trip up prettier-plugin-astro
 src/components/PostHogAnalytics.astro
 src/components/GoogleAnalytics.astro

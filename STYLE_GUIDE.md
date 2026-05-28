@@ -240,3 +240,55 @@ Icon container: `w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-cen
 | Blog detail hero | 3:2           | Faded behind dark gradient                      |
 | Team photo       | 4:3           | Object-cover object-top, hover zoom             |
 | OG image         | 1200×630      | Brand gradient + text                           |
+
+---
+
+## 10. Media embeds
+
+Third-party video and audio embeds load through **facade components** — a static poster + Play button, with the real iframe injected only on click. Two reasons: privacy (no third-party requests, cookies, or tracking pixels before user intent), and performance (the heavy iframe never touches the critical path).
+
+### Components
+
+| Component             | Use for                                                         | Embed target                                                     |
+| --------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `YouTubeFacade.astro` | YouTube videos                                                  | `youtube-nocookie.com/embed/{videoId}` (privacy-enhanced domain) |
+| `SpotifyFacade.astro` | Spotify episodes, tracks, shows, playlists, albums (via `kind`) | `open.spotify.com/embed/{kind}/{id}`                             |
+
+Both expect a **local poster image** as `ImageMetadata` (not a remote URL) so the LCP image is optimized by `astro:assets` and served from the same origin.
+
+### YouTube usage
+
+```astro
+---
+import poster from "~/assets/blog/intro-talk.jpg";
+import YouTubeFacade from "~/components/YouTubeFacade.astro";
+---
+
+<YouTubeFacade
+  videoId="dQw4w9WgXcQ"
+  poster={poster}
+  posterAlt="Speaker on stage, conference lighting"
+  title="Intro talk — Greenleaf 2026"
+  lang={lang}
+/>
+```
+
+### Spotify usage
+
+```astro
+<SpotifyFacade
+  episodeId="EPISODE_ID"
+  kind="episode"
+  title="Episode 12 — Bilingual marketing in practice"
+  cover={cover}
+  coverAlt="Podcast cover, microphone over green leaves"
+  lang={lang}
+/>
+```
+
+### Rules
+
+- **Always pass `lang`** — the aria-label is built from `t('video.play', { title })` or `t('podcast.play', { title })`. Adding a new locale means adding both keys in `de.json` and `en.json`.
+- **Never embed YouTube/Spotify directly** with `<iframe>`. The facades exist precisely to keep third-party connections gated behind user intent.
+- **CSP is scoped** to these two providers (`frame-src` for `youtube-nocookie.com` + `open.spotify.com`, `img-src` for `i.ytimg.com` + `i.scdn.co`, `media-src` for `*.scdn.co` in `public/_headers`). Embedding a new provider (Vimeo, SoundCloud, etc.) means updating the CSP **and** adding a new facade — don't loosen the policy to "fix" a blocked embed in DevTools.
+- **`youtube-nocookie.com` is non-negotiable** for YouTube. Don't switch back to `youtube.com/embed` — it sets cookies before consent.
