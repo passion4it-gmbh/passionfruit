@@ -1,0 +1,84 @@
+---
+/**
+ * Section — design-floor frame primitive.
+ *
+ * Wraps every page section with consistent tone (background + text color),
+ * vertical padding from the section spacing tokens, and a max-width container.
+ * Archetype components (AsymmetricHero, MagazineGrid, StickyStory, ...) compose
+ * with this; pages compose with archetypes.
+ */
+type Tone = "surface" | "elevated" | "dark" | "accent-wash";
+type Padding = "sm" | "md" | "lg";
+type Container = "narrow" | "default" | "wide" | "full";
+type AsTag = "section" | "article" | "aside" | "div";
+
+interface Props {
+  tone?: Tone;
+  padding?: Padding;
+  container?: Container;
+  as?: AsTag;
+  class?: string;
+}
+
+const {
+  tone = "surface" as const,
+  padding = "md" as const,
+  container = "default" as const,
+  as: Tag = "section",
+  class: className,
+} = Astro.props;
+
+const maxWidthByContainer: Record<Container, string> = {
+  narrow: "48rem",
+  default: "72rem",
+  wide: "80rem",
+  full: "none",
+};
+
+const containerKey: Container = container;
+const paddingVar = `var(--space-section-${padding})`;
+const maxWidth = maxWidthByContainer[containerKey];
+
+// Tone styles are emitted via the data-tone attribute so the cascade keeps
+// hex literals out of components. accent-wash uses color-mix to derive a
+// subtle accent tint from the @theme palette.
+---
+
+<Tag
+  data-tone={tone}
+  class:list={["pf-section", className]}
+  style={`padding-block: ${paddingVar};`}
+>
+  <div
+    class="pf-section__inner"
+    style={`max-width: ${maxWidth}; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 2rem);`}
+  >
+    <slot />
+  </div>
+</Tag>
+
+<style>
+  .pf-section[data-tone="surface"] {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .pf-section[data-tone="elevated"] {
+    background-color: var(--color-surface-elevated);
+    color: var(--color-text);
+  }
+
+  .pf-section[data-tone="dark"] {
+    background-color: var(--color-surface-dark);
+    color: var(--color-text-on-dark);
+  }
+
+  .pf-section[data-tone="accent-wash"] {
+    background-color: color-mix(
+      in srgb,
+      var(--color-accent) 8%,
+      var(--color-surface)
+    );
+    color: var(--color-text);
+  }
+</style>
