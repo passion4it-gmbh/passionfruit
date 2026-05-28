@@ -32,7 +32,7 @@ Added:
 - `scripts/og-render.ts` — wires discovery + template + satori + resvg into a `Buffer` producer.
 - `scripts/generate-og.ts` — CLI entry: arg parsing, font loading, orchestration, file writes, exit codes.
 - `scripts/generate-og.test.ts` — node:test suite, end-to-end via spawning the CLI.
-- `scripts/fixtures/og/de.json`, `scripts/fixtures/og/en.json`, `scripts/fixtures/og/global.css`, `scripts/fixtures/og/favicon.svg` — minimal fake project root for failure-path tests.
+- `scripts/fixtures/og/src/i18n/de.json`, `scripts/fixtures/og/src/i18n/en.json`, `scripts/fixtures/og/src/styles/global.css`, `scripts/fixtures/og/public/favicon.svg` — minimal fake project root for failure-path tests (mirrors the real project shape so `--project-root scripts/fixtures/og` works directly).
 
 Modified:
 
@@ -71,20 +71,20 @@ Removed:
 
 **Files:**
 
-- Create: `scripts/fixtures/og/de.json`
-- Create: `scripts/fixtures/og/en.json`
-- Create: `scripts/fixtures/og/global.css`
-- Create: `scripts/fixtures/og/favicon.svg`
+- Create: `scripts/fixtures/og/src/i18n/de.json`
+- Create: `scripts/fixtures/og/src/i18n/en.json`
+- Create: `scripts/fixtures/og/src/styles/global.css`
+- Create: `scripts/fixtures/og/public/favicon.svg`
 
 **Why:** Discovery-layer failure tests need a known-bad project root. The CLI tests use these to exercise missing-key paths and bad-input paths without polluting the real project files.
 
 **Steps:**
 
-- [ ] **2.1** Create `scripts/fixtures/og/de.json` and `scripts/fixtures/og/en.json` mirroring the real i18n structure but with only the `site` block (`site.name`, `site.tagline`). DE uses "Fixture DE" and "DE-tagline"; EN uses "Fixture EN" and "EN-tagline". Keep these strings short and recognizable in test failures.
+- [ ] **2.1** Create `scripts/fixtures/og/src/i18n/de.json` and `scripts/fixtures/og/src/i18n/en.json` mirroring the real i18n structure but with only the `site` block (`site.name`, `site.tagline`). DE uses "Fixture DE" and "DE-tagline"; EN uses "Fixture EN" and "EN-tagline". Keep these strings short and recognizable in test failures.
 
-- [ ] **2.2** Create `scripts/fixtures/og/global.css` containing a minimal `@theme` block with only `--color-accent: #ff0099;` — a deliberately non-brand color so test assertions can detect that the discovery layer actually read it.
+- [ ] **2.2** Create `scripts/fixtures/og/src/styles/global.css` containing a minimal `@theme` block with only `--color-accent: #ff0099;` — a deliberately non-brand color so test assertions can detect that the discovery layer actually read it.
 
-- [ ] **2.3** Create `scripts/fixtures/og/favicon.svg` — a tiny 32×32 SVG with a single distinguishable element (e.g., a red circle). The script will embed this; the test doesn't need to verify pixel content, only that the discovery layer returns the file contents as a string.
+- [ ] **2.3** Create `scripts/fixtures/og/public/favicon.svg` — a tiny 32×32 SVG with a single distinguishable element (e.g., a red circle). The script will embed this; the test doesn't need to verify pixel content, only that the discovery layer returns the file contents as a string.
 
 - [ ] **2.4** Commit: `test(og): add fixtures for og generator tests`.
 
