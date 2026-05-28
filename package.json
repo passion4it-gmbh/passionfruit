@@ -4,7 +4,7 @@
   "description": "Everyone can cook. Professional websites for everyone, powered by Claude Code.",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "pnpm@11.4.0",
   "author": {
     "name": "PASSION4IT GmbH",
     "email": "info@passion4it.de",
