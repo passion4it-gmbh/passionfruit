@@ -5,5 +5,5 @@ dist/
 .cache/
 .DS_Store
 *.log
-CLAUDE.md.local
+CLAUDE.local.md
 .claude/worktrees/
