@@ -97,6 +97,46 @@ After creating a new page, also:
 
 ---
 
+## Careers (Job Postings)
+
+**Path:** `src/content/careers/{de,en}/<slug>.md`
+
+**Important:** The template uses a plain markdown `glob` loader — there is no Personio or other HR-platform dependency. Downstream users can add job postings directly as markdown files without any external service or API key.
+
+**Frontmatter:**
+
+```yaml
+---
+translationKey: senior-frontend-developer # Same value in both locale files
+title: "Senior Frontend Developer"
+location: "Berlin, Germany (Hybrid)"
+department: "Engineering" # Optional
+employmentType: "full-time" # full-time | part-time | contractor | internship
+seniority: "Senior" # Optional
+applyUrl: "https://your-ats.example.com/apply/job-id"
+summary: "One-paragraph summary shown on the card and at the top of the detail page."
+postedAt: 2026-05-01
+closesAt: 2026-07-31 # Optional — application deadline
+salaryMin: 75000 # Optional — Schema.org baseSalary
+salaryMax: 95000 # Optional
+salaryCurrency: "EUR" # Default EUR
+tags: ["TypeScript", "React"] # Optional, default []
+---
+```
+
+The **body** of the markdown file is the long-form job description, rendered as prose on the detail page. Use standard markdown headings and bullet lists.
+
+Always create both `de/<slug>.md` and `en/<slug>.md` with a matching `translationKey`.
+
+**Routing:**
+
+- Index: `/karriere/` (DE) and `/en/careers/` (EN)
+- Detail: `/karriere/<slug>/` (DE) and `/en/careers/<slug>/` (EN)
+
+**Structured data:** Each detail page automatically emits a Schema.org `JobPosting` JSON-LD block via `buildJobPostingLd` in `src/lib/structured-data.ts`. `employmentType` is mapped to Schema.org values (`FULL_TIME`, `PART_TIME`, `CONTRACTOR`, `INTERN`).
+
+---
+
 ## Translations (i18n)
 
 **Files:** `src/i18n/de.json` and `src/i18n/en.json`

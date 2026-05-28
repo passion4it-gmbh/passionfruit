@@ -266,3 +266,53 @@ import ComparisonTable from "~/components/ComparisonTable.astro";
   ]}
 />
 ```
+
+## Careers
+
+Components for the job postings collection. No external HR-platform dependency — content is plain markdown. The collection uses the same `glob` loader and bilingual `translationKey` pattern as `blog` and `team`.
+
+### `CareerCard.astro`
+
+Card representation of a job opening. Used on the careers index page to list all open positions.
+
+| Prop    | Type                         | Required | Notes                                                       |
+| ------- | ---------------------------- | -------- | ----------------------------------------------------------- |
+| `entry` | `CollectionEntry<"careers">` | yes      | A careers collection entry from `getCollection("careers")`. |
+| `lang`  | `Locale`                     | yes      | Drives i18n labels and link locale prefix.                  |
+
+The card links to `/{careersIndexSlug}/{entrySlug}/` (or `/en/{slug}/` for EN). It shows an employment-type badge, the job title, a two-line summary, location, and department.
+
+```astro
+---
+import { getCollection } from "astro:content";
+import CareerCard from "~/components/CareerCard.astro";
+
+const jobs = await getCollection("careers");
+const deJobs = jobs.filter((j) => j.id.startsWith("de/"));
+---
+
+{deJobs.map((job) => <CareerCard entry={job} lang="de" />)}
+```
+
+### `CareerPost.astro`
+
+Full job posting detail view. Renders a dark hero with metadata (location, employment type, department, posted date, optional deadline), the markdown body, and an "Apply" CTA that opens `applyUrl` in a new tab.
+
+| Prop    | Type                         | Required | Notes                          |
+| ------- | ---------------------------- | -------- | ------------------------------ |
+| `entry` | `CollectionEntry<"careers">` | yes      | The careers entry to render.   |
+| `lang`  | `Locale`                     | yes      | Drives i18n strings and dates. |
+
+Used by `src/pages/[...path].astro` when `props.collection === "careers"`. The page also emits a `JobPosting` JSON-LD via `StructuredData.astro` (built by `buildJobPostingLd` in `src/lib/structured-data.ts`).
+
+### `src/components/pages/careers-index.astro`
+
+The careers index page component, consumed by the static-page routing in `page-registry.ts`. Lists all jobs for the current locale, sorted by `postedAt` descending.
+
+Page key: `careers-index`. Bilingual slugs: `{ de: "karriere", en: "careers" }`.
+
+### `buildJobPostingLd` (in `src/lib/structured-data.ts`)
+
+Builds a Schema.org-valid `JobPosting` JSON-LD object for a careers entry. Maps `employmentType` enum values to Schema.org constants (`FULL_TIME`, `PART_TIME`, `CONTRACTOR`, `INTERN`). Includes `baseSalary` when `salaryMin` or `salaryMax` is set; includes `validThrough` when `closesAt` is set.
+
+Emitted via `<StructuredData type="JobPosting" data={jobPostingLd} />` in `[...path].astro`.
