@@ -222,7 +222,7 @@
 }
 
 /* ============================================
-   REDUCED MOTION
+   REDUCED MOTION (legacy + global)
    ============================================ */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -237,5 +237,188 @@
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
+  }
+}
+
+/* ============================================
+   VIEW TRANSITIONS (Astro ClientRouter)
+
+   Crossfade + 8px translateY on <main>, header
+   stays put. Honours reduced-motion via the
+   media query just above (durations are clamped
+   site-wide to ~instant).
+   ============================================ */
+
+@view-transition {
+  navigation: auto;
+}
+
+.pf-vt-main {
+  view-transition-name: page-main;
+}
+
+.pf-vt-header {
+  view-transition-name: page-header;
+}
+
+@keyframes pf-vt-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes pf-vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+::view-transition-old(page-main) {
+  animation: pf-vt-out var(--duration-base) var(--ease-standard) both;
+}
+
+::view-transition-new(page-main) {
+  animation: pf-vt-in var(--duration-base) var(--ease-standard) both;
+}
+
+/* Header is sticky and shared across pages — don't animate it. */
+::view-transition-old(page-header),
+::view-transition-new(page-header) {
+  animation: none;
+}
+
+/* ============================================
+   MOTION PRIMITIVE
+   <Motion> + sugar (FadeUp, FadeIn) consume
+   these rules via data-motion-* attributes.
+
+   IntersectionObserver in Motion.astro toggles
+   `data-motion-visible="true"` when the element
+   crosses its configured threshold. CSS handles
+   the entrance state per `effect`.
+   ============================================ */
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-motion-effect] {
+    transition:
+      opacity var(--duration-base) var(--ease-standard),
+      transform var(--duration-base) var(--ease-standard);
+    will-change: opacity, transform;
+  }
+
+  [data-motion-effect="fade"] {
+    opacity: 0;
+  }
+  [data-motion-effect="fade-up"] {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  [data-motion-effect="fade-down"] {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  [data-motion-effect="scale-in"] {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  [data-motion-duration="instant"] {
+    transition-duration: var(--duration-instant);
+  }
+  [data-motion-duration="quick"] {
+    transition-duration: var(--duration-quick);
+  }
+  [data-motion-duration="base"] {
+    transition-duration: var(--duration-base);
+  }
+  [data-motion-duration="slow"] {
+    transition-duration: var(--duration-slow);
+  }
+
+  [data-motion-effect][data-motion-visible="true"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Reduced motion: skip the animation entirely. The element renders in
+   its target state on first paint — no fade, no translate. */
+@media (prefers-reduced-motion: reduce) {
+  [data-motion-effect] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ============================================
+   MICRO-INTERACTIONS
+
+   Press feedback on buttons, hover lift on
+   cards, focus glow on inputs. All gated on
+   prefers-reduced-motion: no-preference so
+   users who opt out see static surfaces.
+   ============================================ */
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn,
+  button[type="submit"],
+  button[type="button"] {
+    transition: transform var(--duration-instant) var(--ease-standard);
+  }
+
+  .btn:active,
+  button[type="submit"]:active,
+  button[type="button"]:active {
+    transform: translateY(1px);
+  }
+
+  .card,
+  [class*="-card"] {
+    transition:
+      transform var(--duration-base) var(--ease-standard),
+      box-shadow var(--duration-base) var(--ease-standard),
+      border-color var(--duration-base) var(--ease-standard);
+  }
+
+  .card:hover,
+  [class*="-card"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -8px var(--color-shadow-lift);
+  }
+
+  input,
+  textarea,
+  select {
+    transition:
+      box-shadow var(--duration-quick) var(--ease-standard),
+      border-color var(--duration-quick) var(--ease-standard);
+  }
+}
+
+/* ============================================
+   STICKY STORY MOTION ADAPTER
+
+   Copy column dims to 40% and brightens to 100%
+   as the matching media chapter enters the
+   viewport. The IntersectionObserver lives in
+   StickyStory.astro and toggles data-active on
+   the corresponding .pf-story__chapter-copy.
+
+   Under reduced motion, no dim — every chapter
+   reads at full opacity and the copy column is
+   NOT sticky (set inside StickyStory.astro).
+   ============================================ */
+
+@media (prefers-reduced-motion: no-preference) {
+  .pf-story__chapter-copy {
+    opacity: 0.4;
+    transition: opacity var(--duration-base) var(--ease-standard);
+  }
+
+  .pf-story__chapter-copy[data-active="true"] {
+    opacity: 1;
   }
 }

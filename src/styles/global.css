@@ -118,6 +118,10 @@
   --color-overlay-scrim-mid: rgba(0, 0, 0, 0.25);
   --color-overlay-scrim-clear: rgba(0, 0, 0, 0);
 
+  /* Card hover lift shadow — used by the standardized card micro-interaction
+     in motion.css. Tokenised so dark-mode work can swap it. */
+  --color-shadow-lift: rgba(0, 0, 0, 0.15);
+
   /* 12-col grid utility tokens */
   --grid-cols-12: repeat(12, minmax(0, 1fr));
   --grid-gap-sm: var(--space-2);

@@ -1,0 +1,64 @@
+/* ============================================================
+   STATE — skeletons, empty states, error surfaces
+   ============================================================ */
+
+/* Skeleton shimmer keyframes: gated to motion-safe block below. */
+@keyframes pf-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@layer components {
+  .pf-skeleton {
+    display: block;
+    background: linear-gradient(
+      90deg,
+      var(--color-skeleton-base) 0%,
+      var(--color-skeleton-shimmer) 50%,
+      var(--color-skeleton-base) 100%
+    );
+    background-size: 200% 100%;
+    border-radius: var(--radius-md);
+  }
+
+  /* Variant modifiers — sizing/shape only, no animation concerns. */
+  .pf-skeleton--text {
+    height: var(--leading-body);
+    border-radius: var(--radius-sm);
+  }
+
+  .pf-skeleton--card {
+    aspect-ratio: 4 / 3;
+    height: auto;
+    border-radius: var(--radius-card);
+  }
+
+  .pf-skeleton--image {
+    border-radius: var(--radius-md);
+  }
+
+  .pf-skeleton--circle {
+    border-radius: 9999px;
+    aspect-ratio: 1;
+  }
+
+  /* Stacked text lines — one shimmer per line, small visual gap. */
+  .pf-skeleton-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+  }
+}
+
+/* Animation only when the user hasn't asked for less motion.
+   Under reduced-motion the skeleton remains as a static gradient stripe —
+   structure still aids comprehension. */
+@media (prefers-reduced-motion: no-preference) {
+  .pf-skeleton {
+    animation: pf-skeleton-shimmer 1600ms linear infinite;
+  }
+}
