@@ -23,10 +23,10 @@ interface Props {
 const { entry, lang } = Astro.props;
 const { t } = useTranslations(lang);
 
-const eventsIndexSlug =
-  findPageByKey("events-index")?.slug[lang] ??
-  (lang === "de" ? "veranstaltungen" : "events");
-const eventsPath = getLocalizedPath(eventsIndexSlug, lang);
+const eventsPath = getLocalizedPath(
+  findPageByKey("events-index")!.slug[lang],
+  lang,
+);
 
 const now = new Date();
 const isPast = entry.data.startsAt < now;
@@ -220,7 +220,7 @@ const { Content } = await render(entry);
   <!-- Registration CTA -->
   {
     entry.data.registrationUrl && !isPast && (
-      <div class="max-w-3xl mx-auto mt-12 pt-8 border-t border-[var(--color-border)]">
+      <div class="max-w-3xl mx-auto mt-12 pt-8 border-t border-border">
         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <Button
             href={entry.data.registrationUrl}
@@ -245,7 +245,7 @@ const { Content } = await render(entry);
 
   {
     (!entry.data.registrationUrl || isPast) && (
-      <div class="max-w-3xl mx-auto mt-12 pt-8 border-t border-[var(--color-border)]">
+      <div class="max-w-3xl mx-auto mt-12 pt-8 border-t border-border">
         <a
           href={eventsPath}
           class="inline-flex items-center gap-1.5 text-muted text-sm hover:text-accent transition-colors duration-150"

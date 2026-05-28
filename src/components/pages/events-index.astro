@@ -75,7 +75,12 @@ const filteredEvents = allEvents
   <!-- Filter + Events grid -->
   <section class="py-20 md:py-28">
     <div class="container">
-      <EventsFilter {lang} {selected} baseUrl={Astro.url.pathname} />
+      <EventsFilter
+        entries={allEvents}
+        {lang}
+        {selected}
+        baseUrl={Astro.url.pathname}
+      />
 
       {
         filteredEvents.length === 0 ? (

@@ -349,12 +349,12 @@ Consumed by `src/pages/[...path].astro` — do not instantiate directly in page 
 
 Thin wrapper around `CollectionFilter`. Derives `category` and `tag` facets with counts from the entries the caller passes in, then delegates rendering to `CollectionFilter`. The caller is responsible for reading the collection once and passing the locale-filtered slice — `EventsFilter` does **not** call `getCollection` internally.
 
-| Prop       | Type                            | Required | Notes                                                              |
-| ---------- | ------------------------------- | -------- | ------------------------------------------------------------------ |
-| `entries`  | `CollectionEntry<"events">[]`   | yes      | Locale-filtered events; read the collection once in the index page. |
-| `lang`     | `Locale`                        | yes      | Drives i18n strings for facet labels.                              |
-| `selected` | `Record<string, string[]>`      | yes      | Active filter values keyed by facet key.                           |
-| `baseUrl`  | `string`                        | yes      | Pass `Astro.url.pathname`.                                         |
+| Prop       | Type                          | Required | Notes                                                               |
+| ---------- | ----------------------------- | -------- | ------------------------------------------------------------------- |
+| `entries`  | `CollectionEntry<"events">[]` | yes      | Locale-filtered events; read the collection once in the index page. |
+| `lang`     | `Locale`                      | yes      | Drives i18n strings for facet labels.                               |
+| `selected` | `Record<string, string[]>`    | yes      | Active filter values keyed by facet key.                            |
+| `baseUrl`  | `string`                      | yes      | Pass `Astro.url.pathname`.                                          |
 
 ```astro
 ---

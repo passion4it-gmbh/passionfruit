@@ -16,9 +16,7 @@ const { entry, lang } = Astro.props;
 const { t } = useTranslations(lang);
 
 const entrySlug = entry.id.slice(entry.id.indexOf("/") + 1);
-const parentSlug =
-  findPageByKey("events-index")?.slug[lang] ??
-  (lang === "de" ? "veranstaltungen" : "events");
+const parentSlug = findPageByKey("events-index")!.slug[lang];
 const href = getLocalizedPath(`${parentSlug}/${entrySlug}`, lang);
 
 const formattedDate = formatDate(entry.data.startsAt, lang);

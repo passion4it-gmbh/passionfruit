@@ -129,6 +129,8 @@ export function buildEventLd(
         };
 
   return {
+    "@context": "https://schema.org/",
+    "@type": "Event",
     name: entry.data.title,
     description: entry.data.summary,
     startDate: entry.data.startsAt.toISOString(),
