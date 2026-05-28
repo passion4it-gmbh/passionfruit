@@ -73,6 +73,10 @@ const careers = defineCollection({
     postedAt: z.coerce.date(),
     closesAt: z.coerce.date().optional(),
     seniority: z.string().optional(),
+    /** ISO 3166-1 alpha-2 country code — required for Schema.org JobPosting validation. */
+    country: z.string().default("DE"),
+    /** True for fully remote or remote-friendly roles. Adds jobLocationType: "TELECOMMUTE". */
+    remote: z.boolean().default(false),
     salaryMin: z.number().optional(),
     salaryMax: z.number().optional(),
     salaryCurrency: z.string().default("EUR"),

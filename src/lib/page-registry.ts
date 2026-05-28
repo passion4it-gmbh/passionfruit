@@ -238,11 +238,12 @@ export async function getAlternateCollectionSlug(
   translationKey: string,
 ): Promise<string | undefined> {
   const otherLang: Locale = currentLang === "de" ? "en" : "de";
-  const rawEntries = await getCollection(collectionName as "blog");
-  const entries = rawEntries as {
-    id: string;
-    data: { translationKey: string };
-  }[];
+  // getCollection is overloaded per collection name; cast through unknown to
+  // extract the subset we actually use (id + data.translationKey).
+  const rawEntries = (await getCollection(
+    collectionName as Parameters<typeof getCollection>[0],
+  )) as unknown as { id: string; data: { translationKey: string } }[];
+  const entries = rawEntries;
   const paired = entries.find((e) => {
     return (
       e.data.translationKey === translationKey &&

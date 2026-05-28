@@ -6,6 +6,8 @@ department: "Engineering"
 employmentType: "full-time"
 seniority: "Senior"
 applyUrl: "https://example.com/apply/senior-frontend"
+country: "DE"
+remote: false
 summary: "We're looking for an experienced frontend developer to join our engineering team and build high-performance web applications for our clients."
 postedAt: 2026-05-01
 salaryMin: 75000

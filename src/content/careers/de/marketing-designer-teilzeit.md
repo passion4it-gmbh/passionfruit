@@ -6,6 +6,8 @@ department: "Design"
 employmentType: "part-time"
 seniority: "Junior"
 applyUrl: "https://example.com/apply/marketing-designer"
+country: "DE"
+remote: true
 summary: "Du liebst es, visuelle Inhalte zu gestalten, die Menschen begeistern? Wir suchen eine kreative Designer:in (20–30h/Woche), die unsere Marke mit konsistenten, hochwertigen Visuals stärkt."
 postedAt: 2026-05-10
 closesAt: 2026-07-31

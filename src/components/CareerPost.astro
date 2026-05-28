@@ -97,11 +97,11 @@ const formattedClosesAt = entry.data.closesAt
         {formattedPostedAt}
       </time>
       {
-        formattedClosesAt && (
+        entry.data.closesAt && formattedClosesAt && (
           <>
             {" "}
             &bull; {t("careers.closesOn")}
-            <time datetime={entry.data.closesAt!.toISOString().split("T")[0]}>
+            <time datetime={entry.data.closesAt.toISOString().split("T")[0]}>
               {formattedClosesAt}
             </time>
           </>
@@ -130,6 +130,7 @@ const formattedClosesAt = entry.data.closesAt
       >
         {t("careers.apply")}
         <ArrowRight class="w-4 h-4 ml-2" aria-hidden="true" />
+        <span class="sr-only">{t("careers.opensInNewTab")}</span>
       </Button>
       <a
         href={backHref}

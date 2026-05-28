@@ -6,6 +6,8 @@ department: "Engineering"
 employmentType: "full-time"
 seniority: "Senior"
 applyUrl: "https://example.com/apply/senior-frontend"
+country: "DE"
+remote: false
 summary: "Wir suchen eine erfahrene Frontend-Entwickler:in, die unser Engineering-Team verstärkt und anspruchsvolle, performante Web-Applikationen für unsere Kunden baut."
 postedAt: 2026-05-01
 salaryMin: 75000

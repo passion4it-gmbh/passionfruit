@@ -2,7 +2,7 @@ pre-commit:
   parallel: true
   commands:
     lint-staged:
-      run: node_modules/.bin/lint-staged
+      run: pnpm lint-staged
     bilingual-check:
       run: node scripts/check-bilingual.mjs
       glob: "src/content/**/*.md"
@@ -10,4 +10,4 @@ pre-commit:
 commit-msg:
   commands:
     commitlint:
-      run: node_modules/.bin/commitlint --edit {1}
+      run: pnpm commitlint --edit {1}

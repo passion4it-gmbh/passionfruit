@@ -54,7 +54,7 @@ export function buildJobPostingLd(
 ): Record<string, unknown> {
   const d = entry.data;
   const ld: Record<string, unknown> = {
-    "@context": "https://schema.org",
+    "@context": "https://schema.org/",
     "@type": "JobPosting",
     title: d.title,
     description: d.summary,
@@ -72,12 +72,23 @@ export function buildJobPostingLd(
       address: {
         "@type": "PostalAddress",
         addressLocality: d.location,
+        addressCountry: d.country,
       },
     },
     url: canonicalUrl,
-    directApply: false,
-    applyURL: d.applyUrl,
+    potentialAction: {
+      "@type": "ApplyAction",
+      target: d.applyUrl,
+    },
   };
+
+  if (d.remote) {
+    ld["jobLocationType"] = "TELECOMMUTE";
+    ld["applicantLocationRequirements"] = {
+      "@type": "Country",
+      name: d.country,
+    };
+  }
 
   if (d.closesAt) {
     ld["validThrough"] = d.closesAt.toISOString().split("T")[0];
