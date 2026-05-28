@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
 import { Image } from "astro:assets";
 import type { Locale } from "~/i18n";
+import Prose from "~/components/Prose.astro";
 import "~/styles/blog-prose.css";
 
 interface Props {
@@ -34,7 +35,9 @@ const { Content } = await render(entry);
     </h1>
 
     <article class="blog-prose">
-      <Content />
+      <Prose>
+        <Content />
+      </Prose>
     </article>
   </div>
 </div>
