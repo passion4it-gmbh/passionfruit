@@ -265,9 +265,10 @@ function applyBlock(currentContent, catalogBlock) {
     return `${before}${catalogBlock}${after}`;
   }
 
-  // No markers — append block with a leading blank line separator
+  // No markers — append block; omit separator when file is empty
   const trimmed = currentContent.replace(/\n+$/, "");
-  return `${trimmed}\n\n${catalogBlock}\n`;
+  const prefix = trimmed ? `${trimmed}\n\n` : "";
+  return `${prefix}${catalogBlock}\n`;
 }
 
 /**
@@ -436,9 +437,7 @@ for (const key of docKeys) {
   const name = basename(mdPath, ".md");
   const { errors: fileErrors, info } = validateSidecar(mdPath, name);
   schemaErrors.push(...fileErrors);
-  if (info !== null) {
-    validSidecars.push(info);
-  }
+  validSidecars.push(info);
 }
 
 if (schemaErrors.length > 0) {
