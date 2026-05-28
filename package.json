@@ -28,7 +28,7 @@
     "typecheck": "astro check --minimumSeverity warning && tsc --noEmit",
     "lint": "eslint --fix --cache --cache-location .cache/eslint . && prettier --write .",
     "lint:a11y": "eslint --config eslint.astro.config.mjs 'src/**/*.astro'",
-    "test": "node --test scripts/check-bilingual.test.mjs && pnpm test:og",
+    "test": "node --test scripts/check-bilingual.test.mjs scripts/check-component-docs.test.mjs && pnpm test:og",
     "test:og": "tsx --test scripts/generate-og.test.ts",
     "check:spelling": "cspell \"src/content/**/*.md\" --no-progress",
     "check:links": "linkinator ./dist --recurse --skip \"^(?!http://localhost)\" --verbosity error",
