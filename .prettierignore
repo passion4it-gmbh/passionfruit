@@ -14,3 +14,4 @@ node_modules
 # `define:vars` inline scripts trip up prettier-plugin-astro
 src/components/PostHogAnalytics.astro
 src/components/GoogleAnalytics.astro
+src/components/GTMAnalytics.astro

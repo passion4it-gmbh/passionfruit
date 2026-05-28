@@ -73,15 +73,21 @@ const isEnabled = Boolean(GTM_CONTAINER_ID);
 
 	window.addEventListener("passionfruit:consent-changed", function (event) {
 		var detail = event.detail;
-		if (detail && detail.analytics) {
-			initGTM();
-		} else if (window.__gtmLoaded && window.gtag) {
-			// Consent revoked — update consent mode so tags inside GTM stop firing.
+		var analyticsGranted = Boolean(detail && detail.analytics);
+
+		// Always push the consent update first — this covers revoke→re-grant cycles
+		// where the script is already loaded but analytics_storage must be re-granted.
+		if (window.gtag) {
 			window.gtag("consent", "update", {
-				analytics_storage: "denied",
-				functionality_storage: "denied",
-				security_storage: "denied",
+				analytics_storage: analyticsGranted ? "granted" : "denied",
+				functionality_storage: analyticsGranted ? "granted" : "denied",
+				security_storage: analyticsGranted ? "granted" : "denied",
 			});
+		}
+
+		// Load the GTM script if consent was just granted and it isn't loaded yet.
+		if (analyticsGranted && !window.__gtmLoaded) {
+			initGTM();
 		}
 	});
 
