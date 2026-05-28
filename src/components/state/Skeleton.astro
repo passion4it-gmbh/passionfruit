@@ -1,0 +1,78 @@
+---
+/**
+ * Skeleton — content-shape loading placeholder.
+ *
+ * Variants match real content silhouettes (line, card, image, circle) rather
+ * than generic gray bars. The shimmer animation is gated on
+ * `prefers-reduced-motion: no-preference`; otherwise the gradient renders
+ * static so the structural cue remains.
+ */
+type Variant = "text" | "card" | "image" | "circle";
+
+interface Props {
+  variant: Variant;
+  /** Only used when variant === "text". Default 1 line. */
+  lines?: number;
+  /** Optional CSS length applied as inline style (e.g. "200px", "50%"). */
+  width?: string;
+  /** Optional CSS length applied as inline style. */
+  height?: string;
+  /** Extra classes on the wrapper. */
+  class?: string;
+}
+
+const {
+  variant,
+  lines = 1,
+  width,
+  height,
+  class: className = "",
+} = Astro.props;
+
+const variantClass = `pf-skeleton--${variant}`;
+
+function buildStyle(): string | undefined {
+  const parts: string[] = [];
+  if (width !== undefined) parts.push(`width: ${width}`);
+  if (height !== undefined) parts.push(`height: ${height}`);
+  return parts.length > 0 ? parts.join("; ") : undefined;
+}
+
+const inlineStyle = buildStyle();
+const isMultiLineText = variant === "text" && lines > 1;
+const lineCount = Math.max(1, Math.floor(lines));
+---
+
+<div
+  role="status"
+  aria-label="Loading"
+  aria-live="polite"
+  aria-busy="true"
+  class:list={["pf-skeleton-root", className]}
+>
+  {
+    isMultiLineText ? (
+      <div class="pf-skeleton-stack" style={inlineStyle}>
+        {Array.from({ length: lineCount }, (_, i) => {
+          // Last line slightly shorter — feels more like real prose.
+          const isLast = i === lineCount - 1;
+          const lineStyle = isLast ? "width: 70%;" : undefined;
+          return (
+            <div
+              class:list={["pf-skeleton", variantClass]}
+              style={lineStyle}
+              aria-hidden="true"
+            />
+          );
+        })}
+      </div>
+    ) : (
+      <div
+        class:list={["pf-skeleton", variantClass]}
+        style={inlineStyle}
+        aria-hidden="true"
+      />
+    )
+  }
+  <span class="sr-only">Loading…</span>
+</div>
