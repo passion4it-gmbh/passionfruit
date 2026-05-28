@@ -10,6 +10,107 @@ This directory holds Astro components shared across pages. **One component per c
 - **i18n:** `useTranslations(locale)` from `~/i18n`. Adding a new string means updating both `src/i18n/de.json` and `src/i18n/en.json` in the same commit.
 - **Images:** `<Image>` from `astro:assets`. Alt text is mandatory (ESLint enforces `jsx-a11y/alt-text` as error).
 
+## `CollectionFilter.astro`
+
+Generic taxonomy-driven filter bar. Any collection page (blog, events, case studies, careers…) passes its facet data; the component renders anchor-link chips that update URL query params. The page re-renders server-side with the filtered collection — **no client JS required for core filtering**.
+
+### Props
+
+| Prop         | Type                           | Required | Default             | Notes                                                                      |
+| ------------ | ------------------------------ | -------- | ------------------- | -------------------------------------------------------------------------- |
+| `facets`     | `Facet[]`                      | yes      | —                   | Taxonomy groups; each becomes a row of chips.                              |
+| `selected`   | `Record<string, string[]>`     | yes      | —                   | Active selections keyed by facet key, built from `Astro.url.searchParams`. |
+| `lang`       | `Locale`                       | yes      | —                   | Drives i18n strings.                                                       |
+| `baseUrl`    | `string`                       | yes      | —                   | Pass `Astro.url.pathname`. Used as the base for all filter link hrefs.     |
+| `tone`       | `"on-light" \| "on-dark"`      | no       | `"on-light"`        | Adjusts idle chip appearance for light vs dark page sections.              |
+| `resetLabel` | `string`                       | no       | `t('filter.reset')` | Override the reset link text.                                              |
+| `class`      | `string`                       | no       | `""`                | Extra classes on the root `<nav>`.                                         |
+
+`Facet` shape:
+
+```ts
+interface Facet {
+  key: string; // query param name, e.g. "tag"
+  label: string; // group heading shown before chips
+  values: FacetValue[];
+}
+
+interface FacetValue {
+  key: string; // URL-safe value, e.g. "ai"
+  label: string; // user-visible label
+  count?: number; // optional item count shown in parens
+}
+```
+
+### How a page builds `facets` and `selected`
+
+```astro
+---
+import { getCollection } from "astro:content";
+import CollectionFilter from "~/components/CollectionFilter.astro";
+import type { Facet } from "~/components/CollectionFilter.astro";
+import type { Locale } from "~/i18n";
+
+// lang comes from the page's getStaticPaths or a parent layout
+const lang = (Astro.params.lang ?? "de") as Locale;
+const selectedTags = Astro.url.searchParams.getAll("tag");
+
+// Collect tag counts from the blog collection for this locale
+const posts = await getCollection("blog", ({ id }) => id.startsWith(`${lang}/`));
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+
+const facets: Facet[] = [
+  {
+    key: "tag",
+    label: lang === "de" ? "Thema" : "Topic",
+    values: [...tagCounts.entries()].map(([key, count]) => ({
+      key,
+      label: key,
+      count,
+    })),
+  },
+];
+
+const selected: Record<string, string[]> = {
+  tag: selectedTags,
+};
+
+// Filter server-side: URL params drive which posts render
+const filtered = selectedTags.length
+  ? posts.filter((p) => p.data.tags.some((tag) => selectedTags.includes(tag)))
+  : posts;
+---
+
+<CollectionFilter
+  {facets}
+  {selected}
+  {lang}
+  baseUrl={Astro.url.pathname}
+/>
+```
+
+### i18n keys added (`filter.*`)
+
+| Key                | DE                  | EN             |
+| ------------------ | ------------------- | -------------- |
+| `filter.reset`     | Filter zurücksetzen | Reset filters  |
+| `filter.allLabel`  | Alle                | All            |
+| `filter.ariaLabel` | Inhalte filtern     | Filter content |
+
+### a11y
+
+- Root is a `<nav>` with `aria-label` from `t('filter.ariaLabel')`.
+- Chips are real `<a>` elements — fully keyboard navigable without JS.
+- `aria-current="true"` on active chips signals state to screen readers (valid on `<a>` elements, unlike `aria-pressed` which is button-only).
+- `focus-visible` ring on all chips.
+- 44px minimum touch target height enforced via padding.
+- Transitions are gated on `prefers-reduced-motion: no-preference`.
+
 ## Legal pages
 
 ### `LegalDocument.astro`

@@ -146,6 +146,11 @@
   "legal": {
     "lastUpdated": "Last updated:"
   },
+  "filter": {
+    "reset": "Reset filters",
+    "allLabel": "All",
+    "ariaLabel": "Filter content"
+  },
   "podcast": {
     "play": "Play {title} on Spotify"
   },
