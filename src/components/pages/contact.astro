@@ -1,11 +1,11 @@
 ---
-import { getCollection, render } from 'astro:content';
-import type { Locale } from '~/i18n';
-import { useTranslations } from '~/i18n';
-import BaseLayout from '~/layouts/BaseLayout.astro';
-import Button from '~/components/Button.astro';
-import { getAlternateCollectionSlug } from '~/lib/page-registry';
-import { Mail, Phone, MapPin, Send } from '@lucide/astro';
+import { getCollection, render } from "astro:content";
+import type { Locale } from "~/i18n";
+import { useTranslations } from "~/i18n";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import Button from "~/components/Button.astro";
+import { getAlternateCollectionSlug } from "~/lib/page-registry";
+import { Mail, Phone, MapPin, Send } from "@lucide/astro";
 
 interface Props {
   lang: Locale;
@@ -15,27 +15,32 @@ interface Props {
 const { lang, currentSlug } = Astro.props;
 const { t } = useTranslations(lang);
 
-const allPages = await getCollection('pages');
+const allPages = await getCollection("pages");
 const entry = allPages.find(
-  (p) => p.id.startsWith(`${lang}/`) && p.data.translationKey === 'contact',
+  (p) => p.id.startsWith(`${lang}/`) && p.data.translationKey === "contact",
 );
 
 if (!entry) {
-  return Astro.redirect('/404');
+  return Astro.redirect("/404");
 }
 
 const { Content } = await render(entry);
-const alternateSlug = await getAlternateCollectionSlug(lang, 'pages', 'contact');
+const alternateSlug = await getAlternateCollectionSlug(
+  lang,
+  "pages",
+  "contact",
+);
 
 const formEndpoint = import.meta.env.PUBLIC_FORM_ENDPOINT;
-const contactEmail = t('contact.info.email');
+const contactEmail = t("contact.info.email");
 
-const inputClasses = 'w-full px-4 py-3 rounded-[var(--radius-md)] border border-border bg-surface-elevated text-text placeholder:text-muted/50 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all duration-[var(--transition-fast)]';
+const inputClasses =
+  "w-full px-4 py-3 rounded-[var(--radius-md)] border border-border bg-surface-elevated text-text placeholder:text-muted/50 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all duration-[var(--transition-fast)]";
 ---
 
 <BaseLayout
-  title={t('contact.title')}
-  description={t('contact.description')}
+  title={t("contact.title")}
+  description={t("contact.description")}
   lang={lang}
   currentSlug={currentSlug}
   alternateSlug={alternateSlug}
@@ -43,11 +48,26 @@ const inputClasses = 'w-full px-4 py-3 rounded-[var(--radius-md)] border border-
 >
   <section class="bg-surface-dark noise relative overflow-hidden">
     <div class="absolute inset-0 bg-grid opacity-20"></div>
-    <div class="glow-orb absolute top-1/2 right-0 w-[400px] h-[400px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2 translate-x-1/3"></div>
+    <div
+      class="glow-orb absolute top-1/2 right-0 w-[400px] h-[400px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2 translate-x-1/3"
+    >
+    </div>
     <div class="container relative z-10 pt-48 pb-20 md:pt-56 md:pb-28">
-      <p class="eyebrow hero-stagger" style="--delay: 100ms">{t('site.name')}</p>
-      <h1 class="text-h1 text-text-on-dark mt-4 max-w-2xl hero-stagger" style="--delay: 200ms">{entry.data.title}</h1>
-      <p class="text-body-lg text-text-on-dark/60 mt-4 max-w-lg hero-stagger" style="--delay: 300ms">{entry.data.description}</p>
+      <p class="eyebrow hero-stagger" style="--delay: 100ms">
+        {t("site.name")}
+      </p>
+      <h1
+        class="text-h1 text-text-on-dark mt-4 max-w-2xl hero-stagger"
+        style="--delay: 200ms"
+      >
+        {entry.data.title}
+      </h1>
+      <p
+        class="text-body-lg text-text-on-dark/60 mt-4 max-w-lg hero-stagger"
+        style="--delay: 300ms"
+      >
+        {entry.data.description}
+      </p>
     </div>
   </section>
 
@@ -62,19 +82,25 @@ const inputClasses = 'w-full px-4 py-3 rounded-[var(--radius-md)] border border-
           <div class="flex flex-col gap-4">
             <div class="flex items-center gap-3 text-muted">
               <Mail class="w-5 h-5 text-accent flex-shrink-0" />
-              <a href={`mailto:${contactEmail}`} class="hover:text-accent transition-colors duration-[var(--transition-fast)]">
+              <a
+                href={`mailto:${contactEmail}`}
+                class="hover:text-accent transition-colors duration-[var(--transition-fast)]"
+              >
                 {contactEmail}
               </a>
             </div>
             <div class="flex items-center gap-3 text-muted">
               <Phone class="w-5 h-5 text-accent flex-shrink-0" />
-              <a href={`tel:${t('contact.info.phone').replace(/\s/g, '')}`} class="hover:text-accent transition-colors duration-[var(--transition-fast)]">
-                {t('contact.info.phone')}
+              <a
+                href={`tel:${t("contact.info.phone").replace(/\s/g, "")}`}
+                class="hover:text-accent transition-colors duration-[var(--transition-fast)]"
+              >
+                {t("contact.info.phone")}
               </a>
             </div>
             <div class="flex items-center gap-3 text-muted">
               <MapPin class="w-5 h-5 text-accent flex-shrink-0" />
-              <span>{t('contact.info.address')}</span>
+              <span>{t("contact.info.address")}</span>
             </div>
           </div>
         </div>
@@ -83,50 +109,99 @@ const inputClasses = 'w-full px-4 py-3 rounded-[var(--radius-md)] border border-
         <div class="lg:col-span-3 anim-slide-up" style="--delay: 150ms">
           <form
             id="contact-form"
-            data-endpoint={formEndpoint || ''}
+            data-endpoint={formEndpoint || ""}
             data-contact-email={contactEmail}
-            data-msg-sending={t('contact.form.sending')}
-            data-msg-success={t('contact.form.success')}
-            data-msg-error={t('contact.form.error')}
-            data-msg-send={t('contact.form.send')}
+            data-msg-sending={t("contact.form.sending")}
+            data-msg-success={t("contact.form.success")}
+            data-msg-error={t("contact.form.error")}
+            data-msg-send={t("contact.form.send")}
             novalidate
             class="card flex flex-col gap-5 p-8"
           >
             <div class="flex flex-col gap-1.5">
               <label for="name" class="text-sm font-semibold text-text-heading">
-                {t('contact.form.name')}
+                {t("contact.form.name")}
               </label>
-              <input id="name" name="name" type="text" autocomplete="name" required class={inputClasses} />
+              <input
+                id="name"
+                name="name"
+                type="text"
+                autocomplete="name"
+                required
+                class={inputClasses}
+              />
             </div>
 
             <div class="flex flex-col gap-1.5">
-              <label for="email" class="text-sm font-semibold text-text-heading">
-                {t('contact.form.email')}
+              <label
+                for="email"
+                class="text-sm font-semibold text-text-heading"
+              >
+                {t("contact.form.email")}
               </label>
-              <input id="email" name="email" type="email" autocomplete="email" required class={inputClasses} />
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                class={inputClasses}
+              />
             </div>
 
             <div class="flex flex-col gap-1.5">
-              <label for="message" class="text-sm font-semibold text-text-heading">
-                {t('contact.form.message')}
+              <label
+                for="message"
+                class="text-sm font-semibold text-text-heading"
+              >
+                {t("contact.form.message")}
               </label>
-              <textarea id="message" name="message" rows={6} required class={`${inputClasses} resize-y`}></textarea>
+              <textarea
+                id="message"
+                name="message"
+                rows={6}
+                required
+                class={`${inputClasses} resize-y`}></textarea>
             </div>
 
-            <div id="form-error" class="hidden text-sm text-red-600 dark:text-red-400 font-medium"></div>
+            <div
+              id="form-error"
+              class="hidden text-sm text-red-600 dark:text-red-400 font-medium"
+            >
+            </div>
 
-            <Button type="submit" variant="primary" class="btn-glow group self-start">
-              <span id="btn-label">{t('contact.form.send')}</span>
+            <Button
+              type="submit"
+              variant="primary"
+              class="btn-glow group self-start"
+            >
+              <span id="btn-label">{t("contact.form.send")}</span>
               <Send class="w-4 h-4 ml-2" />
             </Button>
           </form>
 
-          <div id="form-success" class="hidden card p-8 flex flex-col items-center gap-4 text-center">
-            <svg class="w-12 h-12 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="9 12 11 14 15 10" />
+          <div
+            id="form-success"
+            class="hidden card p-8 flex flex-col items-center gap-4 text-center"
+          >
+            <svg
+              class="w-12 h-12 text-green-500"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="9 12 11 14 15 10"></polyline>
             </svg>
-            <p class="text-body-lg font-semibold text-text-heading" id="success-message"></p>
+            <p
+              class="text-body-lg font-semibold text-text-heading"
+              id="success-message"
+            >
+            </p>
           </div>
         </div>
       </div>
@@ -136,29 +211,39 @@ const inputClasses = 'w-full px-4 py-3 rounded-[var(--radius-md)] border border-
 
 <script>
   function initContactForm() {
-    const formEl = document.getElementById('contact-form');
+    const formEl = document.getElementById("contact-form");
     if (!(formEl instanceof HTMLFormElement)) return;
     const form: HTMLFormElement = formEl;
 
-    const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
-    const btnLabel = document.getElementById('btn-label') as HTMLSpanElement | null;
-    const errorBox = document.getElementById('form-error') as HTMLDivElement | null;
-    const successBox = document.getElementById('form-success') as HTMLDivElement | null;
-    const successMessage = document.getElementById('success-message') as HTMLParagraphElement | null;
+    const submitBtn = form.querySelector<HTMLButtonElement>(
+      'button[type="submit"]',
+    );
+    const btnLabel = document.getElementById(
+      "btn-label",
+    ) as HTMLSpanElement | null;
+    const errorBox = document.getElementById(
+      "form-error",
+    ) as HTMLDivElement | null;
+    const successBox = document.getElementById(
+      "form-success",
+    ) as HTMLDivElement | null;
+    const successMessage = document.getElementById(
+      "success-message",
+    ) as HTMLParagraphElement | null;
 
-    const endpoint = form.dataset.endpoint ?? '';
-    const contactEmail = form.dataset.contactEmail ?? '';
-    const msgSending = form.dataset.msgSending ?? 'Sending...';
-    const msgSuccess = form.dataset.msgSuccess ?? 'Message sent.';
-    const msgError = form.dataset.msgError ?? 'Something went wrong.';
-    const msgSend = form.dataset.msgSend ?? 'Send';
+    const endpoint = form.dataset.endpoint ?? "";
+    const contactEmail = form.dataset.contactEmail ?? "";
+    const msgSending = form.dataset.msgSending ?? "Sending...";
+    const msgSuccess = form.dataset.msgSuccess ?? "Message sent.";
+    const msgError = form.dataset.msgError ?? "Something went wrong.";
+    const msgSend = form.dataset.msgSend ?? "Send";
 
-    form.addEventListener('submit', async (event: Event) => {
+    form.addEventListener("submit", async (event: Event) => {
       event.preventDefault();
 
-      const nameInput = form.querySelector<HTMLInputElement>('#name');
-      const emailInput = form.querySelector<HTMLInputElement>('#email');
-      const messageInput = form.querySelector<HTMLTextAreaElement>('#message');
+      const nameInput = form.querySelector<HTMLInputElement>("#name");
+      const emailInput = form.querySelector<HTMLInputElement>("#email");
+      const messageInput = form.querySelector<HTMLTextAreaElement>("#message");
 
       if (!nameInput || !emailInput || !messageInput) return;
 
@@ -172,15 +257,15 @@ const inputClasses = 'w-full px-4 py-3 rounded-[var(--radius-md)] border border-
       if (submitBtn) submitBtn.disabled = true;
       if (btnLabel) btnLabel.textContent = msgSending;
       if (errorBox) {
-        errorBox.textContent = '';
-        errorBox.classList.add('hidden');
+        errorBox.textContent = "";
+        errorBox.classList.add("hidden");
       }
 
       if (endpoint) {
         try {
           const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, email, message }),
           });
 
@@ -205,10 +290,10 @@ const inputClasses = 'w-full px-4 py-3 rounded-[var(--radius-md)] border border-
     });
 
     function showSuccess(message: string) {
-      form.classList.add('hidden');
+      form.classList.add("hidden");
       if (successBox) {
-        successBox.classList.remove('hidden');
-        successBox.classList.add('flex');
+        successBox.classList.remove("hidden");
+        successBox.classList.add("flex");
       }
       if (successMessage) successMessage.textContent = message;
     }
@@ -216,24 +301,32 @@ const inputClasses = 'w-full px-4 py-3 rounded-[var(--radius-md)] border border-
     function showError(message: string) {
       if (errorBox) {
         errorBox.textContent = message;
-        errorBox.classList.remove('hidden');
+        errorBox.classList.remove("hidden");
       }
     }
   }
 
   initContactForm();
-  document.addEventListener('astro:after-swap', initContactForm);
+  document.addEventListener("astro:after-swap", initContactForm);
 </script>
 
 <script>
   function initScrollAnimations() {
-    if (CSS.supports('animation-timeline: scroll()')) return;
+    if (CSS.supports("animation-timeline: scroll()")) return;
     const observer = new IntersectionObserver(
-      (entries) => { for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in-view'); observer.unobserve(e.target); } },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      (entries) => {
+        for (const e of entries)
+          if (e.isIntersecting) {
+            e.target.classList.add("in-view");
+            observer.unobserve(e.target);
+          }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     );
-    document.querySelectorAll('.anim-card-enter, .anim-slide-up, .anim-fade').forEach((el) => observer.observe(el));
+    document
+      .querySelectorAll(".anim-card-enter, .anim-slide-up, .anim-fade")
+      .forEach((el) => observer.observe(el));
   }
   initScrollAnimations();
-  document.addEventListener('astro:after-swap', initScrollAnimations);
+  document.addEventListener("astro:after-swap", initScrollAnimations);
 </script>

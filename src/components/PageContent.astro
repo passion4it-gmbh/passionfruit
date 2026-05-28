@@ -1,13 +1,13 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import { render } from 'astro:content';
-import { Image } from 'astro:assets';
-import type { Locale } from '~/i18n';
-import '~/styles/blog-prose.css';
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
+import { Image } from "astro:assets";
+import type { Locale } from "~/i18n";
+import "~/styles/blog-prose.css";
 
 interface Props {
-	entry: CollectionEntry<'pages'>;
-	lang: Locale;
+  entry: CollectionEntry<"pages">;
+  lang: Locale;
 }
 
 const { entry } = Astro.props;
@@ -16,23 +16,25 @@ const { Content } = await render(entry);
 ---
 
 <div class="container section">
-	<div class="max-w-3xl mx-auto">
-		{entry.data.heroImage && (
-			<Image
-				src={entry.data.heroImage}
-				alt={entry.data.title}
-				class="w-full h-72 object-cover rounded-[var(--radius-lg)] mb-8"
-				width={900}
-				height={450}
-			/>
-		)}
+  <div class="max-w-3xl mx-auto">
+    {
+      entry.data.heroImage && (
+        <Image
+          src={entry.data.heroImage}
+          alt={entry.data.title}
+          class="w-full h-72 object-cover rounded-[var(--radius-lg)] mb-8"
+          width={900}
+          height={450}
+        />
+      )
+    }
 
-		<h1 class="text-4xl font-bold text-text-heading leading-tight mb-8">
-			{entry.data.title}
-		</h1>
+    <h1 class="text-4xl font-bold text-text-heading leading-tight mb-8">
+      {entry.data.title}
+    </h1>
 
-		<article class="blog-prose">
-			<Content />
-		</article>
-	</div>
+    <article class="blog-prose">
+      <Content />
+    </article>
+  </div>
 </div>

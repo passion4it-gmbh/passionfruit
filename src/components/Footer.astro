@@ -1,8 +1,8 @@
 ---
-import { getLocalizedPath, useTranslations, type Locale } from '~/i18n';
+import { getLocalizedPath, useTranslations, type Locale } from "~/i18n";
 
 interface Props {
-	lang: Locale;
+  lang: Locale;
 }
 
 const { lang } = Astro.props;
@@ -13,100 +13,126 @@ const currentYear = String(new Date().getFullYear());
 type NavLink = { href: string; label: string };
 
 const navLinks: NavLink[] = [
-	{ href: getLocalizedPath('', lang), label: t('navigation.home') },
-	{ href: getLocalizedPath(lang === 'de' ? 'ueber-uns' : 'about', lang), label: t('navigation.about') },
-	{ href: getLocalizedPath(lang === 'de' ? 'leistungen' : 'services', lang), label: t('navigation.services') },
-	{ href: getLocalizedPath('blog', lang), label: t('navigation.blog') },
-	{ href: getLocalizedPath('team', lang), label: t('navigation.team') },
-	{ href: getLocalizedPath(lang === 'de' ? 'kontakt' : 'contact', lang), label: t('navigation.contact') },
+  { href: getLocalizedPath("", lang), label: t("navigation.home") },
+  {
+    href: getLocalizedPath(lang === "de" ? "ueber-uns" : "about", lang),
+    label: t("navigation.about"),
+  },
+  {
+    href: getLocalizedPath(lang === "de" ? "leistungen" : "services", lang),
+    label: t("navigation.services"),
+  },
+  { href: getLocalizedPath("blog", lang), label: t("navigation.blog") },
+  { href: getLocalizedPath("team", lang), label: t("navigation.team") },
+  {
+    href: getLocalizedPath(lang === "de" ? "kontakt" : "contact", lang),
+    label: t("navigation.contact"),
+  },
 ];
 
 const legalLinks: NavLink[] = [
-	{ href: getLocalizedPath(lang === 'de' ? 'datenschutz' : 'privacy', lang), label: t('footer.privacy') },
-	{ href: getLocalizedPath(lang === 'de' ? 'impressum' : 'imprint', lang), label: t('footer.imprint') },
+  {
+    href: getLocalizedPath(lang === "de" ? "datenschutz" : "privacy", lang),
+    label: t("footer.privacy"),
+  },
+  {
+    href: getLocalizedPath(lang === "de" ? "impressum" : "imprint", lang),
+    label: t("footer.imprint"),
+  },
 ];
 ---
 
 <footer class="bg-surface-dark text-text-on-dark mt-auto">
-	<div class="container py-12">
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
-			<!-- Brand column -->
-			<div>
-				<a
-					href={getLocalizedPath('', lang)}
-					class="inline-block text-lg font-bold tracking-tight text-text-on-dark hover:opacity-80 transition-opacity mb-4"
-					aria-label="Greenleaf Digital – Home"
-				>
-					Greenleaf Digital
-				</a>
-				<p class="text-sm text-text-on-dark/70 leading-relaxed">
-					{t('site.tagline')}
-				</p>
+  <div class="container py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+      <!-- Brand column -->
+      <div>
+        <a
+          href={getLocalizedPath("", lang)}
+          class="inline-block text-lg font-bold tracking-tight text-text-on-dark hover:opacity-80 transition-opacity mb-4"
+          aria-label="Greenleaf Digital – Home"
+        >
+          Greenleaf Digital
+        </a>
+        <p class="text-sm text-text-on-dark/70 leading-relaxed">
+          {t("site.tagline")}
+        </p>
 
-				<!-- Social links placeholder — fill in during onboarding -->
-				<!-- TODO: Add social links (LinkedIn, Twitter, etc.) -->
-			</div>
+        <!-- Social links placeholder — fill in during onboarding -->
+        <!-- TODO: Add social links (LinkedIn, Twitter, etc.) -->
+      </div>
 
-			<!-- Navigation column -->
-			<div>
-				<p class="text-sm font-semibold text-text-on-dark/50 uppercase tracking-wider mb-4">
-					{t('navigation.home')}
-				</p>
-				<ul class="space-y-2">
-					{navLinks.map((link) => (
-						<li>
-							<a
-								href={link.href}
-								class="text-sm text-text-on-dark/70 hover:text-text-on-dark transition-colors duration-[var(--transition-fast)]"
-							>
-								{link.label}
-							</a>
-						</li>
-					))}
-				</ul>
-			</div>
+      <!-- Navigation column -->
+      <div>
+        <p
+          class="text-sm font-semibold text-text-on-dark/50 uppercase tracking-wider mb-4"
+        >
+          {t("navigation.home")}
+        </p>
+        <ul class="space-y-2">
+          {
+            navLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-sm text-text-on-dark/70 hover:text-text-on-dark transition-colors duration-[var(--transition-fast)]"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
 
-			<!-- Legal column -->
-			<div>
-				<p class="text-sm font-semibold text-text-on-dark/50 uppercase tracking-wider mb-4">
-					Legal
-				</p>
-				<ul class="space-y-2">
-					{legalLinks.map((link) => (
-						<li>
-							<a
-								href={link.href}
-								class="text-sm text-text-on-dark/70 hover:text-text-on-dark transition-colors duration-[var(--transition-fast)]"
-							>
-								{link.label}
-							</a>
-						</li>
-					))}
-				</ul>
-			</div>
-		</div>
+      <!-- Legal column -->
+      <div>
+        <p
+          class="text-sm font-semibold text-text-on-dark/50 uppercase tracking-wider mb-4"
+        >
+          Legal
+        </p>
+        <ul class="space-y-2">
+          {
+            legalLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-sm text-text-on-dark/70 hover:text-text-on-dark transition-colors duration-[var(--transition-fast)]"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
 
-		<!-- Bottom bar -->
-		<div class="border-t border-white/10 pt-8 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
-			<p class="text-sm text-text-on-dark/60">
-				{t('footer.copyright', { year: currentYear })}
-			</p>
-			<p class="text-sm text-text-on-dark/40">
-				{t('footer.builtWith').split('passionfruit')[0]}<a
-					href="https://github.com/passion4it-gmbh/passionfruit"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="text-text-on-dark/60 hover:text-text-on-dark transition-colors duration-[var(--transition-fast)] underline underline-offset-2"
-				>passionfruit</a>{t('footer.builtWith').split('passionfruit')[1]} by{' '}
-				<a
-					href="https://passion4it.de"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="text-text-on-dark/60 hover:text-text-on-dark transition-colors duration-[var(--transition-fast)] underline underline-offset-2"
-				>
-					PASSION4IT
-				</a>
-			</p>
-		</div>
-	</div>
+    <!-- Bottom bar -->
+    <div
+      class="border-t border-white/10 pt-8 flex flex-col md:flex-row gap-4 md:items-center md:justify-between"
+    >
+      <p class="text-sm text-text-on-dark/60">
+        {t("footer.copyright", { year: currentYear })}
+      </p>
+      <p class="text-sm text-text-on-dark/40">
+        {t("footer.builtWith").split("passionfruit")[0]}<a
+          href="https://github.com/passion4it-gmbh/passionfruit"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-text-on-dark/60 hover:text-text-on-dark transition-colors duration-[var(--transition-fast)] underline underline-offset-2"
+          >passionfruit</a
+        >{t("footer.builtWith").split("passionfruit")[1]} by{" "}
+        <a
+          href="https://passion4it.de"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-text-on-dark/60 hover:text-text-on-dark transition-colors duration-[var(--transition-fast)] underline underline-offset-2"
+        >
+          PASSION4IT
+        </a>
+      </p>
+    </div>
+  </div>
 </footer>

@@ -1,62 +1,80 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import { Image } from 'astro:assets';
-import type { Locale } from '~/i18n';
-import { getLocalizedPath } from '~/i18n';
-import { formatDate } from '~/lib/format-date';
-import { findPageByKey } from '~/lib/page-registry';
-import Badge from '~/components/Badge.astro';
-import { ArrowRight } from '@lucide/astro';
+import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+import type { Locale } from "~/i18n";
+import { getLocalizedPath } from "~/i18n";
+import { formatDate } from "~/lib/format-date";
+import { findPageByKey } from "~/lib/page-registry";
+import Badge from "~/components/Badge.astro";
+import { ArrowRight } from "@lucide/astro";
 
 interface Props {
-  entry: CollectionEntry<'blog'>;
+  entry: CollectionEntry<"blog">;
   lang: Locale;
 }
 
 const { entry, lang } = Astro.props;
 
-const entrySlug = entry.id.slice(entry.id.indexOf('/') + 1);
-const parentSlug = findPageByKey('blog-index')?.slug[lang] ?? 'blog';
+const entrySlug = entry.id.slice(entry.id.indexOf("/") + 1);
+const parentSlug = findPageByKey("blog-index")?.slug[lang] ?? "blog";
 const href = getLocalizedPath(`${parentSlug}/${entrySlug}`, lang);
 const formattedDate = formatDate(entry.data.publishedAt, lang);
 ---
 
-<a href={href} class="card group flex flex-col overflow-hidden p-0 transition-all hover:shadow-lg hover:shadow-accent/5 hover:-translate-y-0.5">
-  {entry.data.heroImage && (
-    <div class="aspect-[16/10] overflow-hidden">
-      <Image
-        src={entry.data.heroImage}
-        alt={entry.data.title}
-        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        width={600}
-        height={375}
-      />
-    </div>
-  )}
+<a
+  href={href}
+  class="card group flex flex-col overflow-hidden p-0 transition-all hover:shadow-lg hover:shadow-accent/5 hover:-translate-y-0.5"
+>
+  {
+    entry.data.heroImage && (
+      <div class="aspect-[16/10] overflow-hidden">
+        <Image
+          src={entry.data.heroImage}
+          alt={entry.data.title}
+          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          width={600}
+          height={375}
+        />
+      </div>
+    )
+  }
 
   <div class="flex flex-col gap-3 p-6 flex-1">
     <div class="flex items-center gap-3">
-      <time datetime={entry.data.publishedAt.toISOString()} class="text-xs text-muted font-medium">
+      <time
+        datetime={entry.data.publishedAt.toISOString()}
+        class="text-xs text-muted font-medium"
+      >
         {formattedDate}
       </time>
-      {entry.data.tags.length > 0 && (
-        <div class="flex flex-wrap gap-1.5">
-          {entry.data.tags.slice(0, 2).map((tag) => (
-            <Badge>{tag}</Badge>
-          ))}
-        </div>
-      )}
+      {
+        entry.data.tags.length > 0 && (
+          <div class="flex flex-wrap gap-1.5">
+            {entry.data.tags.slice(0, 2).map((tag) => (
+              <Badge>{tag}</Badge>
+            ))}
+          </div>
+        )
+      }
     </div>
 
-    <h3 class="text-h3 text-text-heading group-hover:text-accent transition-colors leading-snug">
+    <h3
+      class="text-h3 text-text-heading group-hover:text-accent transition-colors leading-snug"
+    >
       {entry.data.title}
     </h3>
 
-    <p class="text-muted text-sm leading-relaxed flex-1">{entry.data.description}</p>
+    <p class="text-muted text-sm leading-relaxed flex-1">
+      {entry.data.description}
+    </p>
 
-    <span class="inline-flex items-center gap-1.5 text-sm font-medium text-accent mt-1 transition-transform">
-      {lang === 'de' ? 'Weiterlesen' : 'Read more'}
-      <ArrowRight class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+    <span
+      class="inline-flex items-center gap-1.5 text-sm font-medium text-accent mt-1 transition-transform"
+    >
+      {lang === "de" ? "Weiterlesen" : "Read more"}
+      <ArrowRight
+        class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1"
+      />
     </span>
   </div>
 </a>

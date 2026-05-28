@@ -10,8 +10,8 @@ Create `src/components/pages/<key>.astro`. Use an existing page as a reference.
 
 ```astro
 ---
-import BaseLayout from '~/layouts/BaseLayout.astro';
-import { useTranslations, type Locale } from '~/i18n';
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { useTranslations, type Locale } from "~/i18n";
 
 interface Props {
   lang: Locale;
@@ -22,10 +22,15 @@ const { lang, currentSlug } = Astro.props;
 const { t } = useTranslations(lang);
 ---
 
-<BaseLayout title={t('mypage.title')} description={t('mypage.description')} lang={lang} currentSlug={currentSlug}>
+<BaseLayout
+  title={t("mypage.title")}
+  description={t("mypage.description")}
+  lang={lang}
+  currentSlug={currentSlug}
+>
   <section class="mx-auto max-w-3xl px-6 py-24">
-    <h1 class="text-4xl font-bold">{t('mypage.heading')}</h1>
-    <p class="mt-4">{t('mypage.intro')}</p>
+    <h1 class="text-4xl font-bold">{t("mypage.heading")}</h1>
+    <p class="mt-4">{t("mypage.intro")}</p>
   </section>
 </BaseLayout>
 ```

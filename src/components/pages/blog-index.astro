@@ -1,9 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
-import type { Locale } from '~/i18n';
-import { useTranslations } from '~/i18n';
-import BaseLayout from '~/layouts/BaseLayout.astro';
-import BlogCard from '~/components/BlogCard.astro';
+import { getCollection } from "astro:content";
+import type { Locale } from "~/i18n";
+import { useTranslations } from "~/i18n";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import BlogCard from "~/components/BlogCard.astro";
 
 interface Props {
   lang: Locale;
@@ -13,15 +13,15 @@ interface Props {
 const { lang, currentSlug } = Astro.props;
 const { t } = useTranslations(lang);
 
-const allPosts = await getCollection('blog');
+const allPosts = await getCollection("blog");
 const posts = allPosts
   .filter((p) => p.id.startsWith(`${lang}/`))
   .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 ---
 
 <BaseLayout
-  title={t('blog.title')}
-  description={t('blog.description')}
+  title={t("blog.title")}
+  description={t("blog.description")}
   lang={lang}
   currentSlug={currentSlug}
   headerVariant="on-dark"
@@ -29,41 +29,66 @@ const posts = allPosts
   <!-- Hero -->
   <section class="bg-surface-dark noise relative overflow-hidden">
     <div class="absolute inset-0 bg-grid opacity-20"></div>
-    <div class="glow-orb absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2 -translate-x-1/3"></div>
+    <div
+      class="glow-orb absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2 -translate-x-1/3"
+    >
+    </div>
     <div class="container relative z-10 pt-48 pb-20 md:pt-56 md:pb-28">
-      <p class="eyebrow hero-stagger" style="--delay: 100ms">{t('site.name')}</p>
-      <h1 class="text-h1 text-text-on-dark mt-4 max-w-2xl hero-stagger" style="--delay: 200ms">{t('blog.title')}</h1>
-      <p class="text-body-lg text-text-on-dark/60 mt-4 max-w-lg hero-stagger" style="--delay: 300ms">{t('blog.description')}</p>
+      <p class="eyebrow hero-stagger" style="--delay: 100ms">
+        {t("site.name")}
+      </p>
+      <h1
+        class="text-h1 text-text-on-dark mt-4 max-w-2xl hero-stagger"
+        style="--delay: 200ms"
+      >
+        {t("blog.title")}
+      </h1>
+      <p
+        class="text-body-lg text-text-on-dark/60 mt-4 max-w-lg hero-stagger"
+        style="--delay: 300ms"
+      >
+        {t("blog.description")}
+      </p>
     </div>
   </section>
 
   <!-- Posts -->
   <section class="py-20 md:py-28">
     <div class="container">
-      {posts.length === 0 ? (
-        <p class="text-muted text-center py-16">{t('blog.noPosts')}</p>
-      ) : (
-        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post, i) => (
-            <div class="anim-card-enter" style={`--delay: ${i * 100}ms`}>
-              <BlogCard entry={post} lang={lang} />
-            </div>
-          ))}
-        </div>
-      )}
+      {
+        posts.length === 0 ? (
+          <p class="text-muted text-center py-16">{t("blog.noPosts")}</p>
+        ) : (
+          <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post, i) => (
+              <div class="anim-card-enter" style={`--delay: ${i * 100}ms`}>
+                <BlogCard entry={post} lang={lang} />
+              </div>
+            ))}
+          </div>
+        )
+      }
     </div>
   </section>
 </BaseLayout>
 
 <script>
   function initScrollAnimations() {
-    if (CSS.supports('animation-timeline: scroll()')) return;
+    if (CSS.supports("animation-timeline: scroll()")) return;
     const observer = new IntersectionObserver(
-      (entries) => { for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in-view'); observer.unobserve(e.target); } },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      (entries) => {
+        for (const e of entries)
+          if (e.isIntersecting) {
+            e.target.classList.add("in-view");
+            observer.unobserve(e.target);
+          }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     );
-    document.querySelectorAll('.anim-card-enter, .anim-slide-up, .anim-fade').forEach((el) => observer.observe(el));
+    document
+      .querySelectorAll(".anim-card-enter, .anim-slide-up, .anim-fade")
+      .forEach((el) => observer.observe(el));
   }
   initScrollAnimations();
-  document.addEventListener('astro:after-swap', initScrollAnimations);
+  document.addEventListener("astro:after-swap", initScrollAnimations);
 </script>

@@ -1,262 +1,276 @@
 ---
-import 'vanilla-cookieconsent/dist/cookieconsent.css';
+import "vanilla-cookieconsent/dist/cookieconsent.css";
 
 interface Props {
-	lang: string;
+  lang: string;
 }
 
 const { lang } = Astro.props;
 ---
 
 <script>
-import * as CookieConsent from 'vanilla-cookieconsent';
-import type { Translation } from 'vanilla-cookieconsent';
+  import * as CookieConsent from "vanilla-cookieconsent";
+  import type { Translation } from "vanilla-cookieconsent";
 
-const translations: Record<string, Translation> = {
-	en: {
-		consentModal: {
-			title: 'This website uses cookies',
-			description: 'We use cookies to improve your experience and analyze website traffic.',
-			acceptAllBtn: 'Accept all',
-			acceptNecessaryBtn: 'Reject',
-			showPreferencesBtn: 'Preferences',
-		},
-		preferencesModal: {
-			title: 'Cookie Preferences',
-			acceptAllBtn: 'Accept all',
-			acceptNecessaryBtn: 'Reject all',
-			savePreferencesBtn: 'Save preferences',
-			closeIconLabel: 'Close',
-			sections: [
-				{
-					title: 'Cookie usage',
-					description: 'We use cookies to ensure the basic functionality of the website and to enhance your experience. You can choose to opt in or out of each category.',
-				},
-				{
-					title: 'Necessary',
-					description: 'These cookies are required for basic website functionality. They cannot be disabled.',
-					linkedCategory: 'necessary',
-				},
-				{
-					title: 'Analytics',
-					description: 'These cookies help us understand how visitors use our website. All data is collected anonymously.',
-					linkedCategory: 'analytics',
-				},
-			],
-		},
-	},
-	de: {
-		consentModal: {
-			title: 'Diese Website verwendet Cookies',
-			description: 'Wir verwenden Cookies, um Ihr Erlebnis zu verbessern und den Website-Traffic zu analysieren.',
-			acceptAllBtn: 'Alle akzeptieren',
-			acceptNecessaryBtn: 'Ablehnen',
-			showPreferencesBtn: 'Einstellungen',
-		},
-		preferencesModal: {
-			title: 'Cookie-Einstellungen',
-			acceptAllBtn: 'Alle akzeptieren',
-			acceptNecessaryBtn: 'Alle ablehnen',
-			savePreferencesBtn: 'Einstellungen speichern',
-			closeIconLabel: 'Schließen',
-			sections: [
-				{
-					title: 'Cookie-Nutzung',
-					description: 'Wir verwenden Cookies, um die Grundfunktionen der Website zu gewährleisten und Ihr Erlebnis zu verbessern. Sie können für jede Kategorie wählen, ob Sie zustimmen möchten oder nicht.',
-				},
-				{
-					title: 'Notwendig',
-					description: 'Diese Cookies sind für die Grundfunktionen der Website erforderlich und können nicht deaktiviert werden.',
-					linkedCategory: 'necessary',
-				},
-				{
-					title: 'Analyse',
-					description: 'Diese Cookies helfen uns zu verstehen, wie Besucher unsere Website nutzen. Alle Daten werden anonym erfasst.',
-					linkedCategory: 'analytics',
-				},
-			],
-		},
-	},
-};
+  const translations: Record<string, Translation> = {
+    en: {
+      consentModal: {
+        title: "This website uses cookies",
+        description:
+          "We use cookies to improve your experience and analyze website traffic.",
+        acceptAllBtn: "Accept all",
+        acceptNecessaryBtn: "Reject",
+        showPreferencesBtn: "Preferences",
+      },
+      preferencesModal: {
+        title: "Cookie Preferences",
+        acceptAllBtn: "Accept all",
+        acceptNecessaryBtn: "Reject all",
+        savePreferencesBtn: "Save preferences",
+        closeIconLabel: "Close",
+        sections: [
+          {
+            title: "Cookie usage",
+            description:
+              "We use cookies to ensure the basic functionality of the website and to enhance your experience. You can choose to opt in or out of each category.",
+          },
+          {
+            title: "Necessary",
+            description:
+              "These cookies are required for basic website functionality. They cannot be disabled.",
+            linkedCategory: "necessary",
+          },
+          {
+            title: "Analytics",
+            description:
+              "These cookies help us understand how visitors use our website. All data is collected anonymously.",
+            linkedCategory: "analytics",
+          },
+        ],
+      },
+    },
+    de: {
+      consentModal: {
+        title: "Diese Website verwendet Cookies",
+        description:
+          "Wir verwenden Cookies, um Ihr Erlebnis zu verbessern und den Website-Traffic zu analysieren.",
+        acceptAllBtn: "Alle akzeptieren",
+        acceptNecessaryBtn: "Ablehnen",
+        showPreferencesBtn: "Einstellungen",
+      },
+      preferencesModal: {
+        title: "Cookie-Einstellungen",
+        acceptAllBtn: "Alle akzeptieren",
+        acceptNecessaryBtn: "Alle ablehnen",
+        savePreferencesBtn: "Einstellungen speichern",
+        closeIconLabel: "Schließen",
+        sections: [
+          {
+            title: "Cookie-Nutzung",
+            description:
+              "Wir verwenden Cookies, um die Grundfunktionen der Website zu gewährleisten und Ihr Erlebnis zu verbessern. Sie können für jede Kategorie wählen, ob Sie zustimmen möchten oder nicht.",
+          },
+          {
+            title: "Notwendig",
+            description:
+              "Diese Cookies sind für die Grundfunktionen der Website erforderlich und können nicht deaktiviert werden.",
+            linkedCategory: "necessary",
+          },
+          {
+            title: "Analyse",
+            description:
+              "Diese Cookies helfen uns zu verstehen, wie Besucher unsere Website nutzen. Alle Daten werden anonym erfasst.",
+            linkedCategory: "analytics",
+          },
+        ],
+      },
+    },
+  };
 
-declare global {
-	interface Window {
-		hasAnalyticsConsent: () => boolean;
-		__cookieConsentReady?: boolean;
-	}
-}
+  declare global {
+    interface Window {
+      hasAnalyticsConsent: () => boolean;
+      __cookieConsentReady?: boolean;
+    }
+  }
 
-window.hasAnalyticsConsent = () =>
-	window.__cookieConsentReady ? CookieConsent.acceptedCategory('analytics') : false;
+  window.hasAnalyticsConsent = () =>
+    window.__cookieConsentReady
+      ? CookieConsent.acceptedCategory("analytics")
+      : false;
 
-function dispatchConsentChanged() {
-	window.dispatchEvent(
-		new CustomEvent('passionfruit:consent-changed', {
-			detail: { analytics: CookieConsent.acceptedCategory('analytics') },
-		}),
-	);
-}
+  function dispatchConsentChanged() {
+    window.dispatchEvent(
+      new CustomEvent("passionfruit:consent-changed", {
+        detail: { analytics: CookieConsent.acceptedCategory("analytics") },
+      }),
+    );
+  }
 
-function initCookieConsent() {
-	const locale = document.documentElement.lang?.split('-')[0] ?? 'en';
-	const resolvedLocale = locale in translations ? locale : 'en';
+  function initCookieConsent() {
+    const locale = document.documentElement.lang?.split("-")[0] ?? "en";
+    const resolvedLocale = locale in translations ? locale : "en";
 
-	CookieConsent.run({
-		guiOptions: {
-			consentModal: {
-				layout: 'bar inline',
-				position: 'bottom',
-				equalWeightButtons: true,
-				flipButtons: false,
-			},
-			preferencesModal: {
-				layout: 'box',
-				position: 'right',
-				equalWeightButtons: true,
-				flipButtons: false,
-			},
-		},
+    CookieConsent.run({
+      guiOptions: {
+        consentModal: {
+          layout: "bar inline",
+          position: "bottom",
+          equalWeightButtons: true,
+          flipButtons: false,
+        },
+        preferencesModal: {
+          layout: "box",
+          position: "right",
+          equalWeightButtons: true,
+          flipButtons: false,
+        },
+      },
 
-		categories: {
-			necessary: {
-				enabled: true,
-				readOnly: true,
-			},
-			analytics: {
-				autoClear: {
-					cookies: [{ name: /^_ph/ }, { name: /^ph_/ }],
-				},
-			},
-		},
+      categories: {
+        necessary: {
+          enabled: true,
+          readOnly: true,
+        },
+        analytics: {
+          autoClear: {
+            cookies: [{ name: /^_ph/ }, { name: /^ph_/ }],
+          },
+        },
+      },
 
-		language: {
-			default: resolvedLocale,
-			autoDetect: 'document',
-			translations,
-		},
+      language: {
+        default: resolvedLocale,
+        autoDetect: "document",
+        translations,
+      },
 
-		onConsent: dispatchConsentChanged,
-		onChange: dispatchConsentChanged,
-	});
+      onConsent: dispatchConsentChanged,
+      onChange: dispatchConsentChanged,
+    });
 
-	window.__cookieConsentReady = true;
-}
+    window.__cookieConsentReady = true;
+  }
 
-function wireCookieSettingsButton() {
-	document.getElementById('cookie-settings')?.addEventListener('click', () => {
-		CookieConsent.showPreferences();
-	});
-}
+  function wireCookieSettingsButton() {
+    document
+      .getElementById("cookie-settings")
+      ?.addEventListener("click", () => {
+        CookieConsent.showPreferences();
+      });
+  }
 
-function boot() {
-	initCookieConsent();
-	wireCookieSettingsButton();
-}
+  function boot() {
+    initCookieConsent();
+    wireCookieSettingsButton();
+  }
 
-if ('requestIdleCallback' in window) {
-	requestIdleCallback(boot, { timeout: 2000 });
-} else {
-	setTimeout(boot, 100);
-}
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(boot, { timeout: 2000 });
+  } else {
+    setTimeout(boot, 100);
+  }
 
-document.addEventListener('astro:after-swap', wireCookieSettingsButton);
+  document.addEventListener("astro:after-swap", wireCookieSettingsButton);
 </script>
 
 <style is:global>
-/* ================================================
+  /* ================================================
    COOKIE CONSENT — clean neutral theme
    Tokens: surface #fff, accent #6366f1, border #e5e7eb
    ================================================ */
 
-:root {
-	--cc-font-family: 'Inter Variable', system-ui, sans-serif;
+  :root {
+    --cc-font-family: "Inter Variable", system-ui, sans-serif;
 
-	--cc-bg: #ffffff;
-	--cc-primary-color: #111827;
-	--cc-secondary-color: #6b7280;
+    --cc-bg: #ffffff;
+    --cc-primary-color: #111827;
+    --cc-secondary-color: #6b7280;
 
-	--cc-btn-primary-bg: #6366f1;
-	--cc-btn-primary-color: #ffffff;
-	--cc-btn-primary-hover-bg: #4f46e5;
-	--cc-btn-primary-border-color: transparent;
+    --cc-btn-primary-bg: #6366f1;
+    --cc-btn-primary-color: #ffffff;
+    --cc-btn-primary-hover-bg: #4f46e5;
+    --cc-btn-primary-border-color: transparent;
 
-	--cc-btn-secondary-bg: #ffffff;
-	--cc-btn-secondary-color: #374151;
-	--cc-btn-secondary-hover-bg: #f9fafb;
-	--cc-btn-secondary-border-color: #e5e7eb;
+    --cc-btn-secondary-bg: #ffffff;
+    --cc-btn-secondary-color: #374151;
+    --cc-btn-secondary-hover-bg: #f9fafb;
+    --cc-btn-secondary-border-color: #e5e7eb;
 
-	--cc-toggle-on-bg: #6366f1;
-	--cc-toggle-off-bg: #d1d5db;
-	--cc-toggle-readonly-bg: #e5e7eb;
+    --cc-toggle-on-bg: #6366f1;
+    --cc-toggle-off-bg: #d1d5db;
+    --cc-toggle-readonly-bg: #e5e7eb;
 
-	--cc-separator-border-color: #e5e7eb;
-	--cc-cookie-category-block-bg: #f9fafb;
-	--cc-cookie-category-block-border: #e5e7eb;
-	--cc-overlay-bg: rgba(0, 0, 0, 0.4);
+    --cc-separator-border-color: #e5e7eb;
+    --cc-cookie-category-block-bg: #f9fafb;
+    --cc-cookie-category-block-border: #e5e7eb;
+    --cc-overlay-bg: rgba(0, 0, 0, 0.4);
 
-	--cc-footer-bg: #f9fafb;
-	--cc-footer-color: #6b7280;
-	--cc-footer-border-color: #e5e7eb;
-}
+    --cc-footer-bg: #f9fafb;
+    --cc-footer-color: #6b7280;
+    --cc-footer-border-color: #e5e7eb;
+  }
 
-/* Consent bar */
-#cc-main .cm {
-	border-radius: 0;
-	border: none;
-	border-top: 1px solid #e5e7eb;
-	max-width: 100%;
-	box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
-}
+  /* Consent bar */
+  #cc-main .cm {
+    border-radius: 0;
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    max-width: 100%;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+  }
 
-#cc-main .cm__body {
-	max-width: 71.25rem;
-	margin: 0 auto;
-	padding: 0 1.5rem;
-}
+  #cc-main .cm__body {
+    max-width: 71.25rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
 
-/* Preferences modal */
-#cc-main .pm {
-	border-radius: 0.75rem;
-	border: 1px solid #e5e7eb;
-	box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-}
+  /* Preferences modal */
+  #cc-main .pm {
+    border-radius: 0.75rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
 
-/* Buttons */
-#cc-main .cm__btn,
-#cc-main .pm__btn {
-	border-radius: 0.5rem;
-	font-family: var(--cc-font-family);
-	font-weight: 500;
-	font-size: 0.875rem;
-	padding: 0.625rem 1.25rem;
-	transition: background-color 150ms ease, transform 150ms ease;
-}
+  /* Buttons */
+  #cc-main .cm__btn,
+  #cc-main .pm__btn {
+    border-radius: 0.5rem;
+    font-family: var(--cc-font-family);
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 0.625rem 1.25rem;
+    transition:
+      background-color 150ms ease,
+      transform 150ms ease;
+  }
 
-#cc-main .cm__btn--primary:hover,
-#cc-main .pm__btn--primary:hover {
-	background-color: var(--cc-btn-primary-hover-bg);
-}
+  #cc-main .cm__btn--primary:hover,
+  #cc-main .pm__btn--primary:hover {
+    background-color: var(--cc-btn-primary-hover-bg);
+  }
 
-#cc-main .cm__btn--secondary:hover,
-#cc-main .pm__btn--secondary:hover {
-	background-color: var(--cc-btn-secondary-hover-bg);
-}
+  #cc-main .cm__btn--secondary:hover,
+  #cc-main .pm__btn--secondary:hover {
+    background-color: var(--cc-btn-secondary-hover-bg);
+  }
 
-#cc-main .cm__btn:focus-visible,
-#cc-main .pm__btn:focus-visible {
-	outline: 2px solid #6366f1;
-	outline-offset: 2px;
-}
+  #cc-main .cm__btn:focus-visible,
+  #cc-main .pm__btn:focus-visible {
+    outline: 2px solid #6366f1;
+    outline-offset: 2px;
+  }
 
-/* Category blocks in preferences modal */
-#cc-main .pm .section--toggle {
-	border-radius: 0.5rem;
-}
+  /* Category blocks in preferences modal */
+  #cc-main .pm .section--toggle {
+    border-radius: 0.5rem;
+  }
 
-@media (prefers-reduced-motion: reduce) {
-	#cc-main .cm__btn,
-	#cc-main .pm__btn {
-		transition: none;
-	}
-}
+  @media (prefers-reduced-motion: reduce) {
+    #cc-main .cm__btn,
+    #cc-main .pm__btn {
+      transition: none;
+    }
+  }
 </style>

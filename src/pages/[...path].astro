@@ -1,54 +1,65 @@
 ---
-import { getAllPaths, findPageBySlug, getAlternateCollectionSlug } from '~/lib/page-registry';
-import type { Locale, CollectionName } from '~/lib/page-registry';
-import type { CollectionEntry } from 'astro:content';
-import BaseLayout from '~/layouts/BaseLayout.astro';
-import BlogPost from '~/components/BlogPost.astro';
-import PageContent from '~/components/PageContent.astro';
-import StructuredData from '~/components/StructuredData.astro';
-import { buildBlogPostingLd } from '~/lib/structured-data';
+import {
+  getAllPaths,
+  findPageBySlug,
+  getAlternateCollectionSlug,
+} from "~/lib/page-registry";
+import type { Locale, CollectionName } from "~/lib/page-registry";
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import BlogPost from "~/components/BlogPost.astro";
+import PageContent from "~/components/PageContent.astro";
+import StructuredData from "~/components/StructuredData.astro";
+import { buildBlogPostingLd } from "~/lib/structured-data";
 
 export async function getStaticPaths() {
   return getAllPaths();
 }
 
 type Props =
-  | { kind: 'static-page'; lang: Locale; slug: string }
+  | { kind: "static-page"; lang: Locale; slug: string }
   | {
-      kind: 'collection-detail';
+      kind: "collection-detail";
       lang: Locale;
       slug: string;
       collection: CollectionName;
-      entry: CollectionEntry<'blog'> | CollectionEntry<'pages'>;
+      entry: CollectionEntry<"blog"> | CollectionEntry<"pages">;
     };
 
 const props = Astro.props as Props;
 const { lang, slug } = props;
 
-type AstroPageDefault = (typeof import('~/components/pages/about.astro'))['default'];
+type AstroPageDefault =
+  (typeof import("~/components/pages/about.astro"))["default"];
 
-let collectionTitle = '';
-let collectionDescription = '';
+let collectionTitle = "";
+let collectionDescription = "";
 let collectionAlternateSlug: string | undefined;
 let blogPostingLd: Record<string, unknown> | undefined;
 let StaticComponent: AstroPageDefault | undefined;
 
-if (props.kind === 'collection-detail') {
+if (props.kind === "collection-detail") {
   const data = props.entry.data as Record<string, unknown>;
 
-  collectionTitle = typeof data['title'] === 'string' ? data['title'] : props.entry.id;
-  collectionDescription = typeof data['description'] === 'string' ? data['description'] : '';
+  collectionTitle =
+    typeof data["title"] === "string" ? data["title"] : props.entry.id;
+  collectionDescription =
+    typeof data["description"] === "string" ? data["description"] : "";
 
   const { translationKey } = data as { translationKey: string };
-  collectionAlternateSlug = await getAlternateCollectionSlug(lang, props.collection, translationKey);
+  collectionAlternateSlug = await getAlternateCollectionSlug(
+    lang,
+    props.collection,
+    translationKey,
+  );
 
-  if (props.collection === 'blog') {
-    const blogEntry = props.entry as CollectionEntry<'blog'>;
+  if (props.collection === "blog") {
+    const blogEntry = props.entry as CollectionEntry<"blog">;
     const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
     blogPostingLd = buildBlogPostingLd(
       blogEntry,
       { name: blogEntry.data.author },
-      `${Astro.site?.href ?? ''}og-default.png`,
+      `${Astro.site?.href ?? ""}og-default.png`,
       canonicalUrl,
       lang,
     );
@@ -56,31 +67,40 @@ if (props.kind === 'collection-detail') {
 } else {
   const pageEntry = findPageBySlug(lang, slug);
   if (!pageEntry) {
-    return Astro.redirect('/404');
+    return Astro.redirect("/404");
   }
   const mod = await pageEntry.component();
   StaticComponent = (mod as { default: AstroPageDefault }).default;
 }
 ---
 
-{props.kind === 'collection-detail' ? (
-  <BaseLayout
-    title={collectionTitle}
-    description={collectionDescription}
-    lang={lang}
-    currentSlug={slug}
-    alternateSlug={collectionAlternateSlug}
-  >
-    {blogPostingLd && (
-      <StructuredData slot="structured-data" type="BlogPosting" data={blogPostingLd} />
-    )}
-    {props.collection === 'blog' && (
-      <BlogPost entry={props.entry as CollectionEntry<'blog'>} lang={lang} />
-    )}
-    {props.collection === 'pages' && (
-      <PageContent entry={props.entry as CollectionEntry<'pages'>} lang={lang} />
-    )}
-  </BaseLayout>
-) : (
-  StaticComponent && <StaticComponent lang={lang} currentSlug={slug} />
-)}
+{
+  props.kind === "collection-detail" ? (
+    <BaseLayout
+      title={collectionTitle}
+      description={collectionDescription}
+      lang={lang}
+      currentSlug={slug}
+      alternateSlug={collectionAlternateSlug}
+    >
+      {blogPostingLd && (
+        <StructuredData
+          slot="structured-data"
+          type="BlogPosting"
+          data={blogPostingLd}
+        />
+      )}
+      {props.collection === "blog" && (
+        <BlogPost entry={props.entry as CollectionEntry<"blog">} lang={lang} />
+      )}
+      {props.collection === "pages" && (
+        <PageContent
+          entry={props.entry as CollectionEntry<"pages">}
+          lang={lang}
+        />
+      )}
+    </BaseLayout>
+  ) : (
+    StaticComponent && <StaticComponent lang={lang} currentSlug={slug} />
+  )
+}

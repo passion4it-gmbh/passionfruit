@@ -1,49 +1,51 @@
 ---
 interface Props {
-	variant?: 'primary' | 'secondary' | 'ghost';
-	tone?: 'on-light' | 'on-dark';
-	href?: string;
-	type?: 'button' | 'submit';
-	class?: string;
-	[key: string]: unknown;
+  variant?: "primary" | "secondary" | "ghost";
+  tone?: "on-light" | "on-dark";
+  href?: string;
+  type?: "button" | "submit";
+  class?: string;
+  [key: string]: unknown;
 }
 
 const {
-	variant = 'primary',
-	tone = 'on-light',
-	href,
-	type = 'button',
-	class: className = '',
-	...rest
+  variant = "primary",
+  tone = "on-light",
+  href,
+  type = "button",
+  class: className = "",
+  ...rest
 } = Astro.props;
 
 const baseClasses =
-	'inline-flex items-center justify-center rounded-[var(--radius-button)] font-semibold transition-colors duration-[var(--transition-fast)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-h-[44px] px-6 py-2.5';
+  "inline-flex items-center justify-center rounded-[var(--radius-button)] font-semibold transition-colors duration-[var(--transition-fast)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 min-h-[44px] px-6 py-2.5";
 
 const onLight: Record<string, string> = {
-	primary: 'bg-accent text-white hover:bg-accent-hover',
-	secondary: 'border border-border text-text-heading hover:bg-surface-dark/5',
-	ghost: 'text-accent hover:underline',
+  primary: "bg-accent text-white hover:bg-accent-hover",
+  secondary: "border border-border text-text-heading hover:bg-surface-dark/5",
+  ghost: "text-accent hover:underline",
 };
 
 const onDark: Record<string, string> = {
-	primary: 'bg-accent text-white hover:bg-accent-hover',
-	secondary: 'border border-white/20 text-text-on-dark hover:bg-white/10',
-	ghost: 'text-text-on-dark hover:underline',
+  primary: "bg-accent text-white hover:bg-accent-hover",
+  secondary: "border border-white/20 text-text-on-dark hover:bg-white/10",
+  ghost: "text-text-on-dark hover:underline",
 };
 
-const variantClasses = tone === 'on-dark' ? onDark : onLight;
-const classes = [baseClasses, variantClasses[variant], className].filter(Boolean).join(' ');
+const variantClasses = tone === "on-dark" ? onDark : onLight;
+const classes = [baseClasses, variantClasses[variant], className]
+  .filter(Boolean)
+  .join(" ");
 ---
 
 {
-	href ? (
-		<a href={href} class={classes} {...rest}>
-			<slot />
-		</a>
-	) : (
-		<button type={type} class={classes} {...rest}>
-			<slot />
-		</button>
-	)
+  href ? (
+    <a href={href} class={classes} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={classes} {...rest}>
+      <slot />
+    </button>
+  )
 }

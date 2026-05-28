@@ -1,188 +1,208 @@
 ---
-import { Menu, X } from '@lucide/astro';
-import { getLocalizedPath, useTranslations, type Locale } from '~/i18n';
-import LanguageSwitcher from '~/components/LanguageSwitcher.astro';
+import { Menu, X } from "@lucide/astro";
+import { getLocalizedPath, useTranslations, type Locale } from "~/i18n";
+import LanguageSwitcher from "~/components/LanguageSwitcher.astro";
 
 interface Props {
-	lang: Locale;
-	currentSlug?: string;
-	alternateSlug?: string;
-	variant?: 'on-dark' | 'on-light';
+  lang: Locale;
+  currentSlug?: string;
+  alternateSlug?: string;
+  variant?: "on-dark" | "on-light";
 }
 
-const { lang, currentSlug, alternateSlug, variant = 'on-light' } = Astro.props;
+const { lang, currentSlug, alternateSlug, variant = "on-light" } = Astro.props;
 const { t } = useTranslations(lang);
 
-const homeHref = getLocalizedPath('', lang);
+const homeHref = getLocalizedPath("", lang);
 
 type NavItem = { labelKey: string; slug: string };
 
 const navItems: NavItem[] = [
-	{ labelKey: 'navigation.home', slug: '' },
-	{ labelKey: 'navigation.about', slug: lang === 'de' ? 'ueber-uns' : 'about' },
-	{ labelKey: 'navigation.services', slug: lang === 'de' ? 'leistungen' : 'services' },
-	{ labelKey: 'navigation.blog', slug: 'blog' },
-	{ labelKey: 'navigation.team', slug: 'team' },
-	{ labelKey: 'navigation.contact', slug: lang === 'de' ? 'kontakt' : 'contact' },
+  { labelKey: "navigation.home", slug: "" },
+  { labelKey: "navigation.about", slug: lang === "de" ? "ueber-uns" : "about" },
+  {
+    labelKey: "navigation.services",
+    slug: lang === "de" ? "leistungen" : "services",
+  },
+  { labelKey: "navigation.blog", slug: "blog" },
+  { labelKey: "navigation.team", slug: "team" },
+  {
+    labelKey: "navigation.contact",
+    slug: lang === "de" ? "kontakt" : "contact",
+  },
 ];
 
 function isActive(slug: string): boolean {
-	return currentSlug === slug || (slug === '' && currentSlug === undefined);
+  return currentSlug === slug || (slug === "" && currentSlug === undefined);
 }
 
-const isOnDark = variant === 'on-dark';
-const headerBg = isOnDark ? 'bg-transparent' : 'bg-surface/80';
-const headerBorder = isOnDark ? 'border-transparent' : 'border-border/50';
-const logoTextColor = isOnDark ? 'text-text-on-dark' : 'text-text-heading';
-const navLinkBase = 'text-sm font-medium transition-colors duration-[var(--transition-fast)]';
+const isOnDark = variant === "on-dark";
+const headerBg = isOnDark ? "bg-transparent" : "bg-surface/80";
+const headerBorder = isOnDark ? "border-transparent" : "border-border/50";
+const logoTextColor = isOnDark ? "text-text-on-dark" : "text-text-heading";
+const navLinkBase =
+  "text-sm font-medium transition-colors duration-[var(--transition-fast)]";
 const navLinkInactive = isOnDark
-	? 'text-text-on-dark/60 hover:text-text-on-dark'
-	: 'text-muted hover:text-text-heading';
-const navLinkActive = isOnDark ? 'text-text-on-dark font-semibold' : 'text-accent font-semibold';
-const hamburgerColor = isOnDark ? 'text-text-on-dark' : 'text-text-heading';
+  ? "text-text-on-dark/60 hover:text-text-on-dark"
+  : "text-muted hover:text-text-heading";
+const navLinkActive = isOnDark
+  ? "text-text-on-dark font-semibold"
+  : "text-accent font-semibold";
+const hamburgerColor = isOnDark ? "text-text-on-dark" : "text-text-heading";
 ---
 
 <header
-	id="site-header"
-	class={`sticky top-0 z-50 ${headerBg} backdrop-blur-xl backdrop-saturate-150 border-b ${headerBorder}`}
+  id="site-header"
+  class={`sticky top-0 z-50 ${headerBg} backdrop-blur-xl backdrop-saturate-150 border-b ${headerBorder}`}
 >
-	<div class="container">
-		<div class="flex items-center justify-between h-16">
-			<!-- Logo -->
-			<a
-				href={homeHref}
-				class={`text-lg font-bold tracking-tight ${logoTextColor} hover:opacity-80 transition-opacity`}
-				aria-label="Greenleaf Digital – Home"
-			>
-				Greenleaf Digital
-			</a>
+  <div class="container">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a
+        href={homeHref}
+        class={`text-lg font-bold tracking-tight ${logoTextColor} hover:opacity-80 transition-opacity`}
+        aria-label="Greenleaf Digital – Home"
+      >
+        Greenleaf Digital
+      </a>
 
-			<!-- Desktop nav -->
-			<nav class="hidden md:flex items-center gap-6" aria-label="Main navigation">
-				{navItems.map((item) => (
-					<a
-						href={getLocalizedPath(item.slug, lang)}
-						class={`${navLinkBase} ${isActive(item.slug) ? navLinkActive : navLinkInactive}`}
-						aria-current={isActive(item.slug) ? 'page' : undefined}
-					>
-						{t(item.labelKey)}
-					</a>
-				))}
-			</nav>
+      <!-- Desktop nav -->
+      <nav
+        class="hidden md:flex items-center gap-6"
+        aria-label="Main navigation"
+      >
+        {
+          navItems.map((item) => (
+            <a
+              href={getLocalizedPath(item.slug, lang)}
+              class={`${navLinkBase} ${isActive(item.slug) ? navLinkActive : navLinkInactive}`}
+              aria-current={isActive(item.slug) ? "page" : undefined}
+            >
+              {t(item.labelKey)}
+            </a>
+          ))
+        }
+      </nav>
 
-			<!-- Right: language switcher + mobile hamburger -->
-			<div class="flex items-center gap-4">
-				<LanguageSwitcher lang={lang} currentSlug={currentSlug} alternateSlug={alternateSlug} />
+      <!-- Right: language switcher + mobile hamburger -->
+      <div class="flex items-center gap-4">
+        <LanguageSwitcher
+          lang={lang}
+          currentSlug={currentSlug}
+          alternateSlug={alternateSlug}
+        />
 
-				<button
-					id="mobile-menu-toggle"
-					type="button"
-					aria-label="Open menu"
-					aria-expanded="false"
-					aria-controls="mobile-menu"
-					class={`md:hidden flex items-center justify-center w-10 h-10 rounded-md ${hamburgerColor} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2`}
-				>
-					<Menu size={20} aria-hidden="true" id="hamburger-icon" />
-					<X size={20} aria-hidden="true" id="close-icon" class="hidden" />
-				</button>
-			</div>
-		</div>
-	</div>
+        <button
+          id="mobile-menu-toggle"
+          type="button"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          class={`md:hidden flex items-center justify-center w-10 h-10 rounded-md ${hamburgerColor} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2`}
+        >
+          <Menu size={20} aria-hidden="true" id="hamburger-icon" />
+          <X size={20} aria-hidden="true" id="close-icon" class="hidden" />
+        </button>
+      </div>
+    </div>
+  </div>
 
-	<!-- Mobile menu -->
-	<nav
-		id="mobile-menu"
-		class="hidden md:hidden border-t border-border/50"
-		aria-label="Mobile navigation"
-	>
-		<div class="container py-4 flex flex-col gap-1">
-			{navItems.map((item) => (
-				<a
-					href={getLocalizedPath(item.slug, lang)}
-					class={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-[var(--transition-fast)] ${
-						isActive(item.slug)
-							? 'bg-accent/10 text-accent'
-							: isOnDark
-								? 'text-text-on-dark/80 hover:bg-white/10 hover:text-text-on-dark'
-								: 'text-text hover:bg-surface-dark/5 hover:text-text-heading'
-					}`}
-					aria-current={isActive(item.slug) ? 'page' : undefined}
-				>
-					{t(item.labelKey)}
-				</a>
-			))}
-		</div>
-	</nav>
+  <!-- Mobile menu -->
+  <nav
+    id="mobile-menu"
+    class="hidden md:hidden border-t border-border/50"
+    aria-label="Mobile navigation"
+  >
+    <div class="container py-4 flex flex-col gap-1">
+      {
+        navItems.map((item) => (
+          <a
+            href={getLocalizedPath(item.slug, lang)}
+            class={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-[var(--transition-fast)] ${
+              isActive(item.slug)
+                ? "bg-accent/10 text-accent"
+                : isOnDark
+                  ? "text-text-on-dark/80 hover:bg-white/10 hover:text-text-on-dark"
+                  : "text-text hover:bg-surface-dark/5 hover:text-text-heading"
+            }`}
+            aria-current={isActive(item.slug) ? "page" : undefined}
+          >
+            {t(item.labelKey)}
+          </a>
+        ))
+      }
+    </div>
+  </nav>
 </header>
 
 <script>
-	function initMobileMenu() {
-		const toggle = document.getElementById('mobile-menu-toggle');
-		const menu = document.getElementById('mobile-menu');
-		const hamburgerIcon = document.getElementById('hamburger-icon');
-		const closeIcon = document.getElementById('close-icon');
+  function initMobileMenu() {
+    const toggle = document.getElementById("mobile-menu-toggle");
+    const menu = document.getElementById("mobile-menu");
+    const hamburgerIcon = document.getElementById("hamburger-icon");
+    const closeIcon = document.getElementById("close-icon");
 
-		if (!toggle || !menu) return;
+    if (!toggle || !menu) return;
 
-		let isOpen = false;
+    let isOpen = false;
 
-		function open() {
-			isOpen = true;
-			menu!.classList.remove('hidden');
-			toggle!.setAttribute('aria-expanded', 'true');
-			toggle!.setAttribute('aria-label', 'Close menu');
-			hamburgerIcon?.classList.add('hidden');
-			closeIcon?.classList.remove('hidden');
-		}
+    function open() {
+      isOpen = true;
+      menu!.classList.remove("hidden");
+      toggle!.setAttribute("aria-expanded", "true");
+      toggle!.setAttribute("aria-label", "Close menu");
+      hamburgerIcon?.classList.add("hidden");
+      closeIcon?.classList.remove("hidden");
+    }
 
-		function close() {
-			isOpen = false;
-			menu!.classList.add('hidden');
-			toggle!.setAttribute('aria-expanded', 'false');
-			toggle!.setAttribute('aria-label', 'Open menu');
-			hamburgerIcon?.classList.remove('hidden');
-			closeIcon?.classList.add('hidden');
-		}
+    function close() {
+      isOpen = false;
+      menu!.classList.add("hidden");
+      toggle!.setAttribute("aria-expanded", "false");
+      toggle!.setAttribute("aria-label", "Open menu");
+      hamburgerIcon?.classList.remove("hidden");
+      closeIcon?.classList.add("hidden");
+    }
 
-		toggle.addEventListener('click', () => {
-			isOpen ? close() : open();
-		});
+    toggle.addEventListener("click", () => {
+      isOpen ? close() : open();
+    });
 
-		document.addEventListener('keydown', (e) => {
-			if (e.key === 'Escape' && isOpen) {
-				close();
-				toggle.focus();
-			}
-		});
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && isOpen) {
+        close();
+        toggle.focus();
+      }
+    });
 
-		// Close on nav link click
-		menu.querySelectorAll('a').forEach((link) => {
-			link.addEventListener('click', close);
-		});
-	}
+    // Close on nav link click
+    menu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", close);
+    });
+  }
 
-	function initHeaderScroll() {
-		const header = document.getElementById('site-header');
-		if (!header || !header.classList.contains('bg-transparent')) return;
+  function initHeaderScroll() {
+    const header = document.getElementById("site-header");
+    if (!header || !header.classList.contains("bg-transparent")) return;
 
-		function update() {
-			if (window.scrollY > 80) {
-				header!.classList.replace('bg-transparent', 'bg-surface-dark/80');
-				header!.classList.replace('border-transparent', 'border-white/5');
-			} else {
-				header!.classList.replace('bg-surface-dark/80', 'bg-transparent');
-				header!.classList.replace('border-white/5', 'border-transparent');
-			}
-		}
+    function update() {
+      if (window.scrollY > 80) {
+        header!.classList.replace("bg-transparent", "bg-surface-dark/80");
+        header!.classList.replace("border-transparent", "border-white/5");
+      } else {
+        header!.classList.replace("bg-surface-dark/80", "bg-transparent");
+        header!.classList.replace("border-white/5", "border-transparent");
+      }
+    }
 
-		window.addEventListener('scroll', update, { passive: true });
-		update();
-	}
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+  }
 
-	initMobileMenu();
-	initHeaderScroll();
-	document.addEventListener('astro:after-swap', () => {
-		initMobileMenu();
-		initHeaderScroll();
-	});
+  initMobileMenu();
+  initHeaderScroll();
+  document.addEventListener("astro:after-swap", () => {
+    initMobileMenu();
+    initHeaderScroll();
+  });
 </script>

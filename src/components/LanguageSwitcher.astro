@@ -1,57 +1,59 @@
 ---
-import { getLocalizedPath, type Locale } from '~/i18n';
-import { getAlternateLocaleSlug } from '~/lib/page-registry';
+import { getLocalizedPath, type Locale } from "~/i18n";
+import { getAlternateLocaleSlug } from "~/lib/page-registry";
 
 interface Props {
-	lang: Locale;
-	currentSlug?: string;
-	alternateSlug?: string;
+  lang: Locale;
+  currentSlug?: string;
+  alternateSlug?: string;
 }
 
 const { lang, currentSlug, alternateSlug } = Astro.props;
 
-const otherLang: Locale = lang === 'de' ? 'en' : 'de';
+const otherLang: Locale = lang === "de" ? "en" : "de";
 
 function resolveAlternateHref(): string {
-	if (!currentSlug) {
-		return getLocalizedPath('', otherLang);
-	}
-	if (alternateSlug) {
-		return getLocalizedPath(alternateSlug, otherLang);
-	}
-	const alternate = getAlternateLocaleSlug(lang, currentSlug);
-	if (!alternate) {
-		return getLocalizedPath('', otherLang);
-	}
-	return getLocalizedPath(alternate.slug, otherLang);
+  if (!currentSlug) {
+    return getLocalizedPath("", otherLang);
+  }
+  if (alternateSlug) {
+    return getLocalizedPath(alternateSlug, otherLang);
+  }
+  const alternate = getAlternateLocaleSlug(lang, currentSlug);
+  if (!alternate) {
+    return getLocalizedPath("", otherLang);
+  }
+  return getLocalizedPath(alternate.slug, otherLang);
 }
 
 const alternateHref = resolveAlternateHref();
 
-const deHref = lang === 'de' ? getLocalizedPath(currentSlug ?? '', 'de') : alternateHref;
-const enHref = lang === 'en' ? getLocalizedPath(currentSlug ?? '', 'en') : alternateHref;
+const deHref =
+  lang === "de" ? getLocalizedPath(currentSlug ?? "", "de") : alternateHref;
+const enHref =
+  lang === "en" ? getLocalizedPath(currentSlug ?? "", "en") : alternateHref;
 ---
 
 <div class="flex items-center gap-1 text-sm font-semibold">
-	<a
-		href={deHref}
-		aria-label="Deutsch"
-		aria-current={lang === 'de' ? 'page' : undefined}
-		class={lang === 'de'
-			? 'font-bold text-accent'
-			: 'text-text hover:text-accent transition-colors duration-[var(--transition-fast)]'}
-	>
-		DE
-	</a>
-	<span class="text-muted" aria-hidden="true">/</span>
-	<a
-		href={enHref}
-		aria-label="English"
-		aria-current={lang === 'en' ? 'page' : undefined}
-		class={lang === 'en'
-			? 'font-bold text-accent'
-			: 'text-text hover:text-accent transition-colors duration-[var(--transition-fast)]'}
-	>
-		EN
-	</a>
+  <a
+    href={deHref}
+    aria-label="Deutsch"
+    aria-current={lang === "de" ? "page" : undefined}
+    class={lang === "de"
+      ? "font-bold text-accent"
+      : "text-text hover:text-accent transition-colors duration-[var(--transition-fast)]"}
+  >
+    DE
+  </a>
+  <span class="text-muted" aria-hidden="true">/</span>
+  <a
+    href={enHref}
+    aria-label="English"
+    aria-current={lang === "en" ? "page" : undefined}
+    class={lang === "en"
+      ? "font-bold text-accent"
+      : "text-text hover:text-accent transition-colors duration-[var(--transition-fast)]"}
+  >
+    EN
+  </a>
 </div>

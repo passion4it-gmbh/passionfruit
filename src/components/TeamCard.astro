@@ -1,12 +1,12 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import { Image } from 'astro:assets';
-import type { Locale } from '~/i18n';
-import Badge from '~/components/Badge.astro';
-import { ExternalLink } from '@lucide/astro';
+import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+import type { Locale } from "~/i18n";
+import Badge from "~/components/Badge.astro";
+import { ExternalLink } from "@lucide/astro";
 
 interface Props {
-  entry: CollectionEntry<'team'>;
+  entry: CollectionEntry<"team">;
   lang: Locale;
 }
 
@@ -16,20 +16,29 @@ const { name, role, photo, specializations, socials } = entry.data;
 
 <div class="card group flex flex-col overflow-hidden p-0">
   <!-- Photo or avatar -->
-  <div class="relative aspect-[4/3] bg-gradient-to-br from-accent/10 to-warm/5 overflow-hidden">
-    {photo ? (
-      <Image
-        src={photo}
-        alt={name}
-        class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
-        width={400}
-        height={300}
-      />
-    ) : (
-      <div class="w-full h-full flex items-center justify-center" aria-hidden="true">
-        <span class="text-accent/30 font-bold" style="font-size: 5rem">{name.charAt(0)}</span>
-      </div>
-    )}
+  <div
+    class="relative aspect-[4/3] bg-gradient-to-br from-accent/10 to-warm/5 overflow-hidden"
+  >
+    {
+      photo ? (
+        <Image
+          src={photo}
+          alt={name}
+          class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          width={400}
+          height={300}
+        />
+      ) : (
+        <div
+          class="w-full h-full flex items-center justify-center"
+          aria-hidden="true"
+        >
+          <span class="text-accent/30 font-bold" style="font-size: 5rem">
+            {name.charAt(0)}
+          </span>
+        </div>
+      )
+    }
   </div>
 
   <div class="p-6 flex flex-col gap-3 flex-1">
@@ -38,53 +47,57 @@ const { name, role, photo, specializations, socials } = entry.data;
       <p class="text-sm text-muted">{role}</p>
     </div>
 
-    {specializations.length > 0 && (
-      <div class="flex flex-wrap gap-1.5">
-        {specializations.map((spec) => (
-          <Badge>{spec}</Badge>
-        ))}
-      </div>
-    )}
+    {
+      specializations.length > 0 && (
+        <div class="flex flex-wrap gap-1.5">
+          {specializations.map((spec) => (
+            <Badge>{spec}</Badge>
+          ))}
+        </div>
+      )
+    }
 
-    {(socials.linkedin || socials.github || socials.website) && (
-      <div class="flex gap-4 pt-2 mt-auto border-t border-border">
-        {socials.linkedin && (
-          <a
-            href={socials.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-1.5 text-xs text-muted hover:text-accent transition-colors min-h-[44px]"
-            aria-label={`${name} on LinkedIn`}
-          >
-            <ExternalLink size={14} aria-hidden="true" />
-            LinkedIn
-          </a>
-        )}
-        {socials.github && (
-          <a
-            href={socials.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-1.5 text-xs text-muted hover:text-accent transition-colors min-h-[44px]"
-            aria-label={`${name} on GitHub`}
-          >
-            <ExternalLink size={14} aria-hidden="true" />
-            GitHub
-          </a>
-        )}
-        {socials.website && (
-          <a
-            href={socials.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-1.5 text-xs text-muted hover:text-accent transition-colors min-h-[44px]"
-            aria-label={`${name}'s website`}
-          >
-            <ExternalLink size={14} aria-hidden="true" />
-            Website
-          </a>
-        )}
-      </div>
-    )}
+    {
+      (socials.linkedin || socials.github || socials.website) && (
+        <div class="flex gap-4 pt-2 mt-auto border-t border-border">
+          {socials.linkedin && (
+            <a
+              href={socials.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 text-xs text-muted hover:text-accent transition-colors min-h-[44px]"
+              aria-label={`${name} on LinkedIn`}
+            >
+              <ExternalLink size={14} aria-hidden="true" />
+              LinkedIn
+            </a>
+          )}
+          {socials.github && (
+            <a
+              href={socials.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 text-xs text-muted hover:text-accent transition-colors min-h-[44px]"
+              aria-label={`${name} on GitHub`}
+            >
+              <ExternalLink size={14} aria-hidden="true" />
+              GitHub
+            </a>
+          )}
+          {socials.website && (
+            <a
+              href={socials.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 text-xs text-muted hover:text-accent transition-colors min-h-[44px]"
+              aria-label={`${name}'s website`}
+            >
+              <ExternalLink size={14} aria-hidden="true" />
+              Website
+            </a>
+          )}
+        </div>
+      )
+    }
   </div>
 </div>

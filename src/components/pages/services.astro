@@ -1,10 +1,16 @@
 ---
-import type { Locale } from '~/i18n';
-import { useTranslations, getLocalizedPath } from '~/i18n';
-import BaseLayout from '~/layouts/BaseLayout.astro';
-import Button from '~/components/Button.astro';
-import { getAlternateCollectionSlug } from '~/lib/page-registry';
-import { Palette, Code, Lightbulb, ArrowRight, CheckCircle } from '@lucide/astro';
+import type { Locale } from "~/i18n";
+import { useTranslations, getLocalizedPath } from "~/i18n";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import Button from "~/components/Button.astro";
+import { getAlternateCollectionSlug } from "~/lib/page-registry";
+import {
+  Palette,
+  Code,
+  Lightbulb,
+  ArrowRight,
+  CheckCircle,
+} from "@lucide/astro";
 
 interface Props {
   lang: Locale;
@@ -14,40 +20,80 @@ interface Props {
 const { lang, currentSlug } = Astro.props;
 const { t } = useTranslations(lang);
 
-const alternateSlug = await getAlternateCollectionSlug(lang, 'pages', 'services');
-const contactHref = getLocalizedPath(lang === 'de' ? 'kontakt' : 'contact', lang);
+const alternateSlug = await getAlternateCollectionSlug(
+  lang,
+  "pages",
+  "services",
+);
+const contactHref = getLocalizedPath(
+  lang === "de" ? "kontakt" : "contact",
+  lang,
+);
 
 const services = [
   {
     icon: Palette,
-    titleKey: 'services.webDesign.title',
-    descKey: 'services.webDesign.description',
-    features: lang === 'de'
-      ? ['Responsive Design', 'Markengerechte Gestaltung', 'UI/UX Optimierung', 'Barrierefreiheit (WCAG AA)']
-      : ['Responsive design', 'Brand-aligned styling', 'UI/UX optimization', 'Accessibility (WCAG AA)'],
+    titleKey: "services.webDesign.title",
+    descKey: "services.webDesign.description",
+    features:
+      lang === "de"
+        ? [
+            "Responsive Design",
+            "Markengerechte Gestaltung",
+            "UI/UX Optimierung",
+            "Barrierefreiheit (WCAG AA)",
+          ]
+        : [
+            "Responsive design",
+            "Brand-aligned styling",
+            "UI/UX optimization",
+            "Accessibility (WCAG AA)",
+          ],
   },
   {
     icon: Code,
-    titleKey: 'services.development.title',
-    descKey: 'services.development.description',
-    features: lang === 'de'
-      ? ['Astro & TypeScript', 'Blitzschnelle Ladezeiten', 'SEO-optimiert', 'Mehrsprachig']
-      : ['Astro & TypeScript', 'Lightning-fast load times', 'SEO optimized', 'Multilingual'],
+    titleKey: "services.development.title",
+    descKey: "services.development.description",
+    features:
+      lang === "de"
+        ? [
+            "Astro & TypeScript",
+            "Blitzschnelle Ladezeiten",
+            "SEO-optimiert",
+            "Mehrsprachig",
+          ]
+        : [
+            "Astro & TypeScript",
+            "Lightning-fast load times",
+            "SEO optimized",
+            "Multilingual",
+          ],
   },
   {
     icon: Lightbulb,
-    titleKey: 'services.consulting.title',
-    descKey: 'services.consulting.description',
-    features: lang === 'de'
-      ? ['Digitale Strategie', 'Technologie-Beratung', 'Workshop-Formate', 'KI-Integration']
-      : ['Digital strategy', 'Technology consulting', 'Workshop formats', 'AI integration'],
+    titleKey: "services.consulting.title",
+    descKey: "services.consulting.description",
+    features:
+      lang === "de"
+        ? [
+            "Digitale Strategie",
+            "Technologie-Beratung",
+            "Workshop-Formate",
+            "KI-Integration",
+          ]
+        : [
+            "Digital strategy",
+            "Technology consulting",
+            "Workshop formats",
+            "AI integration",
+          ],
   },
 ];
 ---
 
 <BaseLayout
-  title={t('services.title')}
-  description={t('services.description')}
+  title={t("services.title")}
+  description={t("services.description")}
   lang={lang}
   currentSlug={currentSlug}
   alternateSlug={alternateSlug}
@@ -56,14 +102,25 @@ const services = [
   <!-- Hero -->
   <section class="bg-surface-dark noise relative overflow-hidden">
     <div class="absolute inset-0 bg-grid opacity-20"></div>
-    <div class="glow-orb absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2 -translate-x-1/3"></div>
+    <div
+      class="glow-orb absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2 -translate-x-1/3"
+    >
+    </div>
     <div class="container relative z-10 pt-48 pb-24 md:pt-56 md:pb-32">
-      <p class="eyebrow hero-stagger" style="--delay: 100ms">{t('site.name')}</p>
-      <h1 class="text-display text-text-on-dark mt-6 max-w-3xl hero-stagger" style="--delay: 200ms">
-        {t('services.title')}
+      <p class="eyebrow hero-stagger" style="--delay: 100ms">
+        {t("site.name")}
+      </p>
+      <h1
+        class="text-display text-text-on-dark mt-6 max-w-3xl hero-stagger"
+        style="--delay: 200ms"
+      >
+        {t("services.title")}
       </h1>
-      <p class="text-body-lg text-text-on-dark/60 mt-6 max-w-2xl hero-stagger" style="--delay: 400ms">
-        {t('services.description')}
+      <p
+        class="text-body-lg text-text-on-dark/60 mt-6 max-w-2xl hero-stagger"
+        style="--delay: 400ms"
+      >
+        {t("services.description")}
       </p>
     </div>
   </section>
@@ -72,49 +129,80 @@ const services = [
   <section class="py-28 md:py-36">
     <div class="container">
       <div class="flex flex-col gap-20">
-        {services.map((svc, i) => (
-          <div class={`grid lg:grid-cols-2 gap-12 lg:gap-20 items-center anim-slide-up`} style={`--delay: ${i * 100}ms`}>
-            <div class={i % 2 === 1 ? 'lg:order-2' : ''}>
-              <div class="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mb-6">
-                <svc.icon class="w-7 h-7 text-accent" />
+        {
+          services.map((svc, i) => (
+            <div
+              class={`grid lg:grid-cols-2 gap-12 lg:gap-20 items-center anim-slide-up`}
+              style={`--delay: ${i * 100}ms`}
+            >
+              <div class={i % 2 === 1 ? "lg:order-2" : ""}>
+                <div class="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mb-6">
+                  <svc.icon class="w-7 h-7 text-accent" />
+                </div>
+                <h2 class="text-h2 text-text-heading">{t(svc.titleKey)}</h2>
+                <p class="text-body-lg text-muted mt-4 leading-relaxed">
+                  {t(svc.descKey)}
+                </p>
+                <ul class="mt-8 flex flex-col gap-3">
+                  {svc.features.map((feature) => (
+                    <li class="flex items-center gap-3 text-text">
+                      <CheckCircle class="w-5 h-5 text-accent flex-shrink-0" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h2 class="text-h2 text-text-heading">{t(svc.titleKey)}</h2>
-              <p class="text-body-lg text-muted mt-4 leading-relaxed">{t(svc.descKey)}</p>
-              <ul class="mt-8 flex flex-col gap-3">
-                {svc.features.map((feature) => (
-                  <li class="flex items-center gap-3 text-text">
-                    <CheckCircle class="w-5 h-5 text-accent flex-shrink-0" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+              <div
+                class={`card p-0 overflow-hidden aspect-[4/3] bg-gradient-to-br ${
+                  i === 0
+                    ? "from-accent/5 to-warm/5"
+                    : i === 1
+                      ? "from-accent/5 to-accent-glow/5"
+                      : "from-warm/5 to-accent/5"
+                } flex items-center justify-center ${i % 2 === 1 ? "lg:order-1" : ""}`}
+              >
+                <svc.icon class="w-24 h-24 text-accent/20" />
+              </div>
             </div>
-            <div class={`card p-0 overflow-hidden aspect-[4/3] bg-gradient-to-br ${
-              i === 0 ? 'from-accent/5 to-warm/5' :
-              i === 1 ? 'from-accent/5 to-accent-glow/5' :
-              'from-warm/5 to-accent/5'
-            } flex items-center justify-center ${i % 2 === 1 ? 'lg:order-1' : ''}`}>
-              <svc.icon class="w-24 h-24 text-accent/20" />
-            </div>
-          </div>
-        ))}
+          ))
+        }
       </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="bg-surface-dark noise relative overflow-hidden py-28 md:py-36">
+  <section
+    class="bg-surface-dark noise relative overflow-hidden py-28 md:py-36"
+  >
     <div class="absolute inset-0">
-      <div class="glow-orb absolute top-1/2 left-1/3 w-[500px] h-[500px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2"></div>
-      <div class="glow-orb absolute top-1/2 right-1/4 w-[400px] h-[400px] rounded-full bg-warm/10 blur-[100px] -translate-y-1/2" style="animation-delay: 3s"></div>
+      <div
+        class="glow-orb absolute top-1/2 left-1/3 w-[500px] h-[500px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2"
+      >
+      </div>
+      <div
+        class="glow-orb absolute top-1/2 right-1/4 w-[400px] h-[400px] rounded-full bg-warm/10 blur-[100px] -translate-y-1/2"
+        style="animation-delay: 3s"
+      >
+      </div>
     </div>
     <div class="container relative z-10 text-center anim-scale-blur">
-      <h2 class="text-h1 text-text-on-dark max-w-2xl mx-auto">{t('home.ctaSection.title')}</h2>
-      <p class="text-body-lg text-text-on-dark/60 mt-6 max-w-xl mx-auto">{t('home.ctaSection.subtitle')}</p>
+      <h2 class="text-h1 text-text-on-dark max-w-2xl mx-auto">
+        {t("home.ctaSection.title")}
+      </h2>
+      <p class="text-body-lg text-text-on-dark/60 mt-6 max-w-xl mx-auto">
+        {t("home.ctaSection.subtitle")}
+      </p>
       <div class="mt-10">
-        <Button href={contactHref} variant="primary" tone="on-dark" class="btn-glow group">
-          {t('cta.contact')}
-          <ArrowRight class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+        <Button
+          href={contactHref}
+          variant="primary"
+          tone="on-dark"
+          class="btn-glow group"
+        >
+          {t("cta.contact")}
+          <ArrowRight
+            class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
+          />
         </Button>
       </div>
     </div>
@@ -123,13 +211,23 @@ const services = [
 
 <script>
   function initScrollAnimations() {
-    if (CSS.supports('animation-timeline: scroll()')) return;
+    if (CSS.supports("animation-timeline: scroll()")) return;
     const observer = new IntersectionObserver(
-      (entries) => { for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in-view'); observer.unobserve(e.target); } },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      (entries) => {
+        for (const e of entries)
+          if (e.isIntersecting) {
+            e.target.classList.add("in-view");
+            observer.unobserve(e.target);
+          }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     );
-    document.querySelectorAll('.anim-card-enter, .anim-slide-up, .anim-fade, .anim-scale-blur').forEach((el) => observer.observe(el));
+    document
+      .querySelectorAll(
+        ".anim-card-enter, .anim-slide-up, .anim-fade, .anim-scale-blur",
+      )
+      .forEach((el) => observer.observe(el));
   }
   initScrollAnimations();
-  document.addEventListener('astro:after-swap', initScrollAnimations);
+  document.addEventListener("astro:after-swap", initScrollAnimations);
 </script>

@@ -1,41 +1,41 @@
 ---
-import '~/styles/global.css';
-import { getAlternateLocaleSlug } from '~/lib/page-registry';
-import { getLocalizedPath, type Locale } from '~/i18n';
-import Header from '~/components/Header.astro';
-import Footer from '~/components/Footer.astro';
-import CookieConsent from '~/components/CookieConsent.astro';
-import PostHogAnalytics from '~/components/PostHogAnalytics.astro';
-import GoogleAnalytics from '~/components/GoogleAnalytics.astro';
+import "~/styles/global.css";
+import { getAlternateLocaleSlug } from "~/lib/page-registry";
+import { getLocalizedPath, type Locale } from "~/i18n";
+import Header from "~/components/Header.astro";
+import Footer from "~/components/Footer.astro";
+import CookieConsent from "~/components/CookieConsent.astro";
+import PostHogAnalytics from "~/components/PostHogAnalytics.astro";
+import GoogleAnalytics from "~/components/GoogleAnalytics.astro";
 
 interface Props {
-	title: string;
-	description: string;
-	lang: Locale;
-	/** Used to compute the hreflang alternate URL via the registry */
-	currentSlug?: string;
-	/** Pre-resolved alternate slug for collection detail pages (bypasses registry lookup) */
-	alternateSlug?: string;
-	/** Optional OG image URL/path */
-	ogImage?: string;
-	/** Header colour variant. 'on-dark' for pages whose first section is dark. Defaults to 'on-light'. */
-	headerVariant?: 'on-dark' | 'on-light';
-	/** Emit <meta name="robots" content="noindex,nofollow"> for utility pages */
-	noindex?: boolean;
+  title: string;
+  description: string;
+  lang: Locale;
+  /** Used to compute the hreflang alternate URL via the registry */
+  currentSlug?: string;
+  /** Pre-resolved alternate slug for collection detail pages (bypasses registry lookup) */
+  alternateSlug?: string;
+  /** Optional OG image URL/path */
+  ogImage?: string;
+  /** Header colour variant. 'on-dark' for pages whose first section is dark. Defaults to 'on-light'. */
+  headerVariant?: "on-dark" | "on-light";
+  /** Emit <meta name="robots" content="noindex,nofollow"> for utility pages */
+  noindex?: boolean;
 }
 
 const {
-	title,
-	description,
-	lang,
-	currentSlug,
-	alternateSlug,
-	ogImage,
-	headerVariant = 'on-light',
-	noindex = false,
+  title,
+  description,
+  lang,
+  currentSlug,
+  alternateSlug,
+  ogImage,
+  headerVariant = "on-light",
+  noindex = false,
 } = Astro.props;
 
-const defaultOgImage = '/og-default.png';
+const defaultOgImage = "/og-default.png";
 const effectiveOgImage = ogImage ?? defaultOgImage;
 
 // Canonical URL: absolute, with trailing slash (trailingSlash: 'always').
@@ -43,83 +43,92 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
 
 // hreflang URL builder — absolute URL for locale + slug.
 function hreflangUrl(locale: Locale, slug: string | undefined): string {
-	return new URL(getLocalizedPath(slug ?? '', locale), Astro.site).href;
+  return new URL(getLocalizedPath(slug ?? "", locale), Astro.site).href;
 }
 
 // Resolve alternate locale slug: registry for static pages, pre-resolved prop for collection detail.
-const alternate = currentSlug !== undefined
-	? getAlternateLocaleSlug(lang, currentSlug)
-	: undefined;
+const alternate =
+  currentSlug !== undefined
+    ? getAlternateLocaleSlug(lang, currentSlug)
+    : undefined;
 const resolvedAlternateSlug = alternate?.slug ?? alternateSlug;
 
-const deSlug = lang === 'de' ? currentSlug : resolvedAlternateSlug;
-const enSlug = lang === 'en' ? currentSlug : resolvedAlternateSlug;
+const deSlug = lang === "de" ? currentSlug : resolvedAlternateSlug;
+const enSlug = lang === "en" ? currentSlug : resolvedAlternateSlug;
 
-const deUrl = hreflangUrl('de', deSlug);
-const enUrl = hreflangUrl('en', enSlug);
+const deUrl = hreflangUrl("de", deSlug);
+const enUrl = hreflangUrl("en", enSlug);
 
 // Title: append brand suffix unless already present.
-const pageTitle = title.includes('Greenleaf Digital') ? title : `${title} | Greenleaf Digital`;
+const pageTitle = title.includes("Greenleaf Digital")
+  ? title
+  : `${title} | Greenleaf Digital`;
 ---
 
 <!doctype html>
 <html lang={lang}>
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="theme-color" content="#6366f1" />
-		<title>{pageTitle}</title>
-		<meta name="description" content={description} />
-		{noindex && <meta name="robots" content="noindex,nofollow" />}
-		<link rel="canonical" href={canonicalUrl} />
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#6366f1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+    <link rel="canonical" href={canonicalUrl} />
 
-		<!-- hreflang annotations -->
-		<link rel="alternate" hreflang="de" href={deUrl} />
-		<link rel="alternate" hreflang="en" href={enUrl} />
-		<link rel="alternate" hreflang="x-default" href={deUrl} />
+    <!-- hreflang annotations -->
+    <link rel="alternate" hreflang="de" href={deUrl} />
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="x-default" href={deUrl} />
 
-		<!-- Open Graph -->
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content={title} />
-		<meta property="og:description" content={description} />
-		<meta property="og:url" content={canonicalUrl} />
-		<meta property="og:locale" content={lang === 'de' ? 'de_DE' : 'en_US'} />
-		<meta property="og:image" content={new URL(effectiveOgImage, Astro.site).href} />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content={lang === "de" ? "de_DE" : "en_US"} />
+    <meta
+      property="og:image"
+      content={new URL(effectiveOgImage, Astro.site).href}
+    />
 
-		<!-- Twitter Card -->
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:title" content={title} />
-		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content={new URL(effectiveOgImage, Astro.site).href} />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta
+      name="twitter:image"
+      content={new URL(effectiveOgImage, Astro.site).href}
+    />
 
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-		<!-- Structured data slot — inject JSON-LD from per-page components -->
-		<slot name="structured-data" />
-	</head>
-	<body class="bg-surface min-h-screen">
-		<a
-			href="#main-content"
-			class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded"
-		>
-			Skip to content
-		</a>
+    <!-- Structured data slot — inject JSON-LD from per-page components -->
+    <slot name="structured-data" />
+  </head>
+  <body class="bg-surface min-h-screen">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded"
+    >
+      Skip to content
+    </a>
 
-		<Header
-			lang={lang}
-			currentSlug={currentSlug}
-			alternateSlug={resolvedAlternateSlug}
-			variant={headerVariant}
-		/>
+    <Header
+      lang={lang}
+      currentSlug={currentSlug}
+      alternateSlug={resolvedAlternateSlug}
+      variant={headerVariant}
+    />
 
-		<main id="main-content" class={headerVariant === 'on-dark' ? '-mt-16' : ''}>
-			<slot />
-		</main>
+    <main id="main-content" class={headerVariant === "on-dark" ? "-mt-16" : ""}>
+      <slot />
+    </main>
 
-		<Footer lang={lang} />
+    <Footer lang={lang} />
 
-		<CookieConsent lang={lang} />
-		<PostHogAnalytics />
-		<GoogleAnalytics />
-	</body>
+    <CookieConsent lang={lang} />
+    <PostHogAnalytics />
+    <GoogleAnalytics />
+  </body>
 </html>

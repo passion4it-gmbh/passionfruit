@@ -7,3 +7,7 @@ dist
 node_modules
 .cache
 .release-please-manifest.json
+
+# `define:vars` inline scripts trip up prettier-plugin-astro
+src/components/PostHogAnalytics.astro
+src/components/GoogleAnalytics.astro
