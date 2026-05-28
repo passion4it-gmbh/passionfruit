@@ -226,3 +226,64 @@ describe("no content directory case", () => {
     assert.match(result.stdout, /no collections/i);
   });
 });
+
+// ---------------------------------------------------------------------------
+// 8. OG image locale-pair check — half-state must fail the build
+// ---------------------------------------------------------------------------
+describe("og image locale-pair check", () => {
+  let tmpProjectRoot;
+  let contentRoot;
+
+  before(() => {
+    tmpProjectRoot = mkdtempSync(join(tmpdir(), "bilingual-og-test-"));
+    contentRoot = join(tmpProjectRoot, "src", "content");
+    mkdirSync(join(tmpProjectRoot, "public"), { recursive: true });
+    mkdirSync(contentRoot, { recursive: true });
+  });
+
+  after(() => rmSync(tmpProjectRoot, { recursive: true, force: true }));
+
+  function runWithCwd() {
+    return spawnSync("node", [SCRIPT, `--root=${contentRoot}`], {
+      encoding: "utf8",
+      cwd: tmpProjectRoot,
+    });
+  }
+
+  it("both PNGs present → exit 0, logs as present", () => {
+    writeFileSync(join(tmpProjectRoot, "public", "og-default-de.png"), "fake");
+    writeFileSync(join(tmpProjectRoot, "public", "og-default-en.png"), "fake");
+    const result = runWithCwd();
+    assert.equal(result.status, 0, `stderr: ${result.stderr}`);
+    assert.match(result.stdout, /og-default-\{de,en\}\.png: present/);
+  });
+
+  it("only DE present → exit 1, names the missing EN file", () => {
+    rmSync(join(tmpProjectRoot, "public", "og-default-en.png"), {
+      force: true,
+    });
+    const result = runWithCwd();
+    assert.equal(result.status, 1, `expected exit 1`);
+    assert.match(result.stdout, /og-default-en\.png is missing/);
+    assert.match(result.stdout, /pnpm generate-og/);
+  });
+
+  it("only EN present → exit 1, names the missing DE file", () => {
+    rmSync(join(tmpProjectRoot, "public", "og-default-de.png"), {
+      force: true,
+    });
+    writeFileSync(join(tmpProjectRoot, "public", "og-default-en.png"), "fake");
+    const result = runWithCwd();
+    assert.equal(result.status, 1, `expected exit 1`);
+    assert.match(result.stdout, /og-default-de\.png is missing/);
+  });
+
+  it("neither present → exit 0 (no half-state, no log)", () => {
+    rmSync(join(tmpProjectRoot, "public", "og-default-en.png"), {
+      force: true,
+    });
+    const result = runWithCwd();
+    assert.equal(result.status, 0, `stderr: ${result.stderr}`);
+    assert.doesNotMatch(result.stdout, /og-default-\{de,en\}\.png/);
+  });
+});

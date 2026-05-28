@@ -31,37 +31,32 @@ const green = (s) => (isTTY ? styleText("green", s) : s);
 const yellow = (s) => (isTTY ? styleText("yellow", s) : s);
 const bold = (s) => (isTTY ? styleText("bold", s) : s);
 
-// ---------------------------------------------------------------------------
-// Guard: root must exist
-// ---------------------------------------------------------------------------
-if (!existsSync(root)) {
-  console.log("bilingual check: no collections");
-  process.exit(0);
-}
+/** @type {string[]} */
+const errors = [];
 
 // ---------------------------------------------------------------------------
 // Discover collections (subdirectories of root)
 // ---------------------------------------------------------------------------
-const entries = readdirSync(root);
-const collections = entries.filter((name) => {
-  try {
-    return statSync(join(root, name)).isDirectory();
-  } catch {
-    return false;
-  }
-});
-
-if (collections.length === 0) {
+let collections = [];
+if (!existsSync(root)) {
   console.log("bilingual check: no collections");
-  process.exit(0);
+} else {
+  const entries = readdirSync(root);
+  collections = entries.filter((name) => {
+    try {
+      return statSync(join(root, name)).isDirectory();
+    } catch {
+      return false;
+    }
+  });
+  if (collections.length === 0) {
+    console.log("bilingual check: no collections");
+  }
 }
 
 // ---------------------------------------------------------------------------
 // Per-collection analysis
 // ---------------------------------------------------------------------------
-/** @type {string[]} */
-const errors = [];
-
 for (const collection of collections) {
   const collectionDir = join(root, collection);
 
@@ -145,6 +140,36 @@ for (const collection of collections) {
     const count = deKeys.size;
     console.log(green(`${collection}: ${count}/${count} balanced`));
   }
+}
+
+// ---------------------------------------------------------------------------
+// Locale-paired static assets
+// BaseLayout interpolates `/og-default-${lang}.png` unconditionally, so a
+// half-state (one locale present, the other missing) would render a broken
+// og:image meta tag on the missing-locale pages without any other check
+// catching it. Enforce here so `pnpm generate-og --lang de` alone never
+// reaches a build.
+// ---------------------------------------------------------------------------
+const localePairedAssets = [
+  ["public/og-default-de.png", "public/og-default-en.png"],
+];
+for (const [dePath, enPath] of localePairedAssets) {
+  const deExists = existsSync(dePath);
+  const enExists = existsSync(enPath);
+  if (deExists && !enExists) {
+    errors.push(
+      `${red("ERROR")} ${dePath} exists but ${enPath} is missing — run \`pnpm generate-og\` to regenerate both`,
+    );
+  } else if (enExists && !deExists) {
+    errors.push(
+      `${red("ERROR")} ${enPath} exists but ${dePath} is missing — run \`pnpm generate-og\` to regenerate both`,
+    );
+  } else if (deExists && enExists) {
+    const label = dePath.replace(/-de(\.[^.]+)$/, "-{de,en}$1");
+    console.log(green(`${label}: present`));
+  }
+  // Both missing is fine — `BaseLayout`'s consumer never reached the OG
+  // generator, and the page still renders (just without an og:image asset).
 }
 
 // ---------------------------------------------------------------------------
