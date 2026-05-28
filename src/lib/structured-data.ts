@@ -196,6 +196,8 @@ export function buildBlogPostingLd(
   lang: Locale,
 ): Record<string, unknown> {
   return {
+    "@context": "https://schema.org/",
+    "@type": "BlogPosting",
     headline: entry.data.title,
     description: entry.data.description,
     image: imageUrl,
