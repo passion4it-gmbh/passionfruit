@@ -33,7 +33,7 @@
     "check:links": "linkinator ./dist --recurse --skip \"^(?!http://localhost)\" --verbosity error",
     "check:all": "pnpm check:spelling && pnpm lint:a11y && pnpm build && pnpm check:links",
     "generate-image": "tsx scripts/generate-image.ts",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install --force"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [

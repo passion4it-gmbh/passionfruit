@@ -9,20 +9,32 @@ Content workflows for the passionfruit template. All content is bilingual (DE + 
 The template's `.claude/settings.json` **enables** four plugins from the default `claude-plugins-official` marketplace, but Claude Code does not auto-install them. If you see "plugin not found" warnings on first run, install them once with:
 
 ```bash
-/plugin install superpowers@claude-plugins-official
-/plugin install playwright-skill@claude-plugins-official
-/plugin install claude-md-management@claude-plugins-official
 /plugin install frontend-design@claude-plugins-official
+/plugin install code-review@claude-plugins-official
+/plugin install claude-md-management@claude-plugins-official
+/plugin install playwright-skill@claude-plugins-official
 ```
 
-| Plugin                 | What it gives you                                                                           |
-| ---------------------- | ------------------------------------------------------------------------------------------- |
-| `superpowers`          | Process skills: brainstorming, TDD, debugging, plan execution, verification — the workhorse |
-| `playwright-skill`     | Browser automation for visual verification of UI changes                                    |
-| `claude-md-management` | Audit and improve CLAUDE.md across the repo as it grows                                     |
-| `frontend-design`      | Production-grade frontend design system guidance (used by `/onboard`)                       |
+| Plugin                 | What it gives you                                                                      |
+| ---------------------- | -------------------------------------------------------------------------------------- |
+| `frontend-design`      | Production-grade frontend design system guidance (used by `/onboard` and styling work) |
+| `code-review`          | Multi-agent PR review with confidence scoring — run before squash-merging              |
+| `claude-md-management` | Audit and improve CLAUDE.md across the repo as it grows                                |
+| `playwright-skill`     | Browser automation for visual verification of UI changes                               |
 
-The project skills (`/onboard`, `/brand`, `/deploy`, `/new-post`, `/new-team-member`) ship in `.claude/skills/` and load automatically — no install needed.
+Process-discipline plugins like `superpowers` are deliberately not enabled at project level — they're overkill for non-technical users editing content. If you maintain the template and want them, enable them in your user-level `~/.claude/settings.json`.
+
+The project skills (`passionfruit-content`, `/onboard`, `/brand`, `/deploy`, `/new-post`, `/new-team-member`) ship in `.claude/skills/` and load automatically — no install needed.
+
+### Astro Docs MCP (recommended)
+
+Add the first-party Astro Docs MCP for current Astro 6 docs without web search:
+
+```bash
+claude mcp add --transport http astro https://mcp.docs.astro.build/mcp
+```
+
+This is a project- or user-level config (your choice). It makes the difference between Claude guessing at Astro APIs and Claude reading them.
 
 ---
 

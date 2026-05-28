@@ -88,8 +88,6 @@ Key rules:
 
 You can run either, both, or neither. Most users want GA4 (familiar dashboard); PostHog is for those who want session replay, funnels, and feature flags.
 
-**Google Tag Manager** — `PUBLIC_GTM_CONTAINER_ID` (format `GTM-XXXXXXX`). Use this instead of GA4 direct when you need a tag-management layer (e.g. multiple tracking pixels, custom event triggers, A/B testing tools). Loads the GTM container only after analytics consent is granted; uses Consent Mode v2 with `analytics_storage` granted on consent and all ad_* signals permanently denied (passionfruit has no marketing category). GTM, GA4, and PostHog are all independent — each is env-var gated, so any combination works.
-
 ## 10. Routing
 
 - URL scheme: **apex-locale** — DE at root (`/`), EN under `/en/`.
@@ -192,20 +190,53 @@ The deploy job is gated on `CLOUDFLARE_PROJECT_NAME` being set — when unset, t
 
 ## 16. Commands
 
-| Command               | Purpose                                                  |
-| --------------------- | -------------------------------------------------------- |
-| `pnpm dev`            | Local dev server                                         |
-| `pnpm build`          | Production build (sync + lint + typecheck + astro build) |
-| `pnpm preview`        | Preview built output                                     |
-| `pnpm typecheck`      | `astro check` + `tsc --noEmit`                           |
-| `pnpm lint`           | ESLint + Prettier with autofix                           |
-| `pnpm lint:a11y`      | Accessibility lint (alt-text = error, rest = warn)       |
-| `pnpm test`           | Bilingual check unit tests                               |
-| `pnpm check:spelling` | Spell check content markdown (DE + EN)                   |
-| `pnpm check:links`    | Broken link check on built output                        |
-| `pnpm check:all`      | Spelling + a11y + build + link check (full CI locally)   |
-| `pnpm generate-image` | Generate images via GPT Image (needs `OPENAI_API_KEY`)   |
-| `/brand`              | Replace placeholder favicon and OG image with your own   |
-| `/deploy`             | Interactive Cloudflare Pages deployment setup            |
-| `/new-post`           | Scaffold a bilingual blog post (DE + EN)                 |
-| `/new-team-member`    | Scaffold a bilingual team member entry (DE + EN)         |
+| Command               | Purpose                                                                     |
+| --------------------- | --------------------------------------------------------------------------- |
+| `pnpm dev`            | Local dev server                                                            |
+| `pnpm build`          | Production build (sync + lint + typecheck + astro build)                    |
+| `pnpm preview`        | Preview built output                                                        |
+| `pnpm typecheck`      | `astro check` + `tsc --noEmit`                                              |
+| `pnpm lint`           | ESLint + Prettier with autofix                                              |
+| `pnpm lint:a11y`      | Accessibility lint (alt-text = error, rest = warn)                          |
+| `pnpm test`           | Bilingual check unit tests                                                  |
+| `pnpm check:spelling` | Spell check content markdown (DE + EN)                                      |
+| `pnpm check:links`    | Broken link check on built output                                           |
+| `pnpm check:all`      | Spelling + a11y + build + link check (full CI locally)                      |
+| `pnpm generate-image` | Generate images via GPT Image (needs `OPENAI_API_KEY`)                      |
+| `/onboard`            | Personalize a fresh template for a new business or migrate an existing site |
+| `/brand`              | Replace placeholder favicon and OG image with your own                      |
+| `/deploy`             | Interactive Cloudflare Pages deployment setup                               |
+| `/new-post`           | Scaffold a bilingual blog post (DE + EN)                                    |
+| `/new-team-member`    | Scaffold a bilingual team member entry (DE + EN)                            |
+
+## 17. Claude Code setup
+
+The template ships its own Claude Code configuration. Two layers cooperate.
+
+**Project-local skills** live in `.claude/skills/` and auto-load when the repo is opened. They cover the things downstream users actually do:
+
+| Skill                  | Trigger                                                                                       |
+| ---------------------- | --------------------------------------------------------------------------------------------- |
+| `passionfruit-content` | Auto-loads on any content/i18n edit — bilingual rules, frontmatter shapes, page-registry care |
+| `onboard`              | `/onboard` or "Greenleaf Digital" still present in the repo                                   |
+| `brand`                | `/brand`                                                                                      |
+| `deploy`               | `/deploy`                                                                                     |
+| `new-post`             | `/new-post`                                                                                   |
+| `new-team-member`      | `/new-team-member`                                                                            |
+
+**Plugins** are declared in `.claude/settings.json` under `enabledPlugins`. The template enables four from the default `claude-plugins-official` marketplace:
+
+| Plugin                 | Why it's enabled                                                                   |
+| ---------------------- | ---------------------------------------------------------------------------------- |
+| `frontend-design`      | Production-grade design-system guidance — used by `/onboard` and any styling work  |
+| `code-review`          | Multi-agent PR review with confidence scoring. Run before squash-merging           |
+| `claude-md-management` | Keeps CLAUDE.md sharp as the project grows (see Section 2's self-improvement rule) |
+| `playwright-skill`     | Browser automation for visually verifying UI changes on real pages                 |
+
+Process-discipline plugins like `superpowers` are intentionally **not** enabled at project level — its TDD/spec/review loop is overkill for downstream non-technical users. Maintainers who want it should enable it at user level (`~/.claude/settings.json`).
+
+**Plugin manifest** (`.claude-plugin/marketplace.json` + `plugin.json`) declares this repo as an installable Claude Code plugin. Other projects can pull in the skills via `/plugin marketplace add passion4it-gmbh/passionfruit` — useful only outside the template, since downstream clones get the skills automatically via `.claude/skills/`.
+
+**MCP servers** to recommend to downstream users:
+
+- **Astro Docs MCP** — `https://mcp.docs.astro.build/mcp`. First-party from the Astro team; gives Claude up-to-date Astro 6 docs without web search. Add via `claude mcp add --transport http astro https://mcp.docs.astro.build/mcp` or the equivalent UI step.

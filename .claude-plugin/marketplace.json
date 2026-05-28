@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "passionfruit",
+  "description": "Single-plugin marketplace exposing the passionfruit template's content, branding, and deployment skills.",
+  "version": "0.6.0",
+  "owner": {
+    "name": "PASSION4IT GmbH",
+    "email": "info@passion4it.de",
+    "url": "https://passion4it.de"
+  },
+  "plugins": [
+    {
+      "name": "passionfruit",
+      "source": ".",
+      "description": "Bilingual Astro template skills: /onboard, /brand, /deploy, /new-post, /new-team-member, plus the passionfruit-content auto-loader."
+    }
+  ]
+}

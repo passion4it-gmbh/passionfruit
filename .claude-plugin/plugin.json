@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin.json",
+  "name": "passionfruit",
+  "displayName": "passionfruit",
+  "version": "0.6.0",
+  "description": "Bilingual Astro template that turns Claude Code into a web developer for non-technical users. Ships scaffolding skills for content, branding, and deployment.",
+  "author": {
+    "name": "PASSION4IT GmbH",
+    "email": "info@passion4it.de",
+    "url": "https://passion4it.de"
+  },
+  "homepage": "https://github.com/passion4it-gmbh/passionfruit",
+  "repository": "https://github.com/passion4it-gmbh/passionfruit",
+  "license": "MIT",
+  "keywords": [
+    "astro",
+    "tailwind",
+    "template",
+    "bilingual",
+    "i18n",
+    "static-site"
+  ],
+  "skills": "./.claude/skills/"
+}
