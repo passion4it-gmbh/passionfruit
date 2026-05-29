@@ -23,16 +23,15 @@ Single, focal pull-quote rendered at display scale with a giant opacity-15 quota
 
 ## Props
 
-Consumes `EditorialQuoteProps` from `~/types/sections` (extends `Omit<SectionProps, "headline">`; re-adds `headline?: string` for API completeness but the component does not render it).
+Consumes `EditorialQuoteProps` from `~/types/sections` (extends `SectionFrameProps` — visual frame only; no `eyebrow`, `headline`, or `lede`).
 
-| Prop          | Type                                                 | Required | Default     | Notes                                                                      |
-| ------------- | ---------------------------------------------------- | -------- | ----------- | -------------------------------------------------------------------------- |
-| `quote`       | `string`                                             | yes      | —           | Rendered as `<blockquote>` with `text-h1` size.                            |
-| `attribution` | `EditorialQuoteAttribution`                          | yes      | —           | `{ name, role?, avatar?, avatarAlt? }`.                                    |
-| `eyebrow`     | `string`                                             | no       | —           | Unused by the current layout; reserved for future use via `SectionProps`.  |
-| `headline`    | `string`                                             | no       | —           | Loosened to optional; not rendered (the quote replaces the headline role). |
-| `tone`        | `"surface" \| "elevated" \| "dark" \| "accent-wash"` | no       | `"surface"` | Passed to `<Section>`.                                                     |
-| `padding`     | `"sm" \| "md" \| "lg"`                               | no       | `"lg"`      | Passed to `<Section>`.                                                     |
+| Prop          | Type                                                 | Required | Default     | Notes                                                                    |
+| ------------- | ---------------------------------------------------- | -------- | ----------- | ------------------------------------------------------------------------ |
+| `quote`       | `string`                                             | yes      | —           | Rendered as `<blockquote>` with `text-h1` size.                          |
+| `attribution` | `EditorialQuoteAttribution`                          | yes      | —           | `{ name, role?, avatar?, avatarAlt? }`.                                  |
+| `tone`        | `"surface" \| "elevated" \| "dark" \| "accent-wash"` | no       | `"surface"` | Passed to `<Section>`.                                                   |
+| `padding`     | `"sm" \| "md" \| "lg"`                               | no       | `"lg"`      | Passed to `<Section>`.                                                   |
+| `align`       | `"start" \| "center"`                                | no       | —           | Forwarded via `SectionFrameProps`; not currently consumed by the layout. |
 
 `EditorialQuoteAttribution`: `{ name: string; role?: string; avatar?: ImageMetadata; avatarAlt?: string }`. Avatar renders only when both `avatar` and `avatarAlt` are present (alt-text guard).
 
@@ -62,6 +61,6 @@ _None — strings are passed in as props by the calling page._
 
 ## Gotchas
 
-- **`headline` prop exists but is not rendered.** It's kept on the type for prop-shape symmetry with other section archetypes; ignoring it is intentional. Don't add a heading render path — the quote replaces it.
+- **Type is `SectionFrameProps`, not `SectionProps`.** EditorialQuote intentionally does not carry `eyebrow`, `headline`, or `lede` — the quote IS the focal text. If you need a heading-led section that also includes a quote, compose `EditorialQuote` inside another archetype or page instead of overloading the type.
 - **Avatar requires `avatarAlt`.** If you pass `avatar` without `avatarAlt`, the image is skipped — both must be present. This is the alt-text guard, not a bug.
 - **Quote glyph is `\201C` (left double quote)** rendered via `::before` with opacity 0.15 and accent color. It scales to `--text-display` — on very narrow viewports it can crowd the quote text; consider tightening copy if you see overlap.

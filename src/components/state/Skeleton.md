@@ -23,13 +23,14 @@ A loading placeholder that mirrors the shape of the real content — text lines,
 
 ## Props
 
-| Prop      | Type                                      | Required | Default | Notes                                                                 |
-| --------- | ----------------------------------------- | -------- | ------- | --------------------------------------------------------------------- |
-| `variant` | `"text" \| "card" \| "image" \| "circle"` | yes      | —       | Drives the placeholder silhouette via `.pf-skeleton--{variant}`.      |
-| `lines`   | `number`                                  | no       | `1`     | Only used when `variant === "text"`. Floored to int, min 1.           |
-| `width`   | `string`                                  | no       | —       | Optional CSS length applied as inline `style` (`200px`, `50%`, etc.). |
-| `height`  | `string`                                  | no       | —       | Optional CSS length applied as inline `style`.                        |
-| `class`   | `string`                                  | no       | `""`    | Extra classes on the root wrapper.                                    |
+| Prop      | Type                                      | Required | Default | Notes                                                                                                                                                                                     |
+| --------- | ----------------------------------------- | -------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `variant` | `"text" \| "card" \| "image" \| "circle"` | yes      | —       | Drives the placeholder silhouette via `.pf-skeleton--{variant}`.                                                                                                                          |
+| `lines`   | `number`                                  | no       | `1`     | Only used when `variant === "text"`. Floored to int, min 1.                                                                                                                               |
+| `width`   | `string`                                  | no       | —       | Optional CSS length applied as inline `style` (`200px`, `50%`, etc.).                                                                                                                     |
+| `height`  | `string`                                  | no       | —       | Optional CSS length applied as inline `style`.                                                                                                                                            |
+| `class`   | `string`                                  | no       | `""`    | Extra classes on the root wrapper.                                                                                                                                                        |
+| `lang`    | `Locale` (`"de" \| "en"`)                 | no       | auto    | Locale for the screen-reader "Loading" label. Auto-detected from `Astro.url.pathname` (`/en/*` → `"en"`, else `"de"`); pass explicitly when the prefix doesn't match the rendered locale. |
 
 ## Example
 
@@ -52,11 +53,11 @@ import Skeleton from "~/components/state/Skeleton.astro";
 
 ## i18n keys
 
-_None — the visually-hidden "Loading…" text is hardcoded English. If localized loading announcements matter for your site, fork the component or add a `label` prop._
+- `state.loading` — single string ("Wird geladen" / "Loading"). Used for the visually-hidden screen-reader text and the wrapper's `aria-label`. Locale resolved from the `lang` prop or auto-detected from `Astro.url.pathname`.
 
 ## Gotchas
 
-- **The "Loading…" string is not translated.** A future enhancement; for now it ships in English. Screen reader users on a German page will hear the English token.
+- **Locale auto-detection is pathname-based.** Pages under `/en/*` resolve to English; everything else falls back to German. If the component renders on a page whose locale doesn't match its URL prefix (rare — page-builder previews, embedded fragments), pass `lang` explicitly.
 - **Multi-line text shrinks the last line to 70%.** That's intentional — it mimics how real prose ends mid-measure. If you want uniform lines, pass `lines={1}` per line manually.
 - **`role="status" aria-live="polite" aria-busy="true"`** is set on the wrapper. Don't nest skeletons inside `role="alert"` containers — the politeness levels conflict and screen readers will pick the more aggressive one.
 - **Shimmer animation is in `src/styles/state.css` (or equivalent)**, gated on `@media (prefers-reduced-motion: no-preference)`. Don't move the keyframes into a scoped style — Astro will hash the class and the animation won't find its target.

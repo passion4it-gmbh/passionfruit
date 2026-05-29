@@ -161,6 +161,12 @@ const buttonTone = tone === "dark" || isFullbleed ? "on-dark" : "on-light";
     padding-block: var(--space-12);
   }
 
+  /* On the dark scrim, the default accent (--color-accent) reads as low-contrast
+     indigo-on-dark; the brighter --color-accent-glow keeps the eyebrow legible. */
+  .pf-hero--fullbleed .pf-hero__eyebrow {
+    color: var(--color-accent-glow);
+  }
+
   @media (min-width: 768px) {
     .pf-hero--fullbleed {
       grid-template-columns: var(--grid-cols-12);

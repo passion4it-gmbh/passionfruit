@@ -89,7 +89,8 @@
         "body": "Wir konnten Ihre Anfrage gerade nicht verarbeiten. Bitte versuchen Sie es erneut."
       },
       "retry": "Erneut versuchen"
-    }
+    },
+    "loading": "Wird geladen"
   },
   "cookie": {
     "title": "Diese Website verwendet Cookies",

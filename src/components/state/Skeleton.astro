@@ -1,4 +1,6 @@
 ---
+import { useTranslations, type Locale } from "~/i18n";
+
 /**
  * Skeleton — content-shape loading placeholder.
  *
@@ -19,6 +21,8 @@ interface Props {
   height?: string;
   /** Extra classes on the wrapper. */
   class?: string;
+  /** Locale for the screen-reader "Loading" label. Detected from `Astro.url.pathname` when omitted. */
+  lang?: Locale;
 }
 
 const {
@@ -27,7 +31,13 @@ const {
   width,
   height,
   class: className = "",
+  lang,
 } = Astro.props;
+
+const resolvedLang: Locale =
+  lang ?? (Astro.url.pathname.startsWith("/en") ? "en" : "de");
+const { t } = useTranslations(resolvedLang);
+const loadingLabel = t("state.loading");
 
 const variantClass = `pf-skeleton--${variant}`;
 
@@ -45,7 +55,7 @@ const lineCount = Math.max(1, Math.floor(lines));
 
 <div
   role="status"
-  aria-label="Loading"
+  aria-label={loadingLabel}
   aria-live="polite"
   aria-busy="true"
   class:list={["pf-skeleton-root", className]}
@@ -74,5 +84,5 @@ const lineCount = Math.max(1, Math.floor(lines));
       />
     )
   }
-  <span class="sr-only">Loading…</span>
+  <span class="sr-only">{loadingLabel}…</span>
 </div>

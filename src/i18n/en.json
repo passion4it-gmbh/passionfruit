@@ -89,7 +89,8 @@
         "body": "We couldn't complete your request just now. Please try again."
       },
       "retry": "Try again"
-    }
+    },
+    "loading": "Loading"
   },
   "cookie": {
     "title": "This website uses cookies",

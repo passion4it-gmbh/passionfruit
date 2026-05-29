@@ -1,12 +1,22 @@
 import type { ImageMetadata } from "astro";
 
-export interface SectionProps {
-  eyebrow?: string;
-  headline: string;
-  lede?: string;
+/**
+ * Visual frame props shared by every section archetype: tone (background +
+ * matching text color), padding scale, alignment. Section.astro owns these;
+ * archetypes pass them through. Archetypes that don't render their own
+ * headline/lede (e.g. EditorialQuote) extend this directly instead of
+ * `SectionProps`.
+ */
+export interface SectionFrameProps {
   tone?: "surface" | "elevated" | "dark" | "accent-wash";
   padding?: "sm" | "md" | "lg";
   align?: "start" | "center";
+}
+
+export interface SectionProps extends SectionFrameProps {
+  eyebrow?: string;
+  headline: string;
+  lede?: string;
 }
 
 export interface AsymmetricHeroProps extends SectionProps {
@@ -47,14 +57,13 @@ export interface EditorialQuoteAttribution {
   avatarAlt?: string;
 }
 
-export interface EditorialQuoteProps extends Omit<SectionProps, "headline"> {
-  /**
-   * Override: EditorialQuote uses the `quote` as the focal text and does not
-   * render a separate headline, so the inherited `SectionProps.headline`
-   * required-ness is loosened here. `Omit` is required because TS does not
-   * permit widening a required field to optional via a sub-interface alone.
-   */
-  headline?: string;
+/**
+ * EditorialQuote's focal text is the `quote` itself, not a headline.
+ * It extends `SectionFrameProps` (tone/padding/align) directly instead of
+ * `SectionProps`, so there are no orphan `eyebrow`/`headline`/`lede` fields
+ * for consumers to fill in with dummy text just to satisfy the type.
+ */
+export interface EditorialQuoteProps extends SectionFrameProps {
   quote: string;
   attribution: EditorialQuoteAttribution;
 }
