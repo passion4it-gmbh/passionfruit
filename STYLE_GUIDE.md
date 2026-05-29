@@ -1,18 +1,14 @@
 # Visual Style Guide
 
-**The definitive reference for all visual decisions.** If something contradicts this guide, this guide wins.
+You will be auto-loaded into context by the `passionfruit-design` skill when editing any `.astro` or `.css` file. This is the single source of truth for tokens, patterns, and primitive selection. When you reach a decision point, scan the **Decision Shortcuts** cheat sheet at the bottom first — if your situation appears there, take the shortcut. If it doesn't, read the relevant section above and ask before guessing.
+
+If something contradicts this guide, this guide wins.
 
 ---
 
 ## Design Philosophy
 
-Premium, confident, modern. Not sterile, not flashy — intentional.
-
-- No generic AI aesthetics (floating dashboards, gradient blobs, "AI brain" imagery)
-- Depth through layering: glow orbs, noise textures, glass effects, gradient meshes
-- Generous spacing is a design choice, not laziness
-- Confidence through restraint — say less, mean more
-- Every page should look so good a small business wants to copy it 1:1
+Premium, confident, modern — intentional, not sterile, not flashy. Depth comes from layering (glow orbs, noise, glass, gradient meshes), not from hex literals scattered across components. Generous spacing and restraint signal confidence; every page should look so good a small business wants to copy it 1:1. Never reach for the generic AI aesthetic (floating dashboards, gradient blobs, "AI brain" imagery).
 
 ---
 
