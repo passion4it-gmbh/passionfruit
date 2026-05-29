@@ -14,7 +14,9 @@ Premium, confident, modern — intentional, not sterile, not flashy. Depth comes
 
 ## 1. Color System
 
-All colors are defined in `src/styles/global.css` under `@theme`. Use Tailwind utility classes — never hex literals in components.
+**Use when:** picking a foreground color, background tone, accent, border, or overlay — anything that paints pixels. Reach for the `--color-*` token (or the Tailwind utility that maps to it) defined in `src/styles/global.css` `@theme`.
+
+**Don't use when:** raw hex literals in components. If the color you need isn't a token yet, add it to `@theme` first so `/onboard` can re-skin it. Don't reach for raw `rgba(...)` for scrims and shadow lifts either — those have dedicated tokens.
 
 ### Core Tokens
 
@@ -34,6 +36,8 @@ All colors are defined in `src/styles/global.css` under `@theme`. Use Tailwind u
 | `--color-border`                | `#e2e4eb` | Borders, dividers                         |
 | `--color-muted`                 | `#6b7280` | Secondary text, captions                  |
 
+Overlay scrims and shadow lifts have their own tokens (`--color-overlay-scrim-*`, `--color-shadow-lift`) — use those instead of hand-rolled `rgba()`.
+
 ### Usage Rules
 
 - Dark sections: `bg-surface-dark` with `.noise` overlay and `.bg-grid` pattern
@@ -42,11 +46,39 @@ All colors are defined in `src/styles/global.css` under `@theme`. Use Tailwind u
 - Glass on light: `.glass-light` class (white/65 bg, blur-20)
 - Gradient text: `.gradient-text` (accent-glow → accent → warm)
 
+### Pattern vs. anti-pattern
+
+**Don't** — raw hex bypasses theme swaps:
+
+```html
+<p style="color: #6b7280">Caption</p>
+```
+
+**Do** — token-backed utility, re-skinnable by `/onboard`:
+
+```html
+<p class="text-muted">Caption</p>
+```
+
+**Don't** — hand-rolled scrim:
+
+```css
+background: rgba(12, 12, 29, 0.6);
+```
+
+**Do** — dedicated overlay token:
+
+```css
+background: var(--color-overlay-scrim-strong);
+```
+
 ---
 
 ## 2. Typography
 
-**Inter Variable** for everything. Self-hosted via `@fontsource-variable/inter`.
+**Use when:** sizing any text — pick a `--text-*` fluid token (or the matching `.text-*` utility class), pair it with a `--leading-*` line-height, and pick a tracking token for headings. Inter Variable handles every weight; self-hosted via `@fontsource-variable/inter`.
+
+**Don't use when:** inline `font-size: Xrem` literals. The fluid clamp scale exists so a single token covers mobile-to-desktop without media queries — fixed `rem` literals break that. Don't use ALL CAPS outside the `.eyebrow` utility.
 
 ### Fluid Type Scale (clamp)
 
@@ -72,11 +104,27 @@ All colors are defined in `src/styles/global.css` under `@theme`. Use Tailwind u
 - Eyebrow: `.eyebrow` class (0.8125rem, 600 weight, 0.08em tracking, uppercase, accent color)
 - Line-height: 1.05 display, 1.15 headings, 1.6 body, 1.7 body-lg
 
+### Pattern vs. anti-pattern
+
+**Don't** — fixed size, breaks fluidly at every breakpoint you forget to handle:
+
+```html
+<h1 style="font-size: 2rem">Title</h1>
+```
+
+**Do** — fluid token, mobile-to-desktop in one line:
+
+```html
+<h1 class="text-h1">Title</h1>
+```
+
 ---
 
 ## 3. Buttons
 
-Variant (primary / secondary / ghost) × tone (on-light / on-dark).
+**Use when:** rendering a CTA — anything the user clicks to do a thing (submit, navigate to a key destination, trigger an action). Pick one of three variants (`primary`, `secondary`, `ghost`) crossed with a tone (`on-light`, `on-dark`). Use the `<Button>` component with either `<a>` or `<button>` semantics; never re-roll one.
+
+**Don't use when:** inline text links inside paragraphs (use a plain styled `<a>`), nav-bar links (use a bare `<a>`), or icon-only triggers without an `aria-label`. Don't style a `<div>` to look like a button — it loses keyboard semantics.
 
 | Variant   | On light                            | On dark                     |
 | --------- | ----------------------------------- | --------------------------- |
@@ -91,11 +139,29 @@ Variant (primary / secondary / ghost) × tone (on-light / on-dark).
 - Minimum touch target: 44px, border-radius: `var(--radius-md)` (12px)
 - Always `focus-visible:ring-2 ring-accent ring-offset-2`
 
+### Pattern vs. anti-pattern
+
+**Don't** — styled `<a>` mimicking a button (drifts from the system on every restyle, no shared tone logic):
+
+```
+<a href="/contact" class="rounded-md bg-accent px-6 py-3 text-white">
+  Contact us
+</a>
+```
+
+**Do** — the canonical component:
+
+```
+<Button variant="primary" tone="on-light" href="/contact">Contact us</Button>
+```
+
 ---
 
 ## 4. Cards
 
-One card per content type. No generic `<Card>`.
+**Use when:** displaying an entry from a content collection — blog post, team member, career, case study, event. Use the per-type component (`BlogCard`, `TeamCard`, …). For decorative tile-like content inside a section (values, features, stats), the `.card` global utility is fine.
+
+**Don't use when:** wrapping arbitrary content in a generic `<Card>`. passionfruit deliberately has one card per content type — that's how design intent (image ratios, badge placement, hover behavior) stays consistent. If a new content type appears, add a new card component; don't shoehorn into an existing one.
 
 ### `.card` (global.css)
 
@@ -114,9 +180,31 @@ One card per content type. No generic `<Card>`.
 - **TeamCard**: 4:3 photo with hover zoom, name/role, specialization badges, social links with border-t separator
 - **Value card**: horizontal layout — icon container left, text right
 
+### Pattern vs. anti-pattern
+
+**Don't** — ad-hoc card markup duplicating what the per-type component owns:
+
+```
+<div class="card">
+  <img src={post.image} alt="" />
+  <h3>{post.title}</h3>
+  <p>{post.excerpt}</p>
+</div>
+```
+
+**Do** — the per-type component, which carries image ratio, hover behavior, link semantics, and a11y:
+
+```
+<BlogCard post={post} locale={locale} />
+```
+
 ---
 
 ## 5. Layout
+
+**Use when:** framing a section, wrapping page content in a container, or choosing a grid pattern. Section padding comes from the rhythm utilities (`py-28 md:py-36` standard, hero overrides below). Container max-width and gutters are fixed — use the `.container` utility or the existing wrapper components.
+
+**Don't use when:** hardcoded `padding: 4rem` literals or arbitrary `max-w-*` values without checking the existing tokens first. The container width is deliberately narrower than Tailwind's default `max-w-7xl` — overriding it visually drifts pages out of the system.
 
 ### Container
 
@@ -148,6 +236,24 @@ Every page follows: **Dark hero** → **Content sections** → **CTA** → **Foo
 - Text + visual: `grid lg:grid-cols-2 gap-12 lg:gap-20 items-center`
 - Stats bar: `grid grid-cols-2 md:grid-cols-4 gap-8`
 - Value cards: `grid gap-6 sm:grid-cols-2`
+
+### Pattern vs. anti-pattern
+
+**Don't** — arbitrary literals that drift from the rhythm and width system:
+
+```html
+<section class="py-20">
+  <div class="mx-auto max-w-7xl px-4">…</div>
+</section>
+```
+
+**Do** — token-backed rhythm and the project container:
+
+```html
+<section class="py-28 md:py-36">
+  <div class="container">…</div>
+</section>
+```
 
 ---
 
