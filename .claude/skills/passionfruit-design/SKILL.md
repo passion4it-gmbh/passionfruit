@@ -28,6 +28,9 @@ When you reach one of these decision points, take the shortcut.
 - **Need to add a third-party host?** Update `public/_headers` CSP, then add the resource.
 - **Need to add a translation string?** Update both `src/i18n/de.json` and `src/i18n/en.json` together (the `passionfruit-content` skill auto-loads to remind you).
 - **Need an animation?** CSS keyframes inside a `prefers-reduced-motion: no-preference` block. No JS animation libraries.
+- **Need a section frame?** `<Section tone="..." padding="..." container="...">` or pick the right archetype from `sections/` (`AsymmetricHero`, `MagazineGrid`, `StickyStory`, `EditorialQuote`, `SplitFeature`, `Trust`, `Comparison`, `FAQ`). Don't compose a generic `<section>` ad-hoc.
+- **Need an entrance animation primitive?** `<Motion effect="fade-up" duration="base">` or the `<FadeUp>` / `<FadeIn>` sugars. Reduced-motion handled for you. Don't author per-element keyframes.
+- **Need a loading skeleton, empty state, or error surface?** `<Skeleton variant="...">`, `<EmptyState>` (CTA is required — no dead-end empties), `<ErrorState tone="warning|error|info">`. Don't roll your own gray box or red-text-with-asterisk.
 
 If you don't see your situation here, ask. Don't guess.
 

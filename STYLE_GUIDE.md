@@ -248,6 +248,22 @@ Every page follows: **Dark hero** → **Content sections** → **CTA** → **Foo
 - Stats bar: `grid grid-cols-2 md:grid-cols-4 gap-8`
 - Value cards: `grid gap-6 sm:grid-cols-2`
 
+### Section frame and archetypes
+
+For page sections, use the `Section` frame + an archetype rather than rolling a generic `<section>`. The frame owns tone, padding, and container width; the archetype owns the editorial pattern.
+
+- `<Section>` — tone + padding + container primitive. Wrap a one-off section.
+- `<AsymmetricHero>` — 7/5 hero with intentional vertical offset (image-right, image-left, fullbleed).
+- `<MagazineGrid>` — editorial 12-col cell grid (small/medium/large spans).
+- `<StickyStory>` — pinned copy + scrolling visuals storytelling layout.
+- `<EditorialQuote>` — display-sized pull-quote with attribution + optional avatar.
+- `<SplitFeature>` — alternating image+text rows for feature lists.
+- `<Trust>` — partner/client logo strip (grayscale → color on hover).
+- `<Comparison>` — responsive comparison table (semantic on desktop, stacked cards on mobile).
+- `<FAQ>` — accordion of question/answer pairs via native `<details>`/`<summary>`.
+
+All archetypes consume the shared `SectionProps` shape (`eyebrow`, `headline`, `lede`, `tone`, `padding`, `align`). Per-component intent — when to reach for one over another, gotchas, exact prop tables — lives in the sidecar `.md` next to each component.
+
 ### Pattern vs. anti-pattern
 
 **Don't** — arbitrary literals that drift from the rhythm and width system:
@@ -302,6 +318,18 @@ Stagger cards with `style="--delay: ${i * 100}ms"`.
 ### Reduced Motion
 
 All animations respect `prefers-reduced-motion: reduce` — durations collapse to 0.01ms.
+
+### Motion primitives
+
+For entrance choreography, use the `Motion` primitive instead of authoring keyframes per-element. The primitive handles the reduced-motion gate, ClientRouter re-init, and IntersectionObserver fallback for you.
+
+- `<Motion effect="fade-up" duration="base">` — explicit form. Configurable `effect` / `duration` / `delay` / `threshold` / `once`.
+- `<FadeUp>` — sugar around `<Motion effect="fade-up">`.
+- `<FadeIn>` — sugar around `<Motion effect="fade">`.
+
+Effects: `fade`, `fade-up` (+8px), `fade-down` (-8px), `scale-in` (0.96). Durations: `instant` (80ms) / `quick` (150ms) / `base` (240ms) / `slow` (400ms). All reach the target state immediately under `prefers-reduced-motion: reduce` — no animation, no opacity fade.
+
+For storytelling layouts that depend on scroll position (`StickyStory`), the motion adapter ships inside the section archetype itself — you don't wire it manually.
 
 ### Pattern vs. anti-pattern
 
@@ -463,11 +491,11 @@ import { Image } from 'astro:assets';
 
 ## 10. Social proof
 
-**Use when:** displaying testimonials, partner/client logos, or feature comparisons. Use `TrustSection` for logo strips and `ComparisonTable` for feature grids — both already encode the patterns below.
+**Use when:** displaying testimonials, partner/client logos, or feature comparisons. Use `<Trust>` (`sections/Trust`) for logo strips and `<Comparison>` (`sections/Comparison`) for feature grids — both already encode the patterns below.
 
 **Don't use when:** generic praise without attribution (testimonial loses credibility), partner logos at inconsistent heights (band reads as visual noise), or boolean comparison cells rendered as bare "Yes/No" text without a screen-reader label.
 
-### Logo strips (`TrustSection`)
+### Logo strips (`<Trust>`)
 
 Partner/client logos use a **grayscale-rest / color-hover** pattern:
 
@@ -476,7 +504,7 @@ Partner/client logos use a **grayscale-rest / color-hover** pattern:
 - Keep logo height uniform at `h-10` (40px) so the strip reads as a cohesive band regardless of aspect ratio.
 - Never add decorative borders or drop-shadows to logos — let the grayscale treatment do the work.
 
-### Comparison tables (`ComparisonTable`)
+### Comparison tables (`<Comparison>`)
 
 Feature comparison grids follow a **semantic table on desktop, per-column cards on mobile** pattern:
 
@@ -497,10 +525,10 @@ Feature comparison grids follow a **semantic table on desktop, per-column cards 
 </div>
 ```
 
-**Do** — the `TrustSection` component with a uniform height and the grayscale pattern baked in:
+**Do** — the `<Trust>` component with a uniform height and the grayscale pattern baked in:
 
 ```
-<TrustSection logos={partners} />
+<Trust logos={partners} />
 ```
 
 ---
@@ -544,21 +572,88 @@ Component usage (props, examples, locale wiring) lives in [`src/components/CLAUD
 
 ---
 
+## 12. State surfaces
+
+**Use when:** rendering a loading placeholder, an empty results state, or an inline error/warning surface. The primitives in `src/components/state/` carry the visual contract — shimmer animation, illustration slot, tone-aware coloring — so consumers don't re-roll them.
+
+**Don't use when:** rendering a generic gray block instead of a content-shape-matched skeleton (looks worse than no skeleton); leaving an empty state with no call-to-action (dead end); throwing raw red text with an asterisk for form errors (no semantic, no tone, no retry path).
+
+### Loading (`<Skeleton>`)
+
+Shimmer placeholder for content not yet loaded. Variants match the shape of the eventual content: `text` (line-height-matched, optional multi-line), `card` (aspect-ratio 4/3), `image` (caller-sized), `circle` (avatars).
+
+```
+<Skeleton variant="text" lines={3} />
+<Skeleton variant="card" />
+<Skeleton variant="circle" width="3rem" height="3rem" />
+```
+
+Shimmer is gated behind `prefers-reduced-motion: no-preference`; under reduced motion the skeleton remains visible as a static stripe. `role="status"` and a visually-hidden "Loading…" string ship by default.
+
+### Empty (`<EmptyState>`)
+
+Empty results placeholder. `headline` + `body` + `cta` are all required — the CTA is mandatory because dead-end empty states leave the visitor stranded. Optional `illustration` slot; falls back to a muted lucide `Inbox`.
+
+```
+<EmptyState
+  headline={t("state.empty.filters.headline")}
+  body={t("state.empty.filters.body")}
+  cta={{ label: t("state.empty.filters.cta"), href: baseUrl }}
+/>
+```
+
+Wired into `CollectionFilter` for zero-results on tag/category filters.
+
+### Error (`<ErrorState>`)
+
+Inline error / warning / info surface. `tone` picks the visual and the lucide icon. Background uses a low-opacity `color-mix` of the tone token; border uses the full-opacity token. Retry, when present, is a link (no JS handlers — static site).
+
+```
+<ErrorState
+  tone="error"
+  headline="Konnte Formular nicht senden"
+  body="Versuche es in einer Minute noch einmal."
+  retry={{ label: "Erneut versuchen", href: "/kontakt/" }}
+/>
+```
+
+`role="alert"` + `aria-live="assertive"` for `tone="error"`; `role="status"` + polite for `warning`/`info`.
+
+### Pattern vs. anti-pattern
+
+**Don't** — generic gray block as a "loading skeleton" that doesn't match the eventual content shape:
+
+```html
+<div class="h-32 w-full bg-gray-200 animate-pulse"></div>
+```
+
+**Do** — line-height-matched text skeleton that reads as the prose it replaces:
+
+```
+<Skeleton variant="text" lines={3} />
+```
+
+---
+
 ## Decision Shortcuts
 
 When you reach one of these decision points, take the shortcut.
 
-| Situation                                                                   | Shortcut                                                                                                     |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Need a CTA                                                                  | `<Button variant="primary\|secondary\|ghost" tone="on-light\|on-dark" href="…">…</Button>`                   |
-| Need a color                                                                | Check `@theme` in `src/styles/global.css` first. If missing, add a `--color-*` token there; never hex.       |
-| Need a font size                                                            | `--text-*` token (or matching `.text-*` utility). Never raw `font-size: Xrem`.                               |
-| Need to display a blog / team / career / case-study / event entry as a card | Use the per-type card (`BlogCard`, `TeamCard`, `CareerCard`, `CaseStudyCard`, `EventCard`).                  |
-| Need to embed a YouTube or Spotify video                                    | Use the facade (`<YouTubeFacade>` / `<SpotifyFacade>`), never a raw `<iframe>`.                              |
-| Need long-form Markdown rendering                                           | Use the existing `BlogPost` / `PageContent` / `LegalDocument` patterns; don't re-roll prose styling.         |
-| Need an icon                                                                | Import from `@lucide/astro`. Never an emoji.                                                                 |
-| Need to add a third-party host (script, iframe, font, asset)                | Update `public/_headers` CSP first, then add the resource. Forgotten CSPs silently block in production.      |
-| Need to add a translation string                                            | Edit both `src/i18n/de.json` and `src/i18n/en.json` together (the `passionfruit-content` skill reminds you). |
-| Need an animation                                                           | CSS keyframes inside a `@media (prefers-reduced-motion: no-preference)` block. No JS animation libs.         |
+| Situation                                                                   | Shortcut                                                                                                                         |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Need a CTA                                                                  | `<Button variant="primary\|secondary\|ghost" tone="on-light\|on-dark" href="…">…</Button>`                                       |
+| Need a color                                                                | Check `@theme` in `src/styles/global.css` first. If missing, add a `--color-*` token there; never hex.                           |
+| Need a font size                                                            | `--text-*` token (or matching `.text-*` utility). Never raw `font-size: Xrem`.                                                   |
+| Need to display a blog / team / career / case-study / event entry as a card | Use the per-type card (`BlogCard`, `TeamCard`, `CareerCard`, `CaseStudyCard`, `EventCard`).                                      |
+| Need to embed a YouTube or Spotify video                                    | Use the facade (`<YouTubeFacade>` / `<SpotifyFacade>`), never a raw `<iframe>`.                                                  |
+| Need long-form Markdown rendering                                           | Use the existing `BlogPost` / `PageContent` / `LegalDocument` patterns; don't re-roll prose styling.                             |
+| Need an icon                                                                | Import from `@lucide/astro`. Never an emoji.                                                                                     |
+| Need to add a third-party host (script, iframe, font, asset)                | Update `public/_headers` CSP first, then add the resource. Forgotten CSPs silently block in production.                          |
+| Need to add a translation string                                            | Edit both `src/i18n/de.json` and `src/i18n/en.json` together (the `passionfruit-content` skill reminds you).                     |
+| Need an animation                                                           | CSS keyframes inside a `@media (prefers-reduced-motion: no-preference)` block. No JS animation libs.                             |
+| Need a section frame                                                        | `<Section tone="..." padding="..." container="...">` or pick the right archetype from `sections/`.                               |
+| Need an editorial section pattern (hero / quote / grid)                     | Use the archetype — `AsymmetricHero`, `MagazineGrid`, `StickyStory`, `EditorialQuote`, `SplitFeature`. Don't compose one ad-hoc. |
+| Need an entrance animation primitive                                        | `<Motion effect="fade-up">` (or the `<FadeUp>` / `<FadeIn>` sugars). Don't author per-element keyframes.                         |
+| Need a loading skeleton / empty state / error surface                       | `<Skeleton variant="...">`, `<EmptyState>`, `<ErrorState tone="...">`. Don't roll your own gray box.                             |
 
 If you don't see your situation here, ask. Don't guess.
