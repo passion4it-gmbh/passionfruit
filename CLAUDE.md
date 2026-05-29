@@ -63,24 +63,13 @@ See CONTRIBUTING.md for full details. Summary:
 ## 7. Component conventions
 
 - Prefer Astro components over React.
-- Brand tokens via Tailwind utility classes only — no hex literals in components.
-- Icons via `@lucide/astro`. No emojis.
-- Translation strings via `useTranslations(locale)` from `~/i18n`.
-- Images via `<Image>` component from `astro:assets`.
-- Always update both i18n JSON files when adding strings.
+- Translation strings via `useTranslations(locale)` from `~/i18n`. Always update both `de.json` and `en.json` in lockstep.
 - Every component has a sidecar `.md` (same name, sibling file). See `src/components/CLAUDE.md` for the catalog and `docs/superpowers/specs/2026-05-28-component-sidecar-docs-design.md` for the required frontmatter and section template.
+- Visual rules — tokens, icons, images, hex/emoji bans — live in `STYLE_GUIDE.md`. The `passionfruit-design` skill auto-loads it on `.astro` / `.css` edits.
 
 ## 8. Styling
 
-**Read `STYLE_GUIDE.md` before touching any UI.** It is the single source of truth for colors, typography, buttons, cards, layout, and accessibility.
-
-Key rules:
-
-- No hex literals in components — use Tailwind tokens that map to `global.css` `@theme` values
-- Buttons use variant (primary / secondary / ghost) x tone (on-light / on-dark)
-- One card component per content type (BlogCard, TeamCard)
-- 44px minimum touch targets
-- `focus-visible` ring on all interactive elements
+Style and pattern guidance lives in `STYLE_GUIDE.md` — colors, typography, buttons, cards, layout, animations, dark sections, accessibility, icons, social proof, media embeds. See the **Decision Shortcuts** cheat sheet at the bottom for quick lookups (CTA, color, font size, card, embed, icon, third-party host, animation).
 
 ## 9. Analytics and consent
 
