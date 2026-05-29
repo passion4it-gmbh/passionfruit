@@ -8,3 +8,4 @@ dist/
 CLAUDE.local.md
 .claude/worktrees/
 .lefthook-local.yml
+.superpowers/

@@ -58,26 +58,60 @@ Move on. The template ships with a default passionfruit-themed favicon.
 
 ## Step 2: OG Image (Social Sharing Preview)
 
-Ask:
+This is the image that appears when someone shares a link to the site on LinkedIn, Twitter/X, Slack, etc. There are two ways to make one — ask the user via AskUserQuestion:
 
-> "What should your social media preview image look like? This appears when someone shares a link to your site on LinkedIn, Twitter, etc. Describe what you'd like, or I can generate something based on your brand."
+> "How should we create your social sharing image?"
 
-Generate via:
+Options:
+
+- "Branded template (recommended)" — composes `site.name` + `site.tagline` + accent color + favicon into a clean 1200×630 PNG. Runs in under a second, no API key needed, produces one image per locale.
+- "AI generated" — describe an image and OpenAI's GPT Image model creates it. Slower, costs money, requires `OPENAI_API_KEY`.
+- "Skip" — keep whatever's already at `public/og-default-{de,en}.png`.
+
+### Option A: Branded template
+
+Run:
 
 ```bash
-pnpm generate-image "<prompt including company name, brand style, professional look>" -o public/og-default.png --size 1536x1024
+pnpm generate-og
+```
+
+This writes `public/og-default-de.png` and `public/og-default-en.png` from the project's i18n strings (`site.name`, `site.tagline`), the accent color in `src/styles/global.css`, and the logo in `public/favicon.svg`. If the user has run `/onboard` (so the i18n + accent are theirs) and the favicon is their logo (Step 1 above), the result is on-brand without any prompting.
+
+For per-locale regeneration: `pnpm generate-og --lang de` or `--lang en`.
+
+**Optional background photo.** Drop a 1200×630-ish image at `src/assets/og/bg.png` before running and the generator composites it full-cover behind the text (a left-anchored scrim keeps the title legible regardless of the photo's brightness). Best results when the photo has a darker left third — Satori text sits on the left. Use `pnpm generate-image` to produce a fitting photo first, e.g.:
+
+```bash
+pnpm generate-image "<describe a banner-style photo with empty/dark left third, no text>" -o src/assets/og/bg.png --size 1536x1024
+pnpm generate-og
+```
+
+No code changes needed — bg.png absence falls back to the flat surface look.
+
+### Option B: AI generated
+
+Ask: "Describe what you'd like the image to convey — visual style, mood, key elements."
+
+Generate once, then copy to the second locale — `gpt-image-2` is non-deterministic, so two separate calls with the same prompt produce two visually different images. We want DE and EN visitors to see the same artistic image.
+
+```bash
+pnpm generate-image "<prompt including company name, brand style, professional look>" -o public/og-default-de.png --size 1536x1024
+cp public/og-default-de.png public/og-default-en.png
 ```
 
 Guidelines for the prompt:
 
 - Include the company name if the user wants text on the image
 - Match the site's accent color and visual style
-- Ideal OG dimensions: 1200x630. Using 1536x1024 gives good quality; platforms will crop to fit.
+- Ideal OG dimensions: 1200×630. Using 1536x1024 gives good quality; platforms will crop to fit.
 - Example prompt: "Professional banner for [Company Name], [industry], accent color #6366f1, clean modern design, suitable as social media preview"
 
-**Remind the user:** This also requires `OPENAI_API_KEY` in `.env`.
+**Remind the user:** This requires `OPENAI_API_KEY` in `.env`.
 
-If the user wants to skip, the default `public/og-default.png` will be used.
+### Option C: Skip
+
+Move on. The current `public/og-default-{de,en}.png` files stay as they are.
 
 ## Step 3: Verify Integration
 
@@ -91,13 +125,13 @@ After assets are created, verify:
 
    This is already configured in the template (line 94). No changes needed unless the user wants a different path.
 
-2. **OG image:** `public/og-default.png` exists and is the default in `src/layouts/BaseLayout.astro`:
+2. **OG image:** `public/og-default-de.png` AND `public/og-default-en.png` exist. `src/layouts/BaseLayout.astro` already picks the locale-specific file:
 
    ```ts
-   const defaultOgImage = "/og-default.png";
+   const defaultOgImage = `/og-default-${lang}.png`;
    ```
 
-   This is already configured (line 37). Individual pages can override via the `ogImage` prop.
+   No changes needed unless the user wants a different path. Individual pages can still override via the `ogImage` prop.
 
 3. Run `pnpm build` to confirm no broken asset references.
 
@@ -106,6 +140,6 @@ After assets are created, verify:
 > "Your brand assets are set up:
 >
 > - **Favicon:** `public/favicon.svg` — appears in browser tabs
-> - **OG image:** `public/og-default.png` — appears when your site is shared on social media
+> - **OG images:** `public/og-default-de.png` and `public/og-default-en.png` — appear when your site is shared on social media (locale-aware: DE pages get the DE image, EN pages get the EN image)
 >
-> Individual pages can override the OG image by passing `ogImage` to BaseLayout. To update these later, just run `/brand` again."
+> Individual pages can override the OG image by passing `ogImage` to BaseLayout. To regenerate the branded template later, run `pnpm generate-og`. To run the full brand flow again, use `/brand`."

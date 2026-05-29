@@ -1,6 +1,6 @@
 # Components
 
-This directory holds Astro components shared across pages. **One component per content type** — don't introduce generic content components like `<Card>`; create `BlogCard`, `TeamCard`, etc. instead. The deliberate exception is `<Section>`: a tone + padding + container frame that every section archetype in `sections/` consumes (see "Architectural primitives" below). See [`../../STYLE_GUIDE.md`](../../STYLE_GUIDE.md) for design rules (colors, typography, cards, animations); this file is for component-specific usage.
+This directory holds Astro components shared across pages. **One component per content type** — don't introduce a generic `<Card>` or `<Section>`; create `BlogCard`, `TeamCard`, etc. instead. See [`../../STYLE_GUIDE.md`](../../STYLE_GUIDE.md) for design rules (colors, typography, cards, animations); this file is for component-specific usage.
 
 ## Conventions
 
@@ -10,478 +10,110 @@ This directory holds Astro components shared across pages. **One component per c
 - **i18n:** `useTranslations(locale)` from `~/i18n`. Adding a new string means updating both `src/i18n/de.json` and `src/i18n/en.json` in the same commit.
 - **Images:** `<Image>` from `astro:assets`. Alt text is mandatory (ESLint enforces `jsx-a11y/alt-text` as error).
 
-## Architectural primitives
-
-These are the two deliberate generic components in this directory. Everything else is content-specific. `Section.astro` frames every page section archetype; `Prose.astro` frames every rendered Markdown body. Both are consumed by purpose-built wrappers — don't reach for them ad-hoc on a page when a `sections/`-prefixed archetype or a Markdown-bodied component already covers the case.
-
-### `Section.astro`
-
-The tone + padding + container frame that every `sections/*` archetype wraps with. Pages don't usually instantiate it directly — they compose archetypes (`AsymmetricHero`, `MagazineGrid`, `StickyStory`, `EditorialQuote`, `SplitFeature`, `Trust`, `Comparison`, `FAQ`) which already wrap themselves in a `<Section>`. Reach for `<Section>` directly only when building a new archetype or a true one-off section that doesn't fit any archetype.
-
-| Prop        | Type                                                 | Required | Default     | Notes                                                                            |
-| ----------- | ---------------------------------------------------- | -------- | ----------- | -------------------------------------------------------------------------------- |
-| `tone`      | `"surface" \| "elevated" \| "dark" \| "accent-wash"` | no       | `"surface"` | Background colour + matching text colour. Drives the dark/light rhythm.          |
-| `padding`   | `"sm" \| "md" \| "lg"`                               | no       | `"md"`      | Vertical padding from `--space-section-{sm,md,lg}`.                              |
-| `container` | `"narrow" \| "default" \| "wide" \| "full"`          | no       | `"default"` | Inner max-width: 48rem / 72rem / 80rem / none. Inline padding scales with `4vw`. |
-| `as`        | `"section" \| "article" \| "aside" \| "div"`         | no       | `"section"` | Semantic root element.                                                           |
-
-See `~/types/sections` for the shared `SectionProps` interface that archetype components extend (`eyebrow`, `headline`, `lede`, `tone`, `padding`, `align`).
-
-### `Prose.astro`
-
-The editorial wrapper for any rendered Markdown body. Caps the reading measure, centers the column within its parent, enables `hanging-punctuation`, and optionally renders a drop cap on the first paragraph. Pair it with the editorial type system in `src/styles/typography.css` — heading tracking, OpenType features, leading, and the `p + p` paragraph rhythm flow from there.
-
-| Prop      | Type                             | Required | Default     | Notes                                                                       |
-| --------- | -------------------------------- | -------- | ----------- | --------------------------------------------------------------------------- |
-| `dropCap` | `boolean`                        | no       | `false`     | Renders `::first-letter` of the first `<p>` as a drop cap.                  |
-| `measure` | `"tight" \| "default" \| "wide"` | no       | `"default"` | Inline-size cap: 60ch / 70ch / 80ch desktop; collapses to 100% below 640px. |
-
-**Consumers** (wrap any rendered `<Content />` from a Markdown collection entry):
-
-- `BlogPost.astro` → `<Prose dropCap>` (blog posts get the editorial flourish)
-- `LegalDocument.astro` → `<Prose measure="wide">` (legal copy reads in detail; wider measure)
-- `PageContent.astro` → `<Prose>` (default)
-- `CareerPost.astro` → `<Prose>` (default)
-- `EventDetail.astro` → `<Prose>` (default)
-- `CaseStudyDetail.astro` → `<Prose>` (default)
-- `src/components/pages/contact.astro` → `<Prose>` (default; Markdown sits beside structured contact info)
-
-The drop-cap rule lives unscoped in `src/styles/typography.css` because slotted Markdown `<p>` elements do not carry Astro's component-scoped data attribute. The class application (`.has-drop-cap`) stays in `Prose.astro`.
-
-```astro
----
-import Prose from "~/components/Prose.astro";
-import { render } from "astro:content";
-const { Content } = await render(entry);
----
-
-<Prose dropCap>
-  <Content />
-</Prose>
-```
-
-## `CollectionFilter.astro`
-
-Generic taxonomy-driven filter bar. Any collection page (blog, events, case studies, careers…) passes its facet data; the component renders anchor-link chips that update URL query params. The page re-renders server-side with the filtered collection — **no client JS required for core filtering**.
-
-### Props
-
-| Prop         | Type                       | Required | Default             | Notes                                                                      |
-| ------------ | -------------------------- | -------- | ------------------- | -------------------------------------------------------------------------- |
-| `facets`     | `Facet[]`                  | yes      | —                   | Taxonomy groups; each becomes a row of chips.                              |
-| `selected`   | `Record<string, string[]>` | yes      | —                   | Active selections keyed by facet key, built from `Astro.url.searchParams`. |
-| `lang`       | `Locale`                   | yes      | —                   | Drives i18n strings.                                                       |
-| `baseUrl`    | `string`                   | yes      | —                   | Pass `Astro.url.pathname`. Used as the base for all filter link hrefs.     |
-| `tone`       | `"on-light" \| "on-dark"`  | no       | `"on-light"`        | Adjusts idle chip appearance for light vs dark page sections.              |
-| `resetLabel` | `string`                   | no       | `t('filter.reset')` | Override the reset link text.                                              |
-| `class`      | `string`                   | no       | `""`                | Extra classes on the root `<nav>`.                                         |
-
-`Facet` shape:
-
-```ts
-interface Facet {
-  key: string; // query param name, e.g. "tag"
-  label: string; // group heading shown before chips
-  values: FacetValue[];
-}
-
-interface FacetValue {
-  key: string; // URL-safe value, e.g. "ai"
-  label: string; // user-visible label
-  count?: number; // optional item count shown in parens
-}
-```
-
-### How a page builds `facets` and `selected`
-
-```astro
----
-import { getCollection } from "astro:content";
-import CollectionFilter from "~/components/CollectionFilter.astro";
-import type { Facet } from "~/components/CollectionFilter.astro";
-import type { Locale } from "~/i18n";
-
-// lang comes from the page's getStaticPaths or a parent layout
-const lang = (Astro.params.lang ?? "de") as Locale;
-const selectedTags = Astro.url.searchParams.getAll("tag");
-
-// Collect tag counts from the blog collection for this locale
-const posts = await getCollection("blog", ({ id }) =>
-  id.startsWith(`${lang}/`),
-);
-const tagCounts = new Map<string, number>();
-for (const post of posts) {
-  for (const tag of post.data.tags) {
-    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
-  }
-}
+## Catalog
+
+This catalog is auto-generated by `scripts/check-component-docs.mjs`. Do not edit between the markers — edit the per-component `.md` sidecar instead.
 
-const facets: Facet[] = [
-  {
-    key: "tag",
-    label: lang === "de" ? "Thema" : "Topic",
-    values: [...tagCounts.entries()].map(([key, count]) => ({
-      key,
-      label: key,
-      count,
-    })),
-  },
-];
+<!-- CATALOG:START -->
+Auto-generated by `scripts/check-component-docs.mjs`. Do not edit between markers.
 
-const selected: Record<string, string[]> = {
-  tag: selectedTags,
-};
+### analytics
 
-// Filter server-side: URL params drive which posts render
-const filtered = selectedTags.length
-  ? posts.filter((p) => p.data.tags.some((tag) => selectedTags.includes(tag)))
-  : posts;
----
+| Component | Status | One-liner | Docs |
+| --- | --- | --- | --- |
+| GoogleAnalytics | stable | Consent-gated GA4 integration with Consent Mode v2 and Astro SPA support | [GoogleAnalytics.md](./GoogleAnalytics.md) |
+| GTMAnalytics | stable | Consent-gated Google Tag Manager loader with Consent Mode v2 and revocation | [GTMAnalytics.md](./GTMAnalytics.md) |
+| PostHogAnalytics | stable | Consent-gated PostHog EU analytics with session replay and autocapture | [PostHogAnalytics.md](./PostHogAnalytics.md) |
 
-<CollectionFilter {facets} {selected} {lang} baseUrl={Astro.url.pathname} />
-```
+### card
 
-### i18n keys added (`filter.*`)
+| Component | Status | One-liner | Docs |
+| --- | --- | --- | --- |
+| BlogCard | stable | Teaser card for a blog post used in list and grid layouts | [BlogCard.md](./BlogCard.md) |
+| CareerCard | stable | Dark-surface card for a job opening with employment type, title, and location | [CareerCard.md](./CareerCard.md) |
+| CaseStudyCard | stable | Portrait-first case study card with pull-quote, person info, and video badge | [CaseStudyCard.md](./CaseStudyCard.md) |
+| EventCard | stable | Teaser card for an event with date badge, location kind, and registration CTA | [EventCard.md](./EventCard.md) |
+| TeamCard | stable | Profile card for a team member with photo, role, specializations, and socials | [TeamCard.md](./TeamCard.md) |
 
-| Key                | DE                  | EN             |
-| ------------------ | ------------------- | -------------- |
-| `filter.reset`     | Filter zurücksetzen | Reset filters  |
-| `filter.allLabel`  | Alle                | All            |
-| `filter.ariaLabel` | Inhalte filtern     | Filter content |
+### consent
 
-### a11y
+| Component | Status | One-liner | Docs |
+| --- | --- | --- | --- |
+| CookieConsent | stable | GDPR cookie consent banner (vanilla-cookieconsent) with DE/EN translations | [CookieConsent.md](./CookieConsent.md) |
 
-- Root is a `<nav>` with `aria-label` from `t('filter.ariaLabel')`.
-- Chips are real `<a>` elements — fully keyboard navigable without JS.
-- `aria-current="true"` on active chips signals state to screen readers (valid on `<a>` elements, unlike `aria-pressed` which is button-only).
-- `focus-visible` ring on all chips.
-- 44px minimum touch target height enforced via padding.
-- Transitions are gated on `prefers-reduced-motion: no-preference`.
+### content
 
-## Legal pages
+| Component | Status | One-liner | Docs |
+| --- | --- | --- | --- |
+| BlogPost | stable | Full-page blog post renderer with dark hero, prose body, and back-link | [BlogPost.md](./BlogPost.md) |
+| CareerPost | stable | Full-page job posting with dark hero, metadata pills, and apply CTA | [CareerPost.md](./CareerPost.md) |
+| CaseStudyDetail | stable | Full case study detail with hero quote, portrait, video, and sibling nav | [CaseStudyDetail.md](./CaseStudyDetail.md) |
+| EventDetail | stable | Full event detail with date/time, location, speakers, and registration CTA | [EventDetail.md](./EventDetail.md) |
+| LegalDocument | stable | Legal page wrapper with title, optional last-updated date, and prose slot | [LegalDocument.md](./LegalDocument.md) |
+| PageContent | stable | Generic pages-collection renderer with optional hero image and prose layout | [PageContent.md](./PageContent.md) |
 
-### `LegalDocument.astro`
+### facade
 
-Reusable wrapper for legal pages (imprint, privacy, future terms/AGB). Renders a constrained-width prose container with the page title, an optional last-updated timestamp, and a slot for the markdown body. Wraps the body in `<Prose measure="wide">` so legal copy reads at the wider 80ch measure (legal text rewards detail). `blog-prose` still owns blog-specific typography (links, lists, blockquote, code) until the editorial type system replaces it.
+| Component | Status | One-liner | Docs |
+| --- | --- | --- | --- |
+| SpotifyFacade | stable | Privacy-friendly click-to-load Spotify embed with poster preview | [SpotifyFacade.md](./SpotifyFacade.md) |
+| YouTubeFacade | stable | Privacy-friendly click-to-load YouTube embed with poster image | [YouTubeFacade.md](./YouTubeFacade.md) |
 
-| Prop          | Type     | Required | Default | Notes                                                                     |
-| ------------- | -------- | -------- | ------- | ------------------------------------------------------------------------- |
-| `title`       | `string` | yes      | —       | Rendered as the page `<h1>`.                                              |
-| `lang`        | `Locale` | yes      | —       | Drives locale-aware date formatting; label from `t('legal.lastUpdated')`. |
-| `lastUpdated` | `Date`   | no       | —       | When provided, renders a formatted timestamp below the heading.           |
-| `class`       | `string` | no       | —       | Extra classes appended to the outer `<section>`.                          |
+### filter
 
-Slot: the markdown `<Content />` from the page collection entry.
-
-```astro
-<LegalDocument
-  title={entry.data.title}
-  lang={lang}
-  lastUpdated={new Date("2025-01-01")}
->
-  <Content />
-</LegalDocument>
-```
+| Component | Status | One-liner | Docs |
+| --- | --- | --- | --- |
+| CaseStudiesFilter | stable | URL-driven filter bar for the case studies collection | [CaseStudiesFilter.md](./CaseStudiesFilter.md) |
+| CollectionFilter | stable | URL-driven filter chip bar for any content collection | [CollectionFilter.md](./CollectionFilter.md) |
+| EventsFilter | stable | URL-driven filter bar for a pre-fetched events collection slice | [EventsFilter.md](./EventsFilter.md) |
 
-Adding a new legal page: create `src/content/pages/{de,en}/<slug>.md` with matching `translationKey`, wire up a page component in `src/components/pages/`, add the route to `src/lib/page-registry.ts`. The `legal.lastUpdated` i18n key is already in both `de.json` and `en.json`.
-
-## Case Studies
-
-Three components handle the case studies collection end-to-end. All three are locale-aware and use brand tokens exclusively.
-
-### `CaseStudyCard.astro`
-
-Grid card for the index page. Portrait image on top (4:5 aspect ratio), pull-quote + person info below. An optional Play badge indicates a video is available. Tags render as `Badge` chips. The entire card is wrapped in an invisible full-bleed anchor for keyboard and pointer access.
-
-| Prop    | Type                             | Required | Notes                                       |
-| ------- | -------------------------------- | -------- | ------------------------------------------- |
-| `entry` | `CollectionEntry<"caseStudies">` | yes      | Drives image, quote, person, tags, videoId. |
-| `lang`  | `Locale`                         | yes      | Used for link generation and i18n strings.  |
-
-The card href is built from `findPageByKey("case-studies-index")` + the entry slug. `portraitFit: "contain"` adds padding around the image (use for logos).
-
-### `CaseStudyDetail.astro`
-
-Full-page detail view. Renders a hero quote, a two-column layout (portrait left, person meta right), optional `YouTubeFacade` embed, markdown body via `<slot />`, and prev/next sibling navigation.
-
-| Prop    | Type                             | Required | Notes                                        |
-| ------- | -------------------------------- | -------- | -------------------------------------------- |
-| `entry` | `CollectionEntry<"caseStudies">` | yes      | Full entry including rendered body content.  |
-| `lang`  | `Locale`                         | yes      | Drives back-link, sibling nav, i18n strings. |
-
-When `videoId` is set, `YouTubeFacade` is embedded using `portraitImage` as the poster. Pass `lang` so the aria-label is localised.
+### i18n
 
-Sibling navigation is derived at render time by querying all locale-matching entries sorted newest-first — no static data required.
+| Component | Status | One-liner | Docs |
+| --- | --- | --- | --- |
+| LanguageSwitcher | stable | DE/EN toggle that resolves cross-locale slugs via page-registry lookup | [LanguageSwitcher.md](./LanguageSwitcher.md) |
 
-### `CaseStudiesFilter.astro`
+### layout
 
-Thin wrapper around `CollectionFilter`. Reads all case studies for the current locale, extracts unique `category` and `tag` values with counts, and passes them as `facets`. Only renders if there is at least one facet with values.
-
-| Prop       | Type                       | Required | Default      | Notes                                                                                |
-| ---------- | -------------------------- | -------- | ------------ | ------------------------------------------------------------------------------------ |
-| `lang`     | `Locale`                   | yes      | —            | Passed through to `CollectionFilter`.                                                |
-| `baseUrl`  | `string`                   | yes      | —            | Pass `Astro.url.pathname`.                                                           |
-| `selected` | `Record<string, string[]>` | yes      | —            | Keys: `"category"`, `"tag"`. Build from URL search params.                           |
-| `tone`     | `"on-light" \| "on-dark"`  | no       | `"on-light"` | Pass `"on-dark"` when embedding in a dark-surface section (inverts idle chip style). |
-| `class`    | `string`                   | no       | `""`         | Extra classes on the root element.                                                   |
-
-Category facet is suppressed when all entries share the same category (single-facet collapses are noise).
-
-#### YouTubeFacade integration
-
-Case studies with a `videoId` embed via the existing `YouTubeFacade`. The `portraitImage` is reused as poster — no separate `posterImage` field needed. The `title` prop is built from `t("caseStudies.watchInterview")` + the person name.
-
-```astro
-<YouTubeFacade
-  videoId={entry.data.videoId}
-  poster={entry.data.portraitImage}
-  posterAlt={`${entry.data.personName} | ${entry.data.clientName}`}
-  title={`${t("caseStudies.watchInterview")} – ${entry.data.personName}`}
-  lang={lang}
-/>
-```
-
-## Media facades
-
-Privacy-friendly click-to-load embeds — static poster + Play button until the user opts in. See [`../../STYLE_GUIDE.md`](../../STYLE_GUIDE.md) §10 for the design rationale and provider rules.
-
-### `YouTubeFacade.astro`
-
-Embeds via `youtube-nocookie.com` (privacy-enhanced domain).
-
-| Prop        | Type            | Required | Default | Notes                                                             |
-| ----------- | --------------- | -------- | ------- | ----------------------------------------------------------------- |
-| `videoId`   | `string`        | yes      | —       | The `v=` parameter from the YouTube URL.                          |
-| `poster`    | `ImageMetadata` | yes      | —       | Local image import. Don't pass a remote URL.                      |
-| `posterAlt` | `string`        | yes      | —       | Describes the poster for screen readers — not the video.          |
-| `title`     | `string`        | no       | —       | Used as the iframe title and embedded into the aria-label.        |
-| `lang`      | `Locale`        | no       | `"de"`  | Drives the localized aria-label via `t('video.play', { title })`. |
-| `class`     | `string`        | no       | `""`    | Extra classes appended to the root.                               |
-
-```astro
----
-import poster from "~/assets/blog/intro-talk.jpg";
-import YouTubeFacade from "~/components/YouTubeFacade.astro";
----
-
-<YouTubeFacade
-  videoId="dQw4w9WgXcQ"
-  poster={poster}
-  posterAlt="Speaker on stage, warm conference lighting"
-  title="Intro talk — passion4it 2026"
-  lang={lang}
-/>
-```
-
-### `SpotifyFacade.astro`
-
-Embeds via `open.spotify.com/embed/{kind}/{id}`. Defaults to podcast episodes but works for tracks, shows, playlists, and albums.
-
-| Prop            | Type                                                      | Required | Default     | Notes                                                                   |
-| --------------- | --------------------------------------------------------- | -------- | ----------- | ----------------------------------------------------------------------- |
-| `episodeId`     | `string`                                                  | yes      | —           | Spotify ID. Despite the name, holds any Spotify entity ID (see `kind`). |
-| `title`         | `string`                                                  | yes      | —           | Used as iframe title and aria-label.                                    |
-| `cover`         | `ImageMetadata`                                           | yes      | —           | Local image import.                                                     |
-| `coverAlt`      | `string`                                                  | yes      | —           | Read by screen readers via an `.sr-only` element.                       |
-| `kind`          | `"episode" \| "track" \| "show" \| "playlist" \| "album"` | no       | `"episode"` | Picks the Spotify embed path.                                           |
-| `platformLabel` | `string`                                                  | no       | `"Spotify"` | Eyebrow label shown above the title.                                    |
-| `lang`          | `Locale`                                                  | no       | `"de"`      | Drives the aria-label via `t('podcast.play', { title })`.               |
-| `class`         | `string`                                                  | no       | `""`        | Extra classes appended to the root.                                     |
-
-```astro
-<SpotifyFacade
-  episodeId="EPISODE_ID"
-  kind="episode"
-  title="Episode 12 — Bilingual marketing in practice"
-  cover={cover}
-  coverAlt="Podcast cover art with microphone"
-  lang={lang}
-/>
-```
+| Component | Status | One-liner | Docs |
+| --- | --- | --- | --- |
+| Footer | stable | Dark-surface site footer with nav, legal links, and copyright | [Footer.md](./Footer.md) |
+| Header | stable | Sticky site header with locale-aware nav and mobile menu | [Header.md](./Header.md) |
 
-### Rules for both facades
+### page
 
-- **Always pass `lang`** when the surrounding page is locale-aware — the aria-label is built from `t('video.play', { title })` / `t('podcast.play', { title })`. Adding a new locale means adding both keys in `de.json` and `en.json`.
-- **Don't bypass the facade.** If you find yourself reaching for `<iframe src="https://youtube.com/...">`, stop — see STYLE_GUIDE §11.
+| Component | Status | One-liner | Docs |
+| --- | --- | --- | --- |
+| about | stable | Renders the bilingual About page with hero, stats, values, team preview, and CTA | [about.md](./pages/about.md) |
+| blog-index | stable | Renders the bilingual blog index with a dark hero and chronological post grid | [blog-index.md](./pages/blog-index.md) |
+| careers-index | stable | Renders the bilingual careers index with a dark hero and a job listings grid | [careers-index.md](./pages/careers-index.md) |
+| case-studies-index | stable | Bilingual case studies index with category/tag filters; sorted newest first | [case-studies-index.md](./pages/case-studies-index.md) |
+| contact | stable | Renders the bilingual contact page with a prose sidebar and an async form | [contact.md](./pages/contact.md) |
+| events-index | stable | Renders the bilingual events index with filters and a chronological card grid | [events-index.md](./pages/events-index.md) |
+| imprint | stable | Renders the bilingual imprint (Impressum) page via LegalDocument | [imprint.md](./pages/imprint.md) |
+| privacy | stable | Renders the bilingual privacy policy page via LegalDocument | [privacy.md](./pages/privacy.md) |
+| services | stable | Renders the bilingual services page with icon-driven service cards and a CTA | [services.md](./pages/services.md) |
+| team | stable | Renders the bilingual team page with a dark hero and a full member grid | [team.md](./pages/team.md) |
 
-## Social proof
+### primitive
 
-### `sections/Trust.astro`
+| Component | Status | One-liner | Docs |
+| --- | --- | --- | --- |
+| Badge | stable | Small pill label with variant×tone color matrix for tagging content | [Badge.md](./Badge.md) |
+| Button | stable | Variant×tone CTA primitive that renders as <a> or <button> automatically | [Button.md](./Button.md) |
 
-Horizontal strip of partner/client logos. Logos are grayscale at rest and reveal color on hover — a low-noise way to signal credibility. Composes with `<Section>` and accepts the standard `SectionProps` (`eyebrow`, `headline`, `lede`, `tone`, `padding`, `align`) plus a `logos` array.
+### section
 
-Props are typed by `TrustProps` in `~/types/sections`. The most common use is just `eyebrow` + `logos`, but you can promote it to a fuller section by adding `headline` and `lede`.
+| Component | Status | One-liner | Docs |
+| --- | --- | --- | --- |
+| ComparisonTable | stable | Responsive comparison grid — semantic table on desktop, stacked cards on mobile | [ComparisonTable.md](./ComparisonTable.md) |
+| FAQs | stable | Accordion list of question-and-answer pairs using native HTML details/summary | [FAQs.md](./FAQs.md) |
+| TrustSection | stable | Logo strip with grayscale-to-color hover reveal and optional eyebrow heading | [TrustSection.md](./TrustSection.md) |
 
-```astro
----
-import logoAcme from "~/assets/logos/acme.svg";
-import logoWidget from "~/assets/logos/widget.png";
-import Trust from "~/components/sections/Trust.astro";
----
+### seo
 
-<Trust
-  eyebrow="Trusted by"
-  headline="Marken, die mit uns wachsen"
-  logos={[
-    { src: logoAcme, alt: "Acme Corp", href: "https://acme.example.com" },
-    { src: logoWidget, alt: "Widget GmbH" },
-  ]}
-/>
-```
+| Component | Status | One-liner | Docs |
+| --- | --- | --- | --- |
+| StructuredData | stable | Injects a Schema.org JSON-LD script tag into the page head | [StructuredData.md](./StructuredData.md) |
 
-### `sections/Comparison.astro`
-
-Two-or-three-column feature comparison grid (e.g., "Us vs. Them" or "Free vs. Pro vs. Enterprise"). On desktop it renders as a semantic `<table>`; on mobile it collapses into per-column cards so no horizontal scrolling is required.
-
-Props are typed by `ComparisonProps` in `~/types/sections`. Accepts the standard `SectionProps` (`eyebrow`, `headline`, `lede`, `tone`, `padding`, `align`) plus `columns`, `rows`, and `lang` (drives screen-reader labels via `comparison.yes` / `comparison.no`).
-
-```astro
----
-import Comparison from "~/components/sections/Comparison.astro";
----
-
-<Comparison
-  lang={lang}
-  headline="Was uns unterscheidet"
-  columns={[
-    { name: "Basis" },
-    { name: "Pro", highlight: true },
-    { name: "Konkurrenz" },
-  ]}
-  rows={[
-    { feature: "SSL-Zertifikat", values: [true, true, true] },
-    { feature: "Eigene Domain", values: [false, true, true] },
-    { feature: "Support", values: ["E-Mail", "24/7", "E-Mail"] },
-    { feature: "Speicher", values: ["1 GB", "50 GB", "10 GB"] },
-  ]}
-/>
-```
-
-## Careers
-
-Components for the job postings collection. No external HR-platform dependency — content is plain markdown. The collection uses the same `glob` loader and bilingual `translationKey` pattern as `blog` and `team`.
-
-### `CareerCard.astro`
-
-Card representation of a job opening. Used on the careers index page to list all open positions.
-
-| Prop    | Type                         | Required | Notes                                                       |
-| ------- | ---------------------------- | -------- | ----------------------------------------------------------- |
-| `entry` | `CollectionEntry<"careers">` | yes      | A careers collection entry from `getCollection("careers")`. |
-| `lang`  | `Locale`                     | yes      | Drives i18n labels and link locale prefix.                  |
-
-The card links to `/{careersIndexSlug}/{entrySlug}/` (or `/en/{slug}/` for EN). It shows an employment-type badge, the job title, a two-line summary, location, and department.
-
-```astro
----
-import { getCollection } from "astro:content";
-import CareerCard from "~/components/CareerCard.astro";
-
-const jobs = await getCollection("careers");
-const deJobs = jobs.filter((j) => j.id.startsWith("de/"));
----
-
-{deJobs.map((job) => <CareerCard entry={job} lang="de" />)}
-```
-
-### `CareerPost.astro`
-
-Full job posting detail view. Renders a dark hero with metadata (location, employment type, department, posted date, optional deadline), the markdown body, and an "Apply" CTA that opens `applyUrl` in a new tab.
-
-| Prop    | Type                         | Required | Notes                          |
-| ------- | ---------------------------- | -------- | ------------------------------ |
-| `entry` | `CollectionEntry<"careers">` | yes      | The careers entry to render.   |
-| `lang`  | `Locale`                     | yes      | Drives i18n strings and dates. |
-
-Used by `src/pages/[...path].astro` when `props.collection === "careers"`. The page also emits a `JobPosting` JSON-LD via `StructuredData.astro` (built by `buildJobPostingLd` in `src/lib/structured-data.ts`).
-
-### `src/components/pages/careers-index.astro`
-
-The careers index page component, consumed by the static-page routing in `page-registry.ts`. Lists all jobs for the current locale, sorted by `postedAt` descending.
-
-Page key: `careers-index`. Bilingual slugs: `{ de: "karriere", en: "careers" }`.
-
-### `buildJobPostingLd` (in `src/lib/structured-data.ts`)
-
-Builds a Schema.org-valid `JobPosting` JSON-LD object for a careers entry. Maps `employmentType` enum values to Schema.org constants (`FULL_TIME`, `PART_TIME`, `CONTRACTOR`, `INTERN`). Includes `baseSalary` when `salaryMin` or `salaryMax` is set; includes `validThrough` when `closesAt` is set.
-
-Emitted via `<StructuredData type="JobPosting" data={jobPostingLd} />` in `[...path].astro`.
-
-## Events
-
-Three components form the events trilogy: `EventCard` (list item), `EventDetail` (full-page), and `EventsFilter` (filter bar wrapping `CollectionFilter`).
-
-### `EventCard.astro`
-
-Card representation for a single event in a listing. Shows a hero image (or an accent-gradient placeholder), date badge, location kind indicator, title, summary, and a primary CTA — either a registration link or a "View details" link.
-
-| Prop    | Type                        | Required | Notes                                   |
-| ------- | --------------------------- | -------- | --------------------------------------- |
-| `entry` | `CollectionEntry<"events">` | yes      | The event collection entry.             |
-| `lang`  | `Locale`                    | yes      | Drives i18n strings and localized href. |
-
-```astro
-<EventCard entry={event} lang={lang} />
-```
-
-### `EventDetail.astro`
-
-Full-page event detail view. Renders back-navigation, optional hero image, title, summary, date/time card, location card (with map link when `location.url` is set), speakers section (resolved via `getEntries`), markdown body, and a registration CTA for future events.
-
-| Prop    | Type                        | Required | Notes                                        |
-| ------- | --------------------------- | -------- | -------------------------------------------- |
-| `entry` | `CollectionEntry<"events">` | yes      | The event collection entry.                  |
-| `lang`  | `Locale`                    | yes      | Drives i18n strings and localized back-link. |
-
-Consumed by `src/pages/[...path].astro` — do not instantiate directly in page components.
-
-### `EventsFilter.astro`
-
-Thin wrapper around `CollectionFilter`. Derives `category` and `tag` facets with counts from the entries the caller passes in, then delegates rendering to `CollectionFilter`. The caller is responsible for reading the collection once and passing the locale-filtered slice — `EventsFilter` does **not** call `getCollection` internally.
-
-| Prop       | Type                          | Required | Notes                                                               |
-| ---------- | ----------------------------- | -------- | ------------------------------------------------------------------- |
-| `entries`  | `CollectionEntry<"events">[]` | yes      | Locale-filtered events; read the collection once in the index page. |
-| `lang`     | `Locale`                      | yes      | Drives i18n strings for facet labels.                               |
-| `selected` | `Record<string, string[]>`    | yes      | Active filter values keyed by facet key.                            |
-| `baseUrl`  | `string`                      | yes      | Pass `Astro.url.pathname`.                                          |
-
-```astro
----
-import { getCollection } from "astro:content";
-
-const allEvents = await getCollection("events", ({ id }) =>
-  id.startsWith(`${lang}/`),
-);
-const selectedCategories = Astro.url.searchParams.getAll("category");
-const selectedTags = Astro.url.searchParams.getAll("tag");
-const selected = { category: selectedCategories, tag: selectedTags };
----
-
-<EventsFilter
-  entries={allEvents}
-  {lang}
-  {selected}
-  baseUrl={Astro.url.pathname}
-/>
-```
-
-### i18n keys (`events.*`)
-
-| Key                        | DE                                   | EN                                   |
-| -------------------------- | ------------------------------------ | ------------------------------------ |
-| `events.title`             | Veranstaltungen                      | Events                               |
-| `events.description`       | Webinare, Workshops und Konferenzen… | Webinars, workshops and conferences… |
-| `events.noResults`         | Keine Veranstaltungen gefunden.      | No events found.                     |
-| `events.register`          | Jetzt anmelden                       | Register now                         |
-| `events.details`           | Details ansehen                      | View details                         |
-| `events.backToEvents`      | Zurück zu den Veranstaltungen        | Back to events                       |
-| `events.dateTime`          | Datum & Uhrzeit                      | Date & Time                          |
-| `events.speakers`          | Referenten                           | Speakers                             |
-| `events.openMap`           | Auf Karte anzeigen                   | View on map                          |
-| `events.location.online`   | Online                               | Online                               |
-| `events.location.inPerson` | Vor Ort                              | In person                            |
-| `events.location.hybrid`   | Hybrid (Vor Ort + Online)            | Hybrid (in person + online)          |
-| `events.location.atVenue`  | Veranstaltungsort                    | Venue                                |
-| `events.filter.category`   | Kategorie                            | Category                             |
-| `events.filter.tag`        | Thema                                | Topic                                |
+<!-- CATALOG:END -->
