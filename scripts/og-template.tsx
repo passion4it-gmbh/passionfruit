@@ -28,6 +28,12 @@ export interface OgTemplateProps {
   textOnDark: string;
   /** Raw SVG markup, inlined as a data URI on the lockup <img>. */
   logoSvg: string;
+  /**
+   * Optional `data:image/png;base64,…` URI for an art-directed background
+   * photo. Rendered full-cover behind the radial accent glow. `null` keeps
+   * the flat surface look.
+   */
+  bgImageDataUri: string | null;
   lang: Locale;
 }
 
@@ -46,7 +52,16 @@ function hexToRgba(hex: string, alpha: number): string {
 }
 
 export function OgTemplate(props: OgTemplateProps): JSX.Element {
-  const { name, tagline, accent, surface, textOnDark, logoSvg, lang } = props;
+  const {
+    name,
+    tagline,
+    accent,
+    surface,
+    textOnDark,
+    logoSvg,
+    bgImageDataUri,
+    lang,
+  } = props;
 
   const glowStop = hexToRgba(accent, 0.18);
   const logoDataUri = "data:image/svg+xml;utf8," + encodeURIComponent(logoSvg);
@@ -66,6 +81,33 @@ export function OgTemplate(props: OgTemplateProps): JSX.Element {
         fontFamily: "Inter",
       }}
     >
+      {bgImageDataUri && (
+        <img
+          src={bgImageDataUri}
+          width={1200}
+          height={630}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: 1200,
+            height: 630,
+            objectFit: "cover",
+          }}
+        />
+      )}
+      {bgImageDataUri && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: 1200,
+            height: 630,
+            background: `linear-gradient(90deg, ${hexToRgba(surface, 0.7)} 0%, ${hexToRgba(surface, 0.35)} 55%, ${hexToRgba(surface, 0)} 100%)`,
+          }}
+        />
+      )}
       <div
         style={{
           position: "absolute",

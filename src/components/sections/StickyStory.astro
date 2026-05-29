@@ -1,0 +1,206 @@
+---
+import { Image } from "astro:assets";
+import Section from "~/components/Section.astro";
+import type { StickyStoryProps } from "~/types/sections";
+
+type Props = StickyStoryProps;
+
+const {
+  eyebrow,
+  headline,
+  lede,
+  chapters,
+  tone = "surface",
+  padding = "lg",
+} = Astro.props;
+---
+
+<Section tone={tone} padding={padding}>
+  {
+    (eyebrow || headline || lede) && (
+      <header class="pf-story__header">
+        {eyebrow && (
+          <span class="text-eyebrow pf-story__eyebrow">{eyebrow}</span>
+        )}
+        <h2 class="text-h1 pf-story__title">{headline}</h2>
+        {lede && <p class="text-body-lg pf-story__lede">{lede}</p>}
+      </header>
+    )
+  }
+
+  <div class="pf-story" data-pf-story>
+    <div class="pf-story__grid">
+      <div class="pf-story__copy">
+        {
+          chapters.map((chapter, idx) => (
+            <div class="pf-story__chapter-copy" data-chapter-index={idx}>
+              <h3 class="text-h2 pf-story__chapter-heading">
+                {chapter.headline}
+              </h3>
+              <p class="pf-story__chapter-body">{chapter.body}</p>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="pf-story__media">
+        {
+          chapters.map((chapter, idx) => (
+            <div class="pf-story__chapter-media" data-chapter-index={idx}>
+              <Image
+                src={chapter.image}
+                alt={chapter.imageAlt}
+                loading={idx === 0 ? "eager" : "lazy"}
+                class="pf-story__image"
+              />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</Section>
+
+<script>
+  // Sticky-story motion adapter. For each StickyStory section on the page,
+  // observe the media chapters and mark the matching copy chapter
+  // [data-active="true"] when the media chapter is centered in the viewport.
+  //
+  // Reduced motion: skip entirely. CSS in motion.css keeps every chapter at
+  // full opacity, and the @media gate inside StickyStory's style block
+  // disables `position: sticky`.
+  function initStickyStory(): void {
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduceMotion) return;
+
+    const sections = document.querySelectorAll<HTMLElement>("[data-pf-story]");
+
+    sections.forEach((section) => {
+      const copies = Array.from(
+        section.querySelectorAll<HTMLElement>(".pf-story__chapter-copy"),
+      );
+      const medias = Array.from(
+        section.querySelectorAll<HTMLElement>(".pf-story__chapter-media"),
+      );
+      if (copies.length === 0 || medias.length === 0) return;
+
+      // Default to the first chapter being active so the page doesn't start
+      // with every copy chapter at the dim resting state.
+      copies.forEach((el, i) => {
+        el.setAttribute("data-active", i === 0 ? "true" : "false");
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const idxAttr = (entry.target as HTMLElement).dataset.chapterIndex;
+            if (idxAttr === undefined) return;
+            const idx = Number.parseInt(idxAttr, 10);
+            if (!Number.isFinite(idx)) return;
+
+            copies.forEach((el, i) => {
+              el.setAttribute("data-active", i === idx ? "true" : "false");
+            });
+          });
+        },
+        {
+          // Trigger when the media chapter crosses the viewport mid-line.
+          rootMargin: "-45% 0px -45% 0px",
+          threshold: 0,
+        },
+      );
+
+      medias.forEach((media) => observer.observe(media));
+    });
+  }
+
+  initStickyStory();
+  document.addEventListener("astro:page-load", initStickyStory);
+</script>
+
+<style>
+  /* Motion adapter wires reduced-motion handling and active-chapter
+     tracking in Phase 3. */
+  .pf-story__header {
+    margin-bottom: var(--space-12);
+    max-width: 48rem;
+  }
+
+  .pf-story__eyebrow {
+    display: inline-block;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+    color: var(--color-accent);
+  }
+
+  .pf-story__title {
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .pf-story__lede {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .pf-story__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-section-md);
+  }
+
+  .pf-story__chapter-copy,
+  .pf-story__chapter-media {
+    margin-bottom: var(--space-section-md);
+  }
+
+  .pf-story__chapter-copy:last-child,
+  .pf-story__chapter-media:last-child {
+    margin-bottom: 0;
+  }
+
+  .pf-story__chapter-heading {
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .pf-story__chapter-body {
+    margin: 0;
+  }
+
+  .pf-story__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-card);
+  }
+
+  @media (min-width: 768px) {
+    .pf-story__grid {
+      grid-template-columns: var(--grid-cols-12);
+      gap: var(--grid-gap-lg);
+    }
+
+    .pf-story__copy {
+      grid-column: 1 / span 5;
+      align-self: start;
+      height: fit-content;
+    }
+
+    .pf-story__media {
+      grid-column: 6 / span 7;
+    }
+  }
+
+  /* Sticky behaviour only when the user hasn't asked for less motion.
+     Under reduced motion the copy column scrolls as a normal block — no
+     pinning, no chapter dim-and-brighten (see motion.css). */
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    .pf-story__copy {
+      position: sticky;
+      top: 4rem;
+    }
+  }
+</style>

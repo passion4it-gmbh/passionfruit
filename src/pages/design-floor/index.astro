@@ -1,0 +1,45 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+
+if (!import.meta.env.DEV) {
+  return Astro.redirect("/");
+}
+---
+
+<BaseLayout
+  title="Design Fixtures"
+  description="Dev-only fixture index for the design floor"
+  lang="en"
+  noindex={true}
+>
+  <div style="padding: 2rem; font-family: monospace;">
+    <h1 style="margin-bottom: 1rem;">Design Floor Fixtures</h1>
+    <p style="margin-bottom: 1.5rem; color: var(--color-muted);">
+      DEV-only. These pages do not exist in production.
+    </p>
+    <ul
+      style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem;"
+    >
+      <li>
+        <a href="/design-floor/type/"
+          >/design-floor/type/ — Chapter 1: Editorial type system</a
+        >
+      </li>
+      <li>
+        <a href="/design-floor/sections/"
+          >/design-floor/sections/ — Chapter 2: Section archetypes</a
+        >
+      </li>
+      <li>
+        <a href="/design-floor/motion/"
+          >/design-floor/motion/ — Chapter 3: Motion language</a
+        >
+      </li>
+      <li>
+        <a href="/design-floor/state/"
+          >/design-floor/state/ — Chapter 4: State design</a
+        >
+      </li>
+    </ul>
+  </div>
+</BaseLayout>

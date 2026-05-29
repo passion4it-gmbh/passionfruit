@@ -1,0 +1,44 @@
+---
+interface Props {
+  dropCap?: boolean;
+  measure?: "tight" | "default" | "wide";
+}
+
+const { dropCap = false, measure = "default" } = Astro.props;
+---
+
+<div
+  class:list={["prose-root", `measure-${measure}`, { "has-drop-cap": dropCap }]}
+>
+  <slot />
+</div>
+
+<style>
+  .prose-root {
+    hanging-punctuation: first;
+    max-inline-size: 70ch;
+    margin-inline: auto;
+  }
+
+  .measure-tight {
+    max-inline-size: 60ch;
+  }
+
+  .measure-default {
+    max-inline-size: 70ch;
+  }
+
+  .measure-wide {
+    max-inline-size: 80ch;
+  }
+
+  @media (max-width: 640px) {
+    .prose-root {
+      max-inline-size: 100%;
+    }
+  }
+
+  /* NOTE: .has-drop-cap rule lives in src/styles/typography.css because
+     slotted markdown <p> elements don't carry this component's scoped
+     data attribute. Keeping the class application here, the styling there. */
+</style>

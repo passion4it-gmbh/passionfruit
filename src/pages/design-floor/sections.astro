@@ -1,0 +1,283 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import AsymmetricHero from "~/components/sections/AsymmetricHero.astro";
+import MagazineGrid from "~/components/sections/MagazineGrid.astro";
+import StickyStory from "~/components/sections/StickyStory.astro";
+import EditorialQuote from "~/components/sections/EditorialQuote.astro";
+import SplitFeature from "~/components/sections/SplitFeature.astro";
+import Trust from "~/components/sections/Trust.astro";
+import Comparison from "~/components/sections/Comparison.astro";
+import FAQ from "~/components/sections/FAQ.astro";
+import heroImage from "~/assets/home/hero.png";
+import blogA from "~/assets/blog/ai-websites.png";
+import blogB from "~/assets/blog/digital-transformation.png";
+import portraitA from "~/assets/case-studies/portrait-manufacturing.png";
+import portraitB from "~/assets/case-studies/portrait-shopify.png";
+import logoConsulting from "~/assets/case-studies/logo-consulting.png";
+import anna from "~/assets/team/anna.png";
+import lena from "~/assets/team/lena.png";
+import max from "~/assets/team/max.png";
+
+if (!import.meta.env.DEV) {
+  return Astro.redirect("/");
+}
+
+const magazineCells = [
+  {
+    size: "large" as const,
+    headline: "Editorial layouts that breathe",
+    lede: "A 7/5 split, intentional vertical offsets, and white space treated as a first-class material — not a leftover.",
+    image: heroImage,
+    imageAlt: "Editorial hero photograph",
+    href: "#",
+  },
+  {
+    size: "medium" as const,
+    headline: "Type that earns its weight",
+    lede: "Clamp-based scales, careful tracking, and a real reading rhythm.",
+    image: blogA,
+    imageAlt: "Article hero on AI-generated websites",
+    href: "#",
+  },
+  {
+    size: "medium" as const,
+    headline: "Motion that means something",
+    lede: "Animation as feedback, not garnish. Reduced-motion respected by default.",
+    image: blogB,
+    imageAlt: "Digital transformation editorial",
+    href: "#",
+  },
+  {
+    size: "small" as const,
+    headline: "States as design",
+    lede: "Loading, empty, error — each one a deliberate moment.",
+    href: "#",
+  },
+  {
+    size: "small" as const,
+    headline: "Tokens not hex",
+    lede: "Every color, every space, named.",
+    href: "#",
+  },
+  {
+    size: "small" as const,
+    headline: "Accessible by default",
+    lede: "Keyboard, screen reader, contrast — non-negotiable.",
+    href: "#",
+  },
+];
+
+const stickyChapters = [
+  {
+    headline: "Frame the problem",
+    body: "Before pixels, the brief. We map who the page is for, what they need to do next, and what success looks like measured in their behaviour — not our taste.",
+    image: blogA,
+    imageAlt: "Whiteboard sketches of user flow",
+  },
+  {
+    headline: "Compose the page",
+    body: "Archetypes carry the heavy structural decisions so we can spend our attention on copy, hierarchy, and the moments that surprise.",
+    image: blogB,
+    imageAlt: "Editorial layout in progress on screen",
+  },
+  {
+    headline: "Refine until it sings",
+    body: "The last 20% of the work is 80% of the feeling. Type rhythm, spacing, micro-motion — small calibrations that move the page from correct to delightful.",
+    image: heroImage,
+    imageAlt: "Detail of finished design system",
+  },
+];
+
+const splitFeatures = [
+  {
+    headline: "Asymmetric hero",
+    body: "A 7/5 split with an intentional vertical offset on the image column. Stronger entry than a centered headline-and-button.",
+    image: heroImage,
+    imageAlt: "Hero composition example",
+    cta: { label: "See the variant", href: "#" },
+  },
+  {
+    headline: "Magazine grid",
+    body: "Large, medium, and small cells flow naturally on a 12-col grid — like an editorial spread, not a brochure.",
+    image: blogA,
+    imageAlt: "Grid composition example",
+    cta: { label: "Read the layout notes", href: "#" },
+  },
+  {
+    headline: "Sticky story",
+    body: "Copy holds, visuals scroll. The reader controls the pace; the page rewards attention with chapter changes.",
+    image: blogB,
+    imageAlt: "Scroll story example",
+    cta: { label: "Open the chapter", href: "#" },
+  },
+];
+
+const comparisonColumns = [
+  { name: "Brochure stack" },
+  { name: "Design floor", highlight: true },
+  { name: "Custom build" },
+];
+
+const comparisonRows = [
+  { feature: "Editorial layouts", values: [false, true, true] },
+  { feature: "Section archetypes", values: [false, true, false] },
+  { feature: "Motion language", values: [false, true, true] },
+  { feature: "Time to first draft", values: ["1 day", "1 day", "2 weeks"] },
+  { feature: "Cost to change later", values: ["Low", "Low", "High"] },
+];
+
+const trustLogos = [
+  { src: logoConsulting, alt: "Acme Consulting" },
+  { src: logoConsulting, alt: "Beta Partners" },
+  { src: logoConsulting, alt: "Gamma Studio" },
+  { src: logoConsulting, alt: "Delta Group" },
+  { src: logoConsulting, alt: "Epsilon Labs" },
+];
+
+const faqItems = [
+  {
+    question: "Why archetypes instead of one-off layouts?",
+    answer:
+      "Archetypes encode the structural decisions we make every time anyway — asymmetric hero, magazine grid, sticky story. Naming them lets us iterate on the page composition itself, not the underlying CSS.",
+  },
+  {
+    question: "Can I mix tones across archetypes?",
+    answer:
+      "Yes. Every archetype consumes the standard tone tokens (surface, elevated, dark, accent-wash). Pages compose a rhythm by alternating tones across sections.",
+  },
+  {
+    question: "What happens to existing components?",
+    answer:
+      "Trust, Comparison, and FAQ are migrated into sections/ with harmonized props. Other components keep their narrow scope and can be slotted into archetypes as needed.",
+  },
+];
+---
+
+<BaseLayout
+  title="Section Archetypes"
+  description="Dev-only Chapter 2 fixture page for the design floor"
+  lang="en"
+  noindex={true}
+>
+  <AsymmetricHero
+    eyebrow="Chapter 2"
+    headline="Section archetypes that compose like a magazine"
+    lede="A small library of layout shapes — hero, grid, sticky story, quote, split feature — that pages can mix without reinventing the wheel each time."
+    image={heroImage}
+    imageAlt="Editorial hero photograph"
+    imagePosition="right"
+    cta={{ label: "See the inventory", href: "#magazine" }}
+    tone="surface"
+  />
+
+  <AsymmetricHero
+    eyebrow="Variant"
+    headline="Image left, text right"
+    lede="The mirrored composition. Useful when the image is portrait-oriented or carries more narrative weight than the copy."
+    image={portraitA}
+    imageAlt="Editorial portrait, manufacturing client"
+    imagePosition="left"
+    tone="elevated"
+  />
+
+  <AsymmetricHero
+    eyebrow="Variant"
+    headline="Fullbleed with gradient overlay"
+    lede="The image owns the full canvas. A directional gradient keeps the text readable without dimming the photograph."
+    image={blogB}
+    imageAlt="Wide editorial photograph for fullbleed hero"
+    imagePosition="fullbleed"
+    cta={{ label: "Open the story", href: "#sticky" }}
+  />
+
+  <MagazineGrid
+    eyebrow="Magazine grid"
+    headline="One large, two medium, three small"
+    lede="Cells flow in source order on a 12-col grid. The consumer decides the visual rhythm."
+    cells={magazineCells}
+    tone="surface"
+  />
+
+  <div id="sticky"></div>
+  <StickyStory
+    eyebrow="Sticky story"
+    headline="How a page comes together"
+    lede="Copy holds; visuals scroll. Three chapters, one continuous frame."
+    chapters={stickyChapters}
+    tone="elevated"
+  />
+
+  <EditorialQuote
+    quote="The point of a system isn't fewer decisions — it's better decisions in the moments that matter."
+    attribution={{
+      name: "Anna Schmidt",
+      role: "Design lead, Greenleaf Digital",
+      avatar: anna,
+      avatarAlt: "Portrait of Anna Schmidt",
+    }}
+    tone="surface"
+  />
+
+  <SplitFeature
+    eyebrow="Split feature"
+    headline="Three archetypes, alternating sides"
+    lede="A simple rhythm that keeps long feature sections from feeling like a list."
+    features={splitFeatures}
+    tone="surface"
+  />
+
+  <Trust
+    eyebrow="Trusted by"
+    headline="Brands that ship with the design floor"
+    logos={trustLogos}
+    tone="elevated"
+  />
+
+  <Comparison
+    eyebrow="Comparison"
+    headline="What the design floor changes"
+    columns={comparisonColumns}
+    rows={comparisonRows}
+    lang="en"
+    tone="surface"
+  />
+
+  <FAQ
+    eyebrow="Questions"
+    headline="Design floor FAQ"
+    items={faqItems}
+    tone="elevated"
+  />
+
+  <EditorialQuote
+    quote="Composition is a quiet superpower. Spend your attention there."
+    attribution={{
+      name: "Max Mueller",
+      role: "Editorial director",
+      avatar: max,
+      avatarAlt: "Portrait of Max Mueller",
+    }}
+    tone="accent-wash"
+  />
+
+  <AsymmetricHero
+    eyebrow="Accent wash"
+    headline="Accent-wash tone for breaks in rhythm"
+    lede="A subtle tinted background that signals 'something different' without going fully dark."
+    image={portraitB}
+    imageAlt="Editorial portrait, Shopify client"
+    imagePosition="right"
+    tone="accent-wash"
+  />
+
+  <AsymmetricHero
+    eyebrow="Dark surface"
+    headline="Dark tone for high-contrast moments"
+    lede="Use sparingly. The dark surface is where headlines that need to shout earn their voice."
+    image={lena}
+    imageAlt="Portrait of Lena"
+    imagePosition="left"
+    tone="dark"
+    cta={{ label: "Open dark mode", href: "#" }}
+  />
+</BaseLayout>

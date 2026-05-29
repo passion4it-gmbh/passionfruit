@@ -1,6 +1,7 @@
 ---
 import { RotateCcw } from "@lucide/astro";
 import { useTranslations, type Locale } from "~/i18n";
+import EmptyState from "~/components/state/EmptyState.astro";
 
 export interface FacetValue {
   /** URL-safe key used in query params, e.g. "ai" or "case-study" */
@@ -32,6 +33,15 @@ interface Props {
   tone?: "on-light" | "on-dark";
   /** Override the "Reset filters" label; falls back to t('filter.reset') */
   resetLabel?: string;
+  /**
+   * When true, renders the bilingual filter EmptyState beneath the filter
+   * bar (used when the active filters yield zero results). The CTA links
+   * back to `emptyResetHref` (defaults to `baseUrl` — i.e. the unfiltered
+   * collection).
+   */
+  isEmpty?: boolean;
+  /** Override the empty-state CTA href; defaults to `baseUrl`. */
+  emptyResetHref?: string;
   /** Extra classes on the root element */
   class?: string;
 }
@@ -43,6 +53,8 @@ const {
   baseUrl,
   tone = "on-light",
   resetLabel,
+  isEmpty = false,
+  emptyResetHref,
   class: className = "",
 } = Astro.props;
 
@@ -163,6 +175,19 @@ const idleChipClasses =
     )
   }
 </nav>
+
+{
+  isEmpty && (
+    <EmptyState
+      headline={t("state.empty.filters.headline")}
+      body={t("state.empty.filters.body")}
+      cta={{
+        label: t("state.empty.filters.cta"),
+        href: emptyResetHref ?? baseUrl,
+      }}
+    />
+  )
+}
 
 <style>
   .chip {

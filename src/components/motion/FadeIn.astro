@@ -1,0 +1,27 @@
+---
+import Motion from "~/components/motion/Motion.astro";
+import type { MotionProps } from "~/types/motion";
+
+/**
+ * Sugar over `<Motion effect="fade">`. Same prop shape as MotionProps
+ * minus `effect` — pass through `duration`, `delay`, `threshold`, `once`.
+ */
+type Props = Omit<MotionProps, "effect">;
+
+const {
+  duration = "base",
+  delay = 0,
+  threshold = 0.15,
+  once = true,
+} = Astro.props;
+---
+
+<Motion
+  effect="fade"
+  duration={duration}
+  delay={delay}
+  threshold={threshold}
+  once={once}
+>
+  <slot />
+</Motion>

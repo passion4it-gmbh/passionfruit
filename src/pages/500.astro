@@ -1,0 +1,30 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import AsymmetricHero from "~/components/sections/AsymmetricHero.astro";
+import { useTranslations, type Locale } from "~/i18n";
+import heroImage from "~/assets/home/hero.png";
+
+// Static-output 500: locale is decided at build time. The /en/ mirror at
+// src/pages/en/500.astro carries the English copy; Cloudflare Pages serves
+// the nearest 500.html walking up the tree.
+const lang: Locale = "de";
+const { t } = useTranslations(lang);
+
+const homeHref = "/";
+const title = t("state.500.title");
+const description = t("state.500.body");
+---
+
+<BaseLayout title={title} description={description} lang={lang} noindex={true}>
+  <AsymmetricHero
+    eyebrow="500"
+    headline={title}
+    lede={description}
+    cta={{ label: t("state.500.cta"), href: homeHref }}
+    image={heroImage}
+    imageAlt=""
+    imagePosition="right"
+    tone="surface"
+    padding="lg"
+  />
+</BaseLayout>

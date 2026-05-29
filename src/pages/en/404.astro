@@ -1,0 +1,29 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import AsymmetricHero from "~/components/sections/AsymmetricHero.astro";
+import { useTranslations, type Locale } from "~/i18n";
+import heroImage from "~/assets/home/hero.png";
+
+// EN mirror of the root 404. Cloudflare Pages walks up the directory tree
+// to find the nearest 404.html, so /en/missing serves this one.
+const lang: Locale = "en";
+const { t } = useTranslations(lang);
+
+const homeHref = "/en/";
+const title = t("state.404.title");
+const description = t("state.404.body");
+---
+
+<BaseLayout title={title} description={description} lang={lang} noindex={true}>
+  <AsymmetricHero
+    eyebrow="404"
+    headline={title}
+    lede={description}
+    cta={{ label: t("state.404.cta"), href: homeHref }}
+    image={heroImage}
+    imageAlt=""
+    imagePosition="right"
+    tone="surface"
+    padding="lg"
+  />
+</BaseLayout>

@@ -14,7 +14,7 @@
  * Synchronous, ESM, no `any`, no top-level side effects.
  */
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 export type Locale = "de" | "en";
@@ -28,6 +28,12 @@ export interface GlobalAssets {
   textOnDark: string;
   /** Raw contents of `public/favicon.svg`. */
   logoSvg: string;
+  /**
+   * `data:image/png;base64,…` URI for the optional art-directed background
+   * image at `src/assets/og/bg.png`. `null` when the file is absent — the
+   * template falls back to the flat surface + radial accent glow.
+   */
+  bgImageDataUri: string | null;
 }
 
 export interface SiteText {
@@ -126,7 +132,22 @@ export function loadGlobalAssets(projectRoot: string): GlobalAssets {
   const logoPath = join(projectRoot, "public", "favicon.svg");
   const logoSvg = readFileOrThrow(logoPath, "favicon");
 
-  return { accent, surface, textOnDark, logoSvg };
+  // Optional art-directed background. Absent file is the no-bg default — only
+  // a hard read failure (permissions, truncated bytes) escalates to an error.
+  const bgPath = join(projectRoot, "src", "assets", "og", "bg.png");
+  let bgImageDataUri: string | null = null;
+  if (existsSync(bgPath)) {
+    let buffer: Buffer;
+    try {
+      buffer = readFileSync(bgPath);
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : String(err);
+      throw new OgDiscoverError(`Cannot read bg image at ${bgPath}: ${reason}`);
+    }
+    bgImageDataUri = `data:image/png;base64,${buffer.toString("base64")}`;
+  }
+
+  return { accent, surface, textOnDark, logoSvg, bgImageDataUri };
 }
 
 /**

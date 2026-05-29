@@ -17,6 +17,7 @@ import { spawnSync, type SpawnSyncReturns } from "node:child_process";
 import {
   cpSync,
   existsSync,
+  mkdirSync,
   mkdtempSync,
   readFileSync,
   rmSync,
@@ -25,8 +26,10 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { Resvg } from "@resvg/resvg-js";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -292,6 +295,81 @@ test("7.6 missing favicon in fixture exits 1", () => {
     );
   } finally {
     cleanup(projectRoot, outDir);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// 7.7b — auto-discovered bg image is composited into the output
+// ---------------------------------------------------------------------------
+
+/**
+ * Render a small, vivid synthetic PNG via resvg. Used to plant a recognisable
+ * background into the fixture project so we can prove it reached the output.
+ */
+function makeSyntheticBgPng(): Buffer {
+  const svg =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">' +
+    '<rect width="200" height="200" fill="#ff00ff"/></svg>';
+  return new Resvg(svg).render().asPng();
+}
+
+test("7.7b auto-discovered bg image changes the output PNG", () => {
+  const projectRoot = setupFixtureRoot();
+  const outDirBaseline = mkTmpOutDir();
+  const outDirWithBg = mkTmpOutDir();
+  try {
+    // Baseline: no bg present.
+    const baseline = runCli([
+      "--project-root",
+      projectRoot,
+      "--out-dir",
+      outDirBaseline,
+      "--lang",
+      "de",
+    ]);
+    assert.equal(
+      baseline.status,
+      0,
+      `baseline run failed\nstderr: ${baseline.stderr}`,
+    );
+
+    // Plant the bg fixture at the conventional discovery path.
+    const bgPath = join(projectRoot, "src", "assets", "og", "bg.png");
+    mkdirSync(dirname(bgPath), { recursive: true });
+    writeFileSync(bgPath, makeSyntheticBgPng());
+
+    // With bg: same project root, fresh out dir.
+    const withBg = runCli([
+      "--project-root",
+      projectRoot,
+      "--out-dir",
+      outDirWithBg,
+      "--lang",
+      "de",
+    ]);
+    assert.equal(
+      withBg.status,
+      0,
+      `with-bg run failed\nstderr: ${withBg.stderr}`,
+    );
+
+    const baselinePath = join(outDirBaseline, "og-default-de.png");
+    const withBgPath = join(outDirWithBg, "og-default-de.png");
+
+    const baselineHeader = readPngHeader(baselinePath);
+    const withBgHeader = readPngHeader(withBgPath);
+    assert.equal(withBgHeader.width, 1200);
+    assert.equal(withBgHeader.height, 630);
+    assert.ok(baselineHeader.magicOk && withBgHeader.magicOk);
+
+    const baselineBytes = readFileSync(baselinePath);
+    const withBgBytes = readFileSync(withBgPath);
+    assert.ok(
+      !baselineBytes.equals(withBgBytes),
+      "expected with-bg PNG to differ from baseline PNG bytes",
+    );
+  } finally {
+    cleanup(projectRoot, outDirBaseline, outDirWithBg);
   }
 });
 

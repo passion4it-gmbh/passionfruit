@@ -1,0 +1,185 @@
+---
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import Section from "~/components/Section.astro";
+import Skeleton from "~/components/state/Skeleton.astro";
+import EmptyState from "~/components/state/EmptyState.astro";
+import ErrorState from "~/components/state/ErrorState.astro";
+import { useTranslations } from "~/i18n";
+
+if (!import.meta.env.DEV) {
+  return Astro.redirect("/");
+}
+
+const lang = "en" as const;
+const { t } = useTranslations(lang);
+---
+
+<BaseLayout
+  title="Design Floor — Chapter 4: State design"
+  description="Dev-only fixture page for state primitives (Skeleton, EmptyState, ErrorState) and 404/500 previews."
+  lang={lang}
+  noindex={true}
+>
+  <Section tone="surface" padding="md" container="wide">
+    <header class="df-chapter-header">
+      <p class="text-eyebrow">Chapter 4</p>
+      <h1 class="text-h1">State design</h1>
+      <p class="text-body-lg">
+        Skeleton, empty, error. Failure pages are not playgrounds — they are
+        deliberate moments. Toggle <code>prefers-reduced-motion</code>
+        to verify the skeleton shimmer becomes a static gradient stripe.
+      </p>
+    </header>
+  </Section>
+
+  <Section tone="surface" padding="md" container="wide">
+    <h2 class="text-h2 df-section-heading">Skeleton variants</h2>
+
+    <div class="df-grid">
+      <article class="df-card">
+        <h3 class="text-h3 df-card-heading">text — 1 line</h3>
+        <Skeleton variant="text" />
+      </article>
+
+      <article class="df-card">
+        <h3 class="text-h3 df-card-heading">text — 2 lines</h3>
+        <Skeleton variant="text" lines={2} />
+      </article>
+
+      <article class="df-card">
+        <h3 class="text-h3 df-card-heading">text — 3 lines</h3>
+        <Skeleton variant="text" lines={3} />
+      </article>
+
+      <article class="df-card">
+        <h3 class="text-h3 df-card-heading">card</h3>
+        <Skeleton variant="card" />
+      </article>
+
+      <article class="df-card">
+        <h3 class="text-h3 df-card-heading">image — 200×150</h3>
+        <Skeleton variant="image" width="200px" height="150px" />
+      </article>
+
+      <article class="df-card">
+        <h3 class="text-h3 df-card-heading">circle — 48px</h3>
+        <Skeleton variant="circle" width="48px" />
+      </article>
+    </div>
+  </Section>
+
+  <Section tone="elevated" padding="md" container="wide">
+    <h2 class="text-h2 df-section-heading">EmptyState</h2>
+    <EmptyState
+      headline={t("state.empty.posts.headline")}
+      body={t("state.empty.posts.body")}
+      cta={{ label: t("state.empty.posts.cta"), href: "/en/services/" }}
+    />
+  </Section>
+
+  <Section tone="surface" padding="md" container="wide">
+    <h2 class="text-h2 df-section-heading">ErrorState — tones</h2>
+
+    <div class="df-stack">
+      <ErrorState
+        tone="warning"
+        headline="Heads up — your draft is unsaved"
+        body="Leaving this page now will discard your changes. Save first if you want to keep them."
+        retry={{ label: "Save draft", href: "#" }}
+      />
+
+      <ErrorState
+        tone="error"
+        headline={t("state.error.generic.headline")}
+        body={t("state.error.generic.body")}
+        retry={{ label: t("state.error.retry"), href: "#" }}
+      />
+
+      <ErrorState
+        tone="info"
+        headline="Heads up — maintenance window tonight"
+        body="The site will be briefly unavailable between 02:00 and 02:30 CET."
+      />
+    </div>
+  </Section>
+
+  <Section tone="elevated" padding="md" container="wide">
+    <h2 class="text-h2 df-section-heading">Failure page previews</h2>
+    <p class="text-body df-paragraph">
+      Open these in a new tab to inspect the AsymmetricHero-based 404 and 500
+      surfaces:
+    </p>
+    <ul class="df-link-list">
+      <li>
+        <a href="/this-page-does-not-exist/"
+          >/this-page-does-not-exist/ — triggers 404 (DE)</a
+        >
+      </li>
+      <li>
+        <a href="/en/this-page-does-not-exist/"
+          >/en/this-page-does-not-exist/ — triggers 404 (EN)</a
+        >
+      </li>
+      <li><a href="/500/">/500/ — preview the 500 page (DE)</a></li>
+      <li><a href="/en/500/">/en/500/ — preview the 500 page (EN)</a></li>
+    </ul>
+  </Section>
+</BaseLayout>
+
+<style>
+  .df-chapter-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: 48rem;
+  }
+
+  .df-section-heading {
+    margin: 0 0 var(--space-6) 0;
+  }
+
+  .df-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .df-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    max-width: 48rem;
+  }
+
+  .df-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .df-card-heading {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .df-paragraph {
+    margin: 0 0 var(--space-4) 0;
+    max-width: 48rem;
+  }
+
+  .df-link-list {
+    list-style: disc;
+    padding-inline-start: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+</style>

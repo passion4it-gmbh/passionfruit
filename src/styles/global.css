@@ -1,6 +1,8 @@
-@import "@fontsource-variable/inter";
+@import "@fontsource-variable/inter/opsz.css";
 @import "tailwindcss";
-@import "./scroll-animations.css";
+@import "./motion.css";
+@import "./typography.css";
+@import "./state.css";
 
 @theme {
   /* Surfaces */
@@ -32,12 +34,22 @@
   --font-body: "Inter Variable", system-ui, sans-serif;
   --font-mono: ui-monospace, "Cascadia Code", "Fira Code", monospace;
 
-  /* Fluid type scale */
-  --text-display: clamp(3rem, 6vw + 0.5rem, 5.5rem);
-  --text-h1: clamp(2.25rem, 4vw + 0.5rem, 3.5rem);
-  --text-h2: clamp(1.75rem, 3vw + 0.25rem, 2.75rem);
-  --text-h3: clamp(1.25rem, 1.5vw + 0.5rem, 1.75rem);
-  --text-body-lg: clamp(1.0625rem, 0.5vw + 0.9rem, 1.25rem);
+  /* Type scale: perfect fourth (1.333) anchored at body. text-body-lg is a half-step bump for lead paragraphs. */
+  --text-display: clamp(3.157rem, 5vw + 1.75rem, 4rem);
+  --text-h1: clamp(2.369rem, 3vw + 1.5rem, 3rem);
+  --text-h2: clamp(1.777rem, 2vw + 1.25rem, 2.25rem);
+  --text-h3: clamp(1.333rem, 1vw + 1.1rem, 1.5rem);
+  --text-body-lg: clamp(1.125rem, 0.5vw + 1rem, 1.25rem);
+  --text-body: clamp(1rem, 0.25vw + 0.95rem, 1.0625rem);
+  --text-body-sm: clamp(0.875rem, 0.1vw + 0.85rem, 0.9rem);
+  --text-caption: clamp(0.75rem, 0.05vw + 0.72rem, 0.8rem);
+  --text-eyebrow: clamp(0.6875rem, 0.05vw + 0.65rem, 0.7rem);
+
+  /* Leading (line-height) tokens */
+  --leading-display: 1.05;
+  --leading-heading: 1.15;
+  --leading-body: 1.6;
+  --leading-caption: 1.4;
 
   /* Tracking */
   --tracking-tight: -0.025em;
@@ -65,12 +77,57 @@
   --radius-card: var(--radius-xl);
 
   /* Transitions */
-  --transition-fast: 150ms;
-  --transition-normal: 300ms;
-  --transition-slow: 500ms;
+  /* Motion duration tokens */
+  --duration-instant: 80ms;
+  --duration-quick: 150ms;
+  --duration-base: 240ms;
+  --duration-slow: 400ms;
+
+  /* Back-compat aliases for legacy consumers; values redirected to new semantic tokens.
+     Note: --transition-normal: 300ms → 240ms, --transition-slow: 500ms → 400ms. */
+  --transition-fast: var(--duration-quick);
+  --transition-normal: var(--duration-base);
+  --transition-slow: var(--duration-slow);
+
+  /* Easing — Material 3-style intent-tied curves */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+  --ease-enter: cubic-bezier(0, 0, 0, 1);
+  --ease-exit: cubic-bezier(0.3, 0, 1, 1);
+
+  /* Back-compat aliases for existing consumers */
   --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Section padding tokens */
+  --space-section-sm: clamp(3rem, 5vw, 4rem);
+  --space-section-md: clamp(4rem, 7vw, 6rem);
+  --space-section-lg: clamp(6rem, 10vw, 9rem);
+
+  /* State surface tokens — alias palette where a match exists */
+  --color-skeleton-base: var(--color-border);
+  --color-skeleton-shimmer: var(--color-text-on-dark);
+  --color-state-warning: var(--color-warm);
+  --color-state-error: #dc2626;
+  --color-state-info: var(--color-accent);
+
+  /* Overlay scrim tokens — used to keep text legible over photographic
+     backgrounds (e.g. AsymmetricHero fullbleed). Tokenised so dark-mode
+     work can swap the ramp without touching components. */
+  --color-overlay-scrim-strong: rgba(0, 0, 0, 0.65);
+  --color-overlay-scrim-mid: rgba(0, 0, 0, 0.25);
+  --color-overlay-scrim-clear: rgba(0, 0, 0, 0);
+
+  /* Card hover lift shadow — used by the standardized card micro-interaction
+     in motion.css. Tokenised so dark-mode work can swap it. */
+  --color-shadow-lift: rgba(0, 0, 0, 0.15);
+
+  /* 12-col grid utility tokens */
+  --grid-cols-12: repeat(12, minmax(0, 1fr));
+  --grid-gap-sm: var(--space-2);
+  --grid-gap-md: var(--space-4);
+  --grid-gap-lg: var(--space-6);
 }
 
 /* ============================================================
@@ -84,29 +141,6 @@
 }
 
 @layer base {
-  body {
-    background-color: var(--color-surface);
-    color: var(--color-text);
-    font-family: var(--font-body);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-    line-height: 1.6;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    color: var(--color-text-heading);
-    font-family: var(--font-heading);
-    font-weight: 700;
-    line-height: 1.15;
-    letter-spacing: var(--tracking-tight);
-  }
-
   a {
     color: var(--color-accent);
     transition: color var(--transition-fast) var(--ease-default);

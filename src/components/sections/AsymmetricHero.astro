@@ -1,0 +1,177 @@
+---
+import { Image } from "astro:assets";
+import Section from "~/components/Section.astro";
+import Button from "~/components/Button.astro";
+import type { AsymmetricHeroProps } from "~/types/sections";
+
+type Props = AsymmetricHeroProps;
+
+const {
+  eyebrow,
+  headline,
+  lede,
+  cta,
+  image,
+  imageAlt,
+  imagePosition = "right",
+  tone = "surface",
+  padding = "lg",
+} = Astro.props;
+
+const isFullbleed = imagePosition === "fullbleed";
+const layoutClass = isFullbleed
+  ? "pf-hero--fullbleed"
+  : imagePosition === "left"
+    ? "pf-hero--image-left"
+    : "pf-hero--image-right";
+
+// On dark or fullbleed, buttons live on a dark surface.
+const buttonTone = tone === "dark" || isFullbleed ? "on-dark" : "on-light";
+---
+
+<Section tone={tone} padding={padding} container="wide">
+  <div class:list={["pf-hero", layoutClass]}>
+    <div class="pf-hero__text">
+      {eyebrow && <span class="text-eyebrow pf-hero__eyebrow">{eyebrow}</span>}
+      <h1 class="text-display pf-hero__headline">{headline}</h1>
+      {lede && <p class="text-body-lg pf-hero__lede">{lede}</p>}
+      {
+        cta && (
+          <div class="pf-hero__cta">
+            <Button href={cta.href} variant="primary" tone={buttonTone}>
+              {cta.label}
+            </Button>
+          </div>
+        )
+      }
+    </div>
+
+    <div class="pf-hero__media">
+      <Image
+        src={image}
+        alt={imageAlt}
+        loading="eager"
+        class="pf-hero__image"
+      />
+    </div>
+  </div>
+</Section>
+
+<style>
+  .pf-hero {
+    display: grid;
+    gap: var(--space-8);
+    grid-template-columns: 1fr;
+  }
+
+  .pf-hero__eyebrow {
+    display: inline-block;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+    color: var(--color-accent);
+  }
+
+  .pf-hero__headline {
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .pf-hero__lede {
+    margin: 0 0 var(--space-6) 0;
+    max-width: 40rem;
+  }
+
+  .pf-hero__cta {
+    margin-top: var(--space-2);
+  }
+
+  .pf-hero__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-card);
+  }
+
+  @media (min-width: 768px) {
+    .pf-hero {
+      grid-template-columns: var(--grid-cols-12);
+      gap: var(--grid-gap-lg);
+      align-items: center;
+    }
+
+    .pf-hero--image-right .pf-hero__text {
+      grid-column: 1 / span 7;
+    }
+    .pf-hero--image-right .pf-hero__media {
+      grid-column: 8 / span 5;
+      margin-block-start: 2rem;
+    }
+
+    .pf-hero--image-left .pf-hero__media {
+      grid-column: 1 / span 5;
+      grid-row: 1;
+      margin-block-start: 2rem;
+    }
+    .pf-hero--image-left .pf-hero__text {
+      grid-column: 6 / span 7;
+      grid-row: 1;
+    }
+  }
+
+  /* Fullbleed variant — image fills the section, text overlays with a
+     gradient backdrop. Section's inner container constrains the text column
+     while the image escapes via absolute positioning. */
+  .pf-hero--fullbleed {
+    position: relative;
+    isolation: isolate;
+    min-height: clamp(20rem, 50vw, 32rem);
+  }
+
+  .pf-hero--fullbleed .pf-hero__media {
+    position: absolute;
+    inset: calc(var(--space-section-lg) * -1) calc(var(--space-section-lg) * -1);
+    z-index: -2;
+    border-radius: 0;
+  }
+
+  .pf-hero--fullbleed .pf-hero__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0;
+  }
+
+  .pf-hero--fullbleed::before {
+    content: "";
+    position: absolute;
+    inset: calc(var(--space-section-lg) * -1) calc(var(--space-section-lg) * -1);
+    background: linear-gradient(
+      to right,
+      var(--color-overlay-scrim-strong),
+      var(--color-overlay-scrim-mid) 60%,
+      var(--color-overlay-scrim-clear) 100%
+    );
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .pf-hero--fullbleed .pf-hero__text {
+    color: var(--color-text-on-dark);
+    max-width: 40rem;
+    padding-block: var(--space-12);
+  }
+
+  @media (min-width: 768px) {
+    .pf-hero--fullbleed {
+      grid-template-columns: var(--grid-cols-12);
+    }
+    .pf-hero--fullbleed .pf-hero__text {
+      grid-column: 2 / span 6;
+      grid-row: 1;
+    }
+    .pf-hero--fullbleed .pf-hero__media {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+  }
+</style>

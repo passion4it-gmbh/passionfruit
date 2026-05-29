@@ -1,0 +1,160 @@
+---
+import { Image } from "astro:assets";
+import Section from "~/components/Section.astro";
+import Button from "~/components/Button.astro";
+import type { SplitFeatureProps } from "~/types/sections";
+
+type Props = SplitFeatureProps;
+
+const {
+  eyebrow,
+  headline,
+  lede,
+  features,
+  tone = "surface",
+  padding = "lg",
+  align = "start",
+} = Astro.props;
+
+const buttonTone = tone === "dark" ? "on-dark" : "on-light";
+---
+
+<Section tone={tone} padding={padding}>
+  {
+    (eyebrow || headline || lede) && (
+      <header
+        class:list={[
+          "pf-split__header",
+          align === "center" && "pf-split__header--center",
+        ]}
+      >
+        {eyebrow && (
+          <span class="text-eyebrow pf-split__eyebrow">{eyebrow}</span>
+        )}
+        <h2 class="text-h1 pf-split__title">{headline}</h2>
+        {lede && <p class="text-body-lg pf-split__lede">{lede}</p>}
+      </header>
+    )
+  }
+
+  <ol class="pf-split__list">
+    {
+      features.map((feature) => (
+        <li class="pf-split__row">
+          <div class="pf-split__media">
+            <Image
+              src={feature.image}
+              alt={feature.imageAlt}
+              loading="lazy"
+              class="pf-split__image"
+            />
+          </div>
+          <div class="pf-split__copy">
+            <h3 class="text-h2 pf-split__heading">{feature.headline}</h3>
+            <p class="pf-split__body">{feature.body}</p>
+            {feature.cta && (
+              <div class="pf-split__cta">
+                <Button
+                  href={feature.cta.href}
+                  variant="ghost"
+                  tone={buttonTone}
+                >
+                  {feature.cta.label}
+                </Button>
+              </div>
+            )}
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</Section>
+
+<style>
+  .pf-split__header {
+    margin-bottom: var(--space-12);
+    max-width: 48rem;
+  }
+
+  .pf-split__header--center {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .pf-split__eyebrow {
+    display: inline-block;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+    color: var(--color-accent);
+  }
+
+  .pf-split__title {
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .pf-split__lede {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .pf-split__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-section-md);
+  }
+
+  .pf-split__row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: center;
+  }
+
+  .pf-split__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-card);
+  }
+
+  .pf-split__heading {
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .pf-split__body {
+    margin: 0 0 var(--space-4) 0;
+  }
+
+  .pf-split__cta {
+    margin-top: var(--space-2);
+  }
+
+  @media (min-width: 768px) {
+    .pf-split__row {
+      grid-template-columns: var(--grid-cols-12);
+      gap: var(--grid-gap-lg);
+    }
+
+    /* Default: image left, text right */
+    .pf-split__row .pf-split__media {
+      grid-column: 1 / span 6;
+    }
+    .pf-split__row .pf-split__copy {
+      grid-column: 7 / span 6;
+    }
+
+    /* Alternating: image right, text left on even rows */
+    .pf-split__row:nth-child(even) .pf-split__media {
+      grid-column: 7 / span 6;
+      grid-row: 1;
+    }
+    .pf-split__row:nth-child(even) .pf-split__copy {
+      grid-column: 1 / span 6;
+      grid-row: 1;
+    }
+  }
+</style>

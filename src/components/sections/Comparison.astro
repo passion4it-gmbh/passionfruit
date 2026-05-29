@@ -1,0 +1,347 @@
+---
+import { Check, X } from "@lucide/astro";
+import Section from "~/components/Section.astro";
+import { useTranslations } from "~/i18n";
+import type { ComparisonProps } from "~/types/sections";
+
+type Props = ComparisonProps;
+
+const {
+  eyebrow,
+  headline,
+  lede,
+  columns,
+  rows,
+  lang = "de",
+  tone = "surface",
+  padding = "md",
+  align = "start",
+} = Astro.props;
+
+const { t } = useTranslations(lang);
+---
+
+<Section tone={tone} padding={padding}>
+  {
+    (eyebrow || headline || lede) && (
+      <header
+        class:list={[
+          "pf-cmp__header",
+          align === "center" && "pf-cmp__header--center",
+        ]}
+      >
+        {eyebrow && <span class="text-eyebrow pf-cmp__eyebrow">{eyebrow}</span>}
+        {headline && <h2 class="text-h1 pf-cmp__title">{headline}</h2>}
+        {lede && <p class="text-body-lg pf-cmp__lede">{lede}</p>}
+      </header>
+    )
+  }
+
+  {/* Desktop: semantic table */}
+  <div class="pf-cmp__table-wrap">
+    <table class="pf-cmp__table">
+      <thead>
+        <tr>
+          <th scope="col" class="pf-cmp__th-feature">
+            <span class="sr-only">{t("comparison.feature")}</span>
+          </th>
+          {
+            columns.map((col) => (
+              <th
+                scope="col"
+                class:list={[
+                  "pf-cmp__th-col",
+                  col.highlight && "pf-cmp__th-col--highlight",
+                ]}
+              >
+                {col.name}
+              </th>
+            ))
+          }
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((row, rowIdx) => (
+            <tr
+              class:list={[
+                "pf-cmp__row",
+                rowIdx % 2 === 0 ? "pf-cmp__row--even" : "pf-cmp__row--odd",
+              ]}
+            >
+              <th scope="row" class="pf-cmp__th-row">
+                {row.feature}
+              </th>
+              {columns.map((col, colIdx) => {
+                const value = row.values[colIdx];
+                return (
+                  <td
+                    class:list={[
+                      "pf-cmp__cell",
+                      col.highlight && "pf-cmp__cell--highlight",
+                    ]}
+                  >
+                    {typeof value === "boolean" ? (
+                      value ? (
+                        <span
+                          class="pf-cmp__icon-wrap"
+                          aria-label={t("comparison.yes")}
+                        >
+                          <Check
+                            class="pf-cmp__icon pf-cmp__icon--yes"
+                            aria-hidden="true"
+                          />
+                        </span>
+                      ) : (
+                        <span
+                          class="pf-cmp__icon-wrap"
+                          aria-label={t("comparison.no")}
+                        >
+                          <X
+                            class="pf-cmp__icon pf-cmp__icon--no"
+                            aria-hidden="true"
+                          />
+                        </span>
+                      )
+                    ) : (
+                      <span class="pf-cmp__text">{value}</span>
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  {/* Mobile: per-column cards */}
+  <div class="pf-cmp__cards">
+    {
+      columns.map((col, colIdx) => (
+        <div
+          class:list={[
+            "pf-cmp__card",
+            col.highlight && "pf-cmp__card--highlight",
+          ]}
+        >
+          <div
+            class:list={[
+              "pf-cmp__card-header",
+              col.highlight && "pf-cmp__card-header--highlight",
+            ]}
+          >
+            {col.name}
+          </div>
+          <ul role="list" class="pf-cmp__card-list">
+            {rows.map((row) => {
+              const value = row.values[colIdx];
+              return (
+                <li class="pf-cmp__card-item">
+                  <span class="pf-cmp__card-feature">{row.feature}</span>
+                  {typeof value === "boolean" ? (
+                    value ? (
+                      <span
+                        class="pf-cmp__icon-wrap"
+                        aria-label={t("comparison.yes")}
+                      >
+                        <Check
+                          class="pf-cmp__icon pf-cmp__icon--yes"
+                          aria-hidden="true"
+                        />
+                      </span>
+                    ) : (
+                      <span
+                        class="pf-cmp__icon-wrap"
+                        aria-label={t("comparison.no")}
+                      >
+                        <X
+                          class="pf-cmp__icon pf-cmp__icon--no"
+                          aria-hidden="true"
+                        />
+                      </span>
+                    )
+                  ) : (
+                    <span class="pf-cmp__card-value">{value}</span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</Section>
+
+<style>
+  .pf-cmp__header {
+    margin-bottom: var(--space-12);
+    max-width: 48rem;
+  }
+  .pf-cmp__header--center {
+    margin-inline: auto;
+    text-align: center;
+  }
+  .pf-cmp__eyebrow {
+    display: inline-block;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+    color: var(--color-accent);
+  }
+  .pf-cmp__title {
+    margin: 0 0 var(--space-4) 0;
+  }
+  .pf-cmp__lede {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .pf-cmp__table-wrap {
+    display: none;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+  }
+  .pf-cmp__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-body-sm);
+  }
+  .pf-cmp__th-feature {
+    padding: var(--space-4) var(--space-6);
+    text-align: left;
+    background-color: var(--color-surface);
+  }
+  .pf-cmp__th-col {
+    padding: var(--space-4) var(--space-6);
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+    background-color: var(--color-surface);
+  }
+  .pf-cmp__th-col--highlight {
+    background-color: color-mix(in srgb, var(--color-accent) 6%, transparent);
+    color: var(--color-accent);
+    box-shadow: inset 0 0 0 1px
+      color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+  .pf-cmp__row {
+    border-top: 1px solid var(--color-border);
+  }
+  .pf-cmp__row--even {
+    background-color: var(--color-surface-elevated);
+  }
+  .pf-cmp__row--odd {
+    background-color: var(--color-surface);
+  }
+  .pf-cmp__th-row {
+    padding: var(--space-4) var(--space-6);
+    text-align: left;
+    font-weight: 500;
+    color: var(--color-text-heading);
+  }
+  .pf-cmp__cell {
+    padding: var(--space-4) var(--space-6);
+    text-align: center;
+    vertical-align: middle;
+  }
+  .pf-cmp__cell--highlight {
+    background-color: color-mix(in srgb, var(--color-accent) 6%, transparent);
+    box-shadow: inset 0 0 0 1px
+      color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+  .pf-cmp__icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pf-cmp__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .pf-cmp__icon--yes {
+    color: var(--color-accent);
+  }
+  .pf-cmp__icon--no {
+    color: var(--color-muted);
+  }
+  .pf-cmp__text {
+    color: var(--color-text);
+  }
+
+  .pf-cmp__cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .pf-cmp__card {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+  }
+  .pf-cmp__card--highlight {
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent) 30%,
+      var(--color-border)
+    );
+    box-shadow: inset 0 0 0 1px
+      color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+  .pf-cmp__card-header {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: center;
+    background-color: var(--color-surface);
+    color: var(--color-muted);
+  }
+  .pf-cmp__card-header--highlight {
+    background-color: color-mix(in srgb, var(--color-accent) 6%, transparent);
+    color: var(--color-accent);
+  }
+  .pf-cmp__card-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .pf-cmp__card-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-surface-elevated);
+    border-top: 1px solid var(--color-border);
+  }
+  .pf-cmp__card-item:first-child {
+    border-top: 0;
+  }
+  .pf-cmp__card-feature {
+    font-size: var(--text-body-sm);
+    font-weight: 500;
+    color: var(--color-text-heading);
+  }
+  .pf-cmp__card-value {
+    font-size: var(--text-body-sm);
+    color: var(--color-muted);
+    text-align: right;
+  }
+
+  @media (min-width: 768px) {
+    .pf-cmp__table-wrap {
+      display: block;
+    }
+    .pf-cmp__cards {
+      display: none;
+    }
+  }
+</style>

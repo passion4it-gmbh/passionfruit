@@ -104,6 +104,17 @@ background: var(--color-overlay-scrim-strong);
 - Eyebrow: `.eyebrow` class (0.8125rem, 600 weight, 0.08em tracking, uppercase, accent color)
 - Line-height: 1.05 display, 1.15 headings, 1.6 body, 1.7 body-lg
 
+### Long-form Markdown (`<Prose>`)
+
+Wrap rendered Markdown bodies in `<Prose>` (from `~/components/Prose.astro`). It caps the reading measure, centers the column, and enables editorial features (hanging punctuation, optional drop cap).
+
+| Prop      | Values                            | When                                                         |
+| --------- | --------------------------------- | ------------------------------------------------------------ |
+| `dropCap` | `true \| false` (default `false`) | `true` for blog posts; default elsewhere.                    |
+| `measure` | `"tight" \| "default" \| "wide"`  | `"wide"` for legal copy; `"default"` (70ch) everywhere else. |
+
+Consumers: `BlogPost`, `LegalDocument`, `PageContent`, `CareerPost`, `EventDetail`, `CaseStudyDetail`, contact page. See `src/components/CLAUDE.md` for the full list and rationale.
+
 ### Pattern vs. anti-pattern
 
 **Don't** — fixed size, breaks fluidly at every breakpoint you forget to handle:

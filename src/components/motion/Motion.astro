@@ -1,0 +1,84 @@
+---
+import type { MotionProps } from "~/types/motion";
+
+type Props = MotionProps;
+
+const {
+  effect = "fade-up",
+  duration = "base",
+  delay = 0,
+  threshold = 0.15,
+  once = true,
+} = Astro.props;
+
+// Inline transition-delay; the rest is driven by CSS attribute selectors
+// in motion.css. Zero-delay elements stay style-attribute-free.
+const inlineStyle = delay > 0 ? `transition-delay: ${delay}ms;` : undefined;
+---
+
+<div
+  data-motion-effect={effect}
+  data-motion-duration={duration}
+  data-motion-delay={delay}
+  data-motion-threshold={threshold}
+  data-motion-once={once ? "true" : "false"}
+  style={inlineStyle}
+>
+  <slot />
+</div>
+
+<script>
+  // Element entrance observer. Toggles [data-motion-visible="true"] when the
+  // element's intersection ratio crosses its configured threshold. Runs on
+  // every page load AND after Astro view transitions (astro:page-load).
+  //
+  // Reduced motion: skipped entirely — CSS in motion.css makes such elements
+  // render at their target state immediately, so no observer is needed.
+  function initMotion(): void {
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    const elements = document.querySelectorAll<HTMLElement>(
+      "[data-motion-effect]:not([data-motion-visible])",
+    );
+
+    elements.forEach((el) => {
+      const thresholdAttr = el.dataset.motionThreshold ?? "0.15";
+      const parsed = Number.parseFloat(thresholdAttr);
+      const threshold =
+        Number.isFinite(parsed) && parsed >= 0 && parsed <= 1 ? parsed : 0.15;
+      const once = el.dataset.motionOnce !== "false";
+
+      // Elements already in the viewport at load — flip immediately so we
+      // don't pop in once the user scrolls a hair.
+      const rect = el.getBoundingClientRect();
+      const inView =
+        rect.top < window.innerHeight * (1 - threshold) && rect.bottom > 0;
+      if (inView) {
+        el.setAttribute("data-motion-visible", "true");
+        if (once) return;
+      }
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.intersectionRatio >= threshold) {
+              el.setAttribute("data-motion-visible", "true");
+              if (once) observer.unobserve(el);
+            } else if (!once) {
+              el.setAttribute("data-motion-visible", "false");
+            }
+          });
+        },
+        { threshold: [threshold] },
+      );
+
+      observer.observe(el);
+    });
+  }
+
+  initMotion();
+  document.addEventListener("astro:page-load", initMotion);
+</script>

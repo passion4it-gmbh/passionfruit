@@ -7,6 +7,7 @@ import { getLocalizedPath, useTranslations } from "~/i18n";
 import { formatDate } from "~/lib/format-date";
 import { findPageByKey } from "~/lib/page-registry";
 import Badge from "~/components/Badge.astro";
+import Prose from "~/components/Prose.astro";
 import { ArrowLeft } from "@lucide/astro";
 import "~/styles/blog-prose.css";
 
@@ -90,7 +91,9 @@ const formattedDate = formatDate(entry.data.publishedAt, lang);
 <section class="py-16 md:py-24">
   <div class="container">
     <article class="blog-prose max-w-3xl mx-auto">
-      <Content />
+      <Prose dropCap>
+        <Content />
+      </Prose>
     </article>
 
     <div class="max-w-3xl mx-auto mt-16 pt-8 border-t border-border">

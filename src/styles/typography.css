@@ -1,0 +1,110 @@
+/* ============================================================
+   EDITORIAL TYPE SYSTEM
+   ------------------------------------------------------------
+   Inter Variable opsz axis, OpenType feature targeting,
+   vertical rhythm via leading tokens, hierarchical tracking.
+   ============================================================ */
+
+@layer base {
+  /* Optical size: body default at 16, display utility steps to 32 */
+  html {
+    font-variation-settings: "opsz" 16;
+  }
+
+  .text-display {
+    font-variation-settings: "opsz" 32;
+  }
+
+  /* OpenType feature targeting */
+  body {
+    font-feature-settings: "liga", "calt", "kern", "onum";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-feature-settings: "liga", "calt", "kern", "ss01";
+  }
+
+  table,
+  .tabular {
+    font-feature-settings: "tnum", "lnum";
+  }
+
+  code,
+  pre,
+  code * {
+    font-feature-settings: "liga" 0;
+  }
+
+  /* Vertical rhythm — leading tokens */
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    line-height: var(--leading-body);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--color-text-heading);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    line-height: var(--leading-heading);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .text-display {
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
+  }
+
+  .text-caption,
+  .text-eyebrow {
+    line-height: var(--leading-caption);
+  }
+
+  /* Paragraph rhythm — stacked paragraphs in Prose-wrapped content breathe.
+     Scoped to .prose-root so unrelated paragraph stacks (heroes, cards,
+     footers) keep their own spacing. */
+  .prose-root > p + p {
+    margin-block-start: calc(var(--leading-body) * 0.5em);
+  }
+
+  /* Heading hierarchy refinement — tracking tightens with size */
+  h1 {
+    letter-spacing: -0.04em;
+  }
+
+  h2 {
+    letter-spacing: -0.03em;
+  }
+
+  h3 {
+    letter-spacing: -0.02em;
+  }
+
+  /* Drop cap — unscoped so it can match slotted markdown <p> elements
+     that don't carry Prose.astro's scoped data attribute.
+     :first-of-type targets the first paragraph even if content leads with
+     a heading. */
+  .has-drop-cap > p:first-of-type::first-letter {
+    font-size: var(--text-display);
+    float: inline-start;
+    line-height: 0.85;
+    margin-inline-end: 0.1em;
+    padding-block-start: 0.05em;
+    color: var(--color-text-heading);
+    font-weight: 700;
+  }
+}

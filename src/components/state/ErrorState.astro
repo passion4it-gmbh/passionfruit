@@ -1,0 +1,138 @@
+---
+/**
+ * ErrorState — inline notice surface for warnings, errors, and info.
+ *
+ * Tone-tinted background + bordered card with a lucide icon, headline,
+ * body, and optional retry link. No JS handlers — the retry slot is a
+ * plain anchor so it works without hydration and respects Astro's
+ * view-transition semantics.
+ */
+import { AlertTriangle, AlertCircle, Info } from "@lucide/astro";
+
+type Tone = "warning" | "error" | "info";
+
+interface Props {
+  tone: Tone;
+  headline: string;
+  body: string;
+  /** Optional retry link. Anchor-based (no JS). */
+  retry?: { label: string; href: string };
+  class?: string;
+}
+
+const { tone, headline, body, retry, class: className = "" } = Astro.props;
+
+const Icon =
+  tone === "warning" ? AlertTriangle : tone === "error" ? AlertCircle : Info;
+
+// Map tone to live-region politeness. Errors are assertive (interrupts);
+// warnings + info are polite (queue behind other announcements).
+const live = tone === "error" ? "assertive" : "polite";
+---
+
+<div
+  role={tone === "error" ? "alert" : "status"}
+  aria-live={live}
+  data-tone={tone}
+  class:list={["pf-error-state", className]}
+>
+  <div class="pf-error-state__icon" aria-hidden="true">
+    <Icon />
+  </div>
+
+  <div class="pf-error-state__content">
+    <p class="pf-error-state__headline">{headline}</p>
+    <p class="pf-error-state__body">{body}</p>
+
+    {
+      retry && (
+        <p class="pf-error-state__retry">
+          <a href={retry.href} class="pf-error-state__retry-link">
+            {retry.label}
+          </a>
+        </p>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  .pf-error-state {
+    display: flex;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--pf-state-tone, var(--color-state-info));
+    background-color: color-mix(
+      in srgb,
+      var(--pf-state-tone, var(--color-state-info)) 10%,
+      transparent
+    );
+    color: var(--color-text);
+    align-items: flex-start;
+  }
+
+  .pf-error-state[data-tone="warning"] {
+    --pf-state-tone: var(--color-state-warning);
+  }
+  .pf-error-state[data-tone="error"] {
+    --pf-state-tone: var(--color-state-error);
+  }
+  .pf-error-state[data-tone="info"] {
+    --pf-state-tone: var(--color-state-info);
+  }
+
+  .pf-error-state__icon {
+    color: var(--pf-state-tone);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0.125rem;
+  }
+
+  :global(.pf-error-state__icon svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+    stroke-width: 2;
+  }
+
+  .pf-error-state__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .pf-error-state__headline {
+    margin: 0 0 var(--space-1) 0;
+    font-weight: 600;
+    color: var(--color-text-heading);
+    line-height: var(--leading-heading);
+  }
+
+  .pf-error-state__body {
+    margin: 0;
+    color: var(--color-text);
+    line-height: var(--leading-body);
+  }
+
+  .pf-error-state__retry {
+    margin: var(--space-3) 0 0 0;
+  }
+
+  .pf-error-state__retry-link {
+    color: var(--pf-state-tone);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .pf-error-state__retry-link:hover {
+    text-decoration-thickness: 2px;
+  }
+
+  .pf-error-state__retry-link:focus-visible {
+    outline: 2px solid var(--pf-state-tone);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+</style>

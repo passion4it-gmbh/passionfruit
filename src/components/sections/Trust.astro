@@ -1,0 +1,146 @@
+---
+import { Image } from "astro:assets";
+import Section from "~/components/Section.astro";
+import type { TrustProps } from "~/types/sections";
+
+type Props = TrustProps;
+
+const {
+  eyebrow,
+  headline,
+  lede,
+  logos,
+  tone = "surface",
+  padding = "md",
+  align = "center",
+} = Astro.props;
+---
+
+<Section tone={tone} padding={padding}>
+  {
+    (eyebrow || headline || lede) && (
+      <header
+        class:list={[
+          "pf-trust__header",
+          align === "center" && "pf-trust__header--center",
+        ]}
+      >
+        {eyebrow && (
+          <span class="text-eyebrow pf-trust__eyebrow">{eyebrow}</span>
+        )}
+        {headline && <h2 class="text-h2 pf-trust__title">{headline}</h2>}
+        {lede && <p class="text-body-lg pf-trust__lede">{lede}</p>}
+      </header>
+    )
+  }
+
+  <ul
+    class:list={[
+      "pf-trust__logos",
+      align === "center" && "pf-trust__logos--center",
+    ]}
+    role="list"
+    aria-label={eyebrow ?? headline}
+  >
+    {
+      logos.map((logo) => (
+        <li class="pf-trust__logo">
+          {logo.href ? (
+            <a
+              href={logo.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="pf-trust__logo-link"
+              aria-label={logo.alt}
+            >
+              <Image
+                src={logo.src}
+                alt=""
+                height={40}
+                class="pf-trust__logo-image"
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          ) : (
+            <Image
+              src={logo.src}
+              alt={logo.alt}
+              height={40}
+              class="pf-trust__logo-image"
+              loading="lazy"
+              decoding="async"
+            />
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</Section>
+
+<style>
+  .pf-trust__header {
+    margin-bottom: var(--space-8);
+    max-width: 48rem;
+  }
+  .pf-trust__header--center {
+    margin-inline: auto;
+    text-align: center;
+  }
+  .pf-trust__eyebrow {
+    display: inline-block;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+    color: var(--color-accent);
+  }
+  .pf-trust__title {
+    margin: 0 0 var(--space-3) 0;
+  }
+  .pf-trust__lede {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .pf-trust__logos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-6) var(--space-12);
+  }
+  .pf-trust__logos--center {
+    justify-content: center;
+  }
+
+  .pf-trust__logo-image,
+  .pf-trust__logo-link {
+    display: block;
+    height: 2.5rem;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.5;
+    filter: grayscale(100%);
+    transition:
+      opacity var(--transition-normal) var(--ease-default),
+      filter var(--transition-normal) var(--ease-default);
+    border-radius: 0.125rem;
+  }
+
+  .pf-trust__logo-link:hover .pf-trust__logo-image,
+  .pf-trust__logo-image:hover {
+    opacity: 1;
+    filter: grayscale(0%);
+  }
+  .pf-trust__logo-link:hover {
+    opacity: 1;
+    filter: grayscale(0%);
+  }
+
+  .pf-trust__logo-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+</style>
