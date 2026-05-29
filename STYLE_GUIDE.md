@@ -530,3 +530,24 @@ Facades exist for two reasons:
 ```
 
 Component usage (props, examples, locale wiring) lives in [`src/components/CLAUDE.md`](./src/components/CLAUDE.md) — Claude Code auto-loads it when working in that directory.
+
+---
+
+## Decision Shortcuts
+
+When you reach one of these decision points, take the shortcut.
+
+| Situation                                                                   | Shortcut                                                                                                     |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Need a CTA                                                                  | `<Button variant="primary\|secondary\|ghost" tone="on-light\|on-dark" href="…">…</Button>`                   |
+| Need a color                                                                | Check `@theme` in `src/styles/global.css` first. If missing, add a `--color-*` token there; never hex.       |
+| Need a font size                                                            | `--text-*` token (or matching `.text-*` utility). Never raw `font-size: Xrem`.                               |
+| Need to display a blog / team / career / case-study / event entry as a card | Use the per-type card (`BlogCard`, `TeamCard`, `CareerCard`, `CaseStudyCard`, `EventCard`).                  |
+| Need to embed a YouTube or Spotify video                                    | Use the facade (`<YouTubeFacade>` / `<SpotifyFacade>`), never a raw `<iframe>`.                              |
+| Need long-form Markdown rendering                                           | Use the existing `BlogPost` / `PageContent` / `LegalDocument` patterns; don't re-roll prose styling.         |
+| Need an icon                                                                | Import from `@lucide/astro`. Never an emoji.                                                                 |
+| Need to add a third-party host (script, iframe, font, asset)                | Update `public/_headers` CSP first, then add the resource. Forgotten CSPs silently block in production.      |
+| Need to add a translation string                                            | Edit both `src/i18n/de.json` and `src/i18n/en.json` together (the `passionfruit-content` skill reminds you). |
+| Need an animation                                                           | CSS keyframes inside a `@media (prefers-reduced-motion: no-preference)` block. No JS animation libs.         |
+
+If you don't see your situation here, ask. Don't guess.
