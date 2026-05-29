@@ -259,6 +259,10 @@ Every page follows: **Dark hero** → **Content sections** → **CTA** → **Foo
 
 ## 6. Animations
 
+**Use when:** entrance choreography on scroll, micro-interactions on hover/press/focus, view-transition affordances. Reach for the existing `.hero-stagger` and `.anim-*` classes — they already carry the easing curves, durations, and reduced-motion gates. Set per-element delays via `style="--delay: ${i * 100}ms"`.
+
+**Don't use when:** custom `@keyframes` without a `prefers-reduced-motion: no-preference` gate. Never use parallax (motion sickness, zero quality lift). Never reach for a JS animation library — CSS animation-timeline + IntersectionObserver fallback cover every case the project has.
+
 ### Hero (time-based, always plays)
 
 `.hero-stagger` with `--delay` CSS variable. Stagger: 100ms eyebrow → 200ms title → 400ms subtitle → 600ms CTAs.
@@ -288,9 +292,52 @@ Stagger cards with `style="--delay: ${i * 100}ms"`.
 
 All animations respect `prefers-reduced-motion: reduce` — durations collapse to 0.01ms.
 
+### Pattern vs. anti-pattern
+
+**Don't** — keyframes that play unconditionally:
+
+```css
+@keyframes slide-in {
+  from {
+    transform: translateY(32px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.my-reveal {
+  animation: slide-in 600ms ease-out both;
+}
+```
+
+**Do** — gate the motion, leave the target state as the fallback:
+
+```css
+.my-reveal {
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes slide-in {
+    from {
+      transform: translateY(32px);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  .my-reveal {
+    animation: slide-in 600ms ease-out both;
+  }
+}
+```
+
 ---
 
 ## 7. Dark Sections
+
+**Use when:** framing a section on the dark surface (`--color-surface-dark`) — hero, footer, CTA bands, any "negative space" block in the page rhythm. Text routes through `--color-text-on-dark`; backgrounds layer noise, grid, and glow orbs to add depth.
+
+**Don't use when:** `color: white` (or `text-white`) on a dark section. Always route through the on-dark token so `/onboard` recolorings propagate. Don't drop the `.noise` + `.bg-grid` layers either — a flat dark surface looks cheap.
 
 Every dark section uses this stack:
 
@@ -308,11 +355,31 @@ Every dark section uses this stack:
 - `.bg-grid`: 60px grid lines at 3% accent opacity
 - Glow orbs: 400-500px blurred circles, positioned at edges/corners, pulsing
 
+### Pattern vs. anti-pattern
+
+**Don't** — hardcoded white that won't follow brand changes:
+
+```html
+<section class="bg-surface-dark">
+  <h2 style="color: white">Headline</h2>
+</section>
+```
+
+**Do** — token-backed on-dark text:
+
+```html
+<section class="bg-surface-dark noise relative overflow-hidden">
+  <h2 class="text-on-dark">Headline</h2>
+</section>
+```
+
 ---
 
 ## 8. Accessibility
 
-WCAG AA minimum.
+**Use when:** any element with `aria-*`, `role=`, `alt=`, or interactive semantics — buttons, links, form fields, custom widgets. WCAG AA is the floor, not the ceiling. The `passionfruit-a11y` skill auto-loads on these edits; this section is the canonical reference behind it.
+
+**Don't use when:** missing alt text on `<img>` / `<Image>` (the build fails — `jsx-a11y/alt-text` is error-level). Don't treat decorative imagery as informational, don't suppress the `:focus-visible` ring without providing a custom one, don't ship interactive `<div>`s.
 
 - Semantic HTML: `<section>`, `<nav>`, `<main>`, `<article>`
 - Skip-link: `<a href="#main-content">` before header
@@ -325,9 +392,29 @@ WCAG AA minimum.
 - Color contrast: 4.5:1 body, 3:1 large text
 - `::selection` styled to accent color
 
+### Pattern vs. anti-pattern
+
+**Don't** — no alt text (the build will fail) and no accessible name on an icon-only button:
+
+```
+<img src={hero} />
+<button><Search class="w-5 h-5" /></button>
+```
+
+**Do** — informational alt or `alt=""` for decorative, plus an `aria-label` on icon-only triggers:
+
+```
+<Image src={hero} alt="Team workshopping a customer journey on a whiteboard" />
+<button aria-label="Search"><Search class="w-5 h-5" /></button>
+```
+
 ---
 
 ## 9. Icons & Images
+
+**Use when:** adding an icon (import from `@lucide/astro`) or a brand/content image (`<Image>` from `astro:assets`, with an imported asset reference). Use the size scale below for icons and the aspect/treatment table for images.
+
+**Don't use when:** emojis in place of icons (the project is icon-only), raw `<img>` tags for project assets (loses Astro's AVIF/WebP generation and responsive sizing), or icon-only buttons without an `aria-label`.
 
 **Icons**: Lucide only via `@lucide/astro`. Standard sizes: `w-4 h-4` inline, `w-5 h-5` buttons, `w-6 h-6` features.
 
@@ -343,9 +430,31 @@ Icon container: `w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-cen
 | Team photo       | 4:3           | Object-cover object-top, hover zoom             |
 | OG image         | 1200×630      | Brand gradient + text                           |
 
+### Pattern vs. anti-pattern
+
+**Don't** — raw `<img>` with a string path (no AVIF/WebP, no responsive sizing):
+
+```
+<img src="/blog/post.png" alt="Post hero" />
+```
+
+**Do** — Astro's `<Image>` with an imported asset, which generates AVIF + WebP automatically:
+
+```
+---
+import postImg from '~/assets/blog/post.png';
+import { Image } from 'astro:assets';
+---
+<Image src={postImg} alt="Post hero" />
+```
+
 ---
 
 ## 10. Social proof
+
+**Use when:** displaying testimonials, partner/client logos, or feature comparisons. Use `TrustSection` for logo strips and `ComparisonTable` for feature grids — both already encode the patterns below.
+
+**Don't use when:** generic praise without attribution (testimonial loses credibility), partner logos at inconsistent heights (band reads as visual noise), or boolean comparison cells rendered as bare "Yes/No" text without a screen-reader label.
 
 ### Logo strips (`TrustSection`)
 
@@ -366,11 +475,32 @@ Feature comparison grids follow a **semantic table on desktop, per-column cards 
 - Boolean cells: `<Check class="text-accent">` for true, `<X class="text-muted">` for false — never raw "Yes/No" text without a screen-reader label.
 - Zebra striping on desktop rows: even rows `bg-surface-elevated`, odd rows `bg-surface`.
 
+### Pattern vs. anti-pattern
+
+**Don't** — free-floating logos at inconsistent sizes, treated as decorative:
+
+```
+<div class="flex gap-8">
+  <img src="/logos/a.svg" />
+  <img src="/logos/b.svg" style="height: 56px" />
+</div>
+```
+
+**Do** — the `TrustSection` component with a uniform height and the grayscale pattern baked in:
+
+```
+<TrustSection logos={partners} />
+```
+
 ---
 
 ## 11. Media embeds
 
-Third-party video and audio embeds load through **facade components** — a static poster + Play button, with the real iframe injected only on click. Two reasons:
+**Use when:** embedding any third-party video or audio (YouTube, Spotify, and the additional providers as they appear). Always go through the facade component (`<YouTubeFacade>`, `<SpotifyFacade>`) — a static poster + Play button, with the real iframe injected only on click.
+
+**Don't use when:** raw `<iframe>` to a third-party host. It skips the consent gate, fires tracking pixels on passive page view, and bloats LCP because the iframe and its sub-resources land on the critical path.
+
+Facades exist for two reasons:
 
 - **Privacy:** no third-party requests, cookies, or tracking pixels fire before user intent — nothing to consent-gate on a passive page view.
 - **Performance:** the heavy iframe and its sub-resources never touch the critical path; LCP stays a local image.
@@ -381,5 +511,22 @@ Third-party video and audio embeds load through **facade components** — a stat
 - **`youtube-nocookie.com` is non-negotiable** for YouTube. Don't switch back to `youtube.com/embed` — it sets cookies before consent.
 - **CSP is scoped per provider** in `public/_headers`. Adding a new provider (Vimeo, SoundCloud, …) means a new facade **and** a CSP update for that provider's `frame-src`/`img-src`/`media-src` — never loosen the policy to "fix" a blocked embed in DevTools.
 - **Posters are local `ImageMetadata`**, not remote URLs — `astro:assets` optimizes them and serves from the same origin.
+
+### Pattern vs. anti-pattern
+
+**Don't** — raw third-party iframe, fires on page load, ignores consent:
+
+```html
+<iframe
+  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+  allow="autoplay"
+></iframe>
+```
+
+**Do** — the facade, which defers the real iframe until the user clicks Play:
+
+```
+<YouTubeFacade videoId="dQw4w9WgXcQ" poster={posterImg} title="…" />
+```
 
 Component usage (props, examples, locale wiring) lives in [`src/components/CLAUDE.md`](./src/components/CLAUDE.md) — Claude Code auto-loads it when working in that directory.
