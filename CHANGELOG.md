@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.0.0](https://github.com/passion4it-gmbh/passionfruit/compare/v0.6.0...v1.0.0) (2026-05-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* **og:** public/og-default.png is removed. Downstream forks that customized that file with their own image — or have external references (LinkedIn cache, archive.org, etc.) pointing at the old URL — need to migrate. Run pnpm generate-og once after pulling; both new locale-specific files land in public/. If your i18n site.name / site.tagline and public/favicon.svg are your own, the generated images are on-brand without prompting. For an art-directed alternative, use the new /brand skill Step 2 (Branded template / AI generated / Skip) or run pnpm generate-image targeting public/og-default-{de,en}.png directly.
+
+### Features
+
+* **analytics:** add Google Tag Manager component ([#18](https://github.com/passion4it-gmbh/passionfruit/issues/18)) ([453d2e2](https://github.com/passion4it-gmbh/passionfruit/commit/453d2e26dd6b61eb4a0fe290424e4c963b42c0b6))
+* **careers:** add careers collection, CareerCard, CareerPost, and bilingual fixtures ([#24](https://github.com/passion4it-gmbh/passionfruit/issues/24)) ([570f591](https://github.com/passion4it-gmbh/passionfruit/commit/570f591745cdd91e47543af9ebbf65bbd7d6ceb8))
+* **case-studies:** case studies collection trilogy + bilingual fixtures ([#23](https://github.com/passion4it-gmbh/passionfruit/issues/23)) ([aa8c54e](https://github.com/passion4it-gmbh/passionfruit/commit/aa8c54ea1296dc8c47fd9b80404ce8645d956bcb))
+* **claude:** add create-passionfruit-site bootstrap skill ([#26](https://github.com/passion4it-gmbh/passionfruit/issues/26)) ([07a8c8a](https://github.com/passion4it-gmbh/passionfruit/commit/07a8c8a656cfef3c456dd4df0c3bc9f9292ebb26))
+* **claude:** package skills as plugin, swap superpowers for code-review ([#22](https://github.com/passion4it-gmbh/passionfruit/issues/22)) ([0818046](https://github.com/passion4it-gmbh/passionfruit/commit/0818046523c9f43e0b82b1a7e583a1eca7929958))
+* **components:** add generic CollectionFilter foundation ([#21](https://github.com/passion4it-gmbh/passionfruit/issues/21)) ([f3fd3d5](https://github.com/passion4it-gmbh/passionfruit/commit/f3fd3d5b0b0686df79b91fc0da021f00cd3a1907))
+* **components:** add TrustSection and ComparisonTable ([#19](https://github.com/passion4it-gmbh/passionfruit/issues/19)) ([d82b340](https://github.com/passion4it-gmbh/passionfruit/commit/d82b340857482f4d1d111e5c940b5ba03873d6b8))
+* **components:** per-component sidecar docs + auto-generated catalog ([#31](https://github.com/passion4it-gmbh/passionfruit/issues/31)) ([aa2447f](https://github.com/passion4it-gmbh/passionfruit/commit/aa2447f101b82c578a36a14edcaad5f1588261a5))
+* **design-floor:** editorial type, section archetypes, motion, state design (Spec 1) ([#29](https://github.com/passion4it-gmbh/passionfruit/issues/29)) ([27b29d6](https://github.com/passion4it-gmbh/passionfruit/commit/27b29d6d1abb49b578458da7b72ce628280627a2))
+* **docs+skills:** Spec 2 — Claude-grade docs (STYLE_GUIDE rewrite + 3 skills) ([#32](https://github.com/passion4it-gmbh/passionfruit/issues/32)) ([c87203c](https://github.com/passion4it-gmbh/passionfruit/commit/c87203c72ea903b30f5f0952e2cd8f95fc448844))
+* **events:** events content collection trilogy ([#25](https://github.com/passion4it-gmbh/passionfruit/issues/25)) ([ee412b9](https://github.com/passion4it-gmbh/passionfruit/commit/ee412b9f32aec56e2761735a3a7f9b6d2252fc9f))
+* **media:** add YouTube and Spotify facades ([#16](https://github.com/passion4it-gmbh/passionfruit/issues/16)) ([f0f4a41](https://github.com/passion4it-gmbh/passionfruit/commit/f0f4a411dfbc609b63d8980c65df3fce59d857d2))
+* **og:** auto-discover optional background photo at src/assets/og/bg.png ([#30](https://github.com/passion4it-gmbh/passionfruit/issues/30)) ([173a69b](https://github.com/passion4it-gmbh/passionfruit/commit/173a69bd98812169c97fe3f673143e7356aa2ebf))
+* **og:** branded bilingual sharing-image generator ([#27](https://github.com/passion4it-gmbh/passionfruit/issues/27)) ([9b4b248](https://github.com/passion4it-gmbh/passionfruit/commit/9b4b24864cec14575cb31d47d17f3dc74e9a984b))
+
+
+### Bug Fixes
+
+* **structured-data:** add [@context](https://github.com/context) and [@type](https://github.com/type) to BlogPosting JSON-LD ([#28](https://github.com/passion4it-gmbh/passionfruit/issues/28)) ([0a52b95](https://github.com/passion4it-gmbh/passionfruit/commit/0a52b956b3b1eae81b9b1191d843fda767a00aff))
+
 ## [0.6.0](https://github.com/passion4it-gmbh/passionfruit/compare/v0.5.0...v0.6.0) (2026-05-28)
 
 
