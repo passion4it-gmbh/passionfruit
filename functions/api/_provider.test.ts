@@ -49,9 +49,28 @@ test("sendContactEmail calls Brevo API with correct payload", async () => {
   assert.equal(body.sender.name, "Website contact form");
   assert.equal(body.replyTo.email, SAMPLE_INPUT.email);
   assert.equal(body.replyTo.name, SAMPLE_INPUT.name);
-  assert.ok(body.subject.includes(SAMPLE_INPUT.name));
+  assert.equal(body.subject, `Contact form: ${SAMPLE_INPUT.name}`);
+  assert.ok(body.textContent.includes(`Name: ${SAMPLE_INPUT.name}`));
+  assert.ok(body.textContent.includes(`Email: ${SAMPLE_INPUT.email}`));
   assert.ok(body.textContent.includes(SAMPLE_INPUT.message));
-  assert.ok(body.textContent.includes(`Reply to: ${SAMPLE_INPUT.email}`));
+});
+
+test("sendContactEmail uses German subject and labels when lang is de", async () => {
+  const mockFetch = mock.fn((_input: RequestInfo | URL, _init?: RequestInit) =>
+    Promise.resolve(new Response(null, { status: 201 })),
+  );
+  globalThis.fetch = mockFetch as unknown as typeof globalThis.fetch;
+
+  await sendContactEmail({ ...SAMPLE_INPUT, lang: "de" });
+
+  const [, init] = mockFetch.mock.calls[0].arguments as [string, RequestInit];
+  const body = JSON.parse(init.body as string) as {
+    subject: string;
+    textContent: string;
+  };
+  assert.equal(body.subject, `Kontaktanfrage von ${SAMPLE_INPUT.name}`);
+  assert.ok(body.textContent.includes(`E-Mail: ${SAMPLE_INPUT.email}`));
+  assert.ok(body.textContent.includes(SAMPLE_INPUT.message));
 });
 
 test("sendContactEmail uses custom senderName when provided", async () => {
