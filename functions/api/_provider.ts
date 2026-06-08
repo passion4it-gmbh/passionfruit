@@ -1,4 +1,4 @@
-const SENDER_NAME = "passionfruit contact form";
+const SENDER_NAME = "Website contact form";
 
 export interface ContactEmailInput {
   name: string;
@@ -7,15 +7,16 @@ export interface ContactEmailInput {
   recipient: string;
   sender: string;
   apiKey: string;
+  senderName?: string;
 }
 
 export async function sendContactEmail(
   input: ContactEmailInput,
 ): Promise<void> {
-  const { name, email, message, recipient, sender, apiKey } = input;
+  const { name, email, message, recipient, sender, apiKey, senderName } = input;
 
   const body = {
-    sender: { email: sender, name: SENDER_NAME },
+    sender: { email: sender, name: senderName ?? SENDER_NAME },
     to: [{ email: recipient }],
     replyTo: { email, name },
     subject: `Contact form: ${name}`,

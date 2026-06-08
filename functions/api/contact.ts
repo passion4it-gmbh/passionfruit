@@ -5,6 +5,7 @@ export interface Env {
   CONTACT_SENDER?: string;
   BREVO_API_KEY?: string;
   TURNSTILE_SECRET_KEY?: string;
+  CONTACT_SENDER_NAME?: string;
 }
 
 interface ContactBody {
@@ -29,6 +30,7 @@ function json(
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
+// Spam protection: Turnstile + honeypot + Cloudflare edge limits — no app-level rate limiting by design.
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
 
@@ -89,7 +91,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   // 6. Dispatch
   try {
-    await sendContactEmail({ name, email, message, recipient, sender, apiKey });
+    await sendContactEmail({
+      name,
+      email,
+      message,
+      recipient,
+      sender,
+      apiKey,
+      senderName: env.CONTACT_SENDER_NAME,
+    });
   } catch {
     return json({ ok: false, error: "delivery" }, 502);
   }

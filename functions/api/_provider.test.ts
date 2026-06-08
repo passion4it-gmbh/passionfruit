@@ -46,11 +46,27 @@ test("sendContactEmail calls Brevo API with correct payload", async () => {
   };
   assert.equal(body.to[0].email, SAMPLE_INPUT.recipient);
   assert.equal(body.sender.email, SAMPLE_INPUT.sender);
+  assert.equal(body.sender.name, "Website contact form");
   assert.equal(body.replyTo.email, SAMPLE_INPUT.email);
   assert.equal(body.replyTo.name, SAMPLE_INPUT.name);
   assert.ok(body.subject.includes(SAMPLE_INPUT.name));
   assert.ok(body.textContent.includes(SAMPLE_INPUT.message));
   assert.ok(body.textContent.includes(`Reply to: ${SAMPLE_INPUT.email}`));
+});
+
+test("sendContactEmail uses custom senderName when provided", async () => {
+  const mockFetch = mock.fn((_input: RequestInfo | URL, _init?: RequestInit) =>
+    Promise.resolve(new Response(null, { status: 201 })),
+  );
+  globalThis.fetch = mockFetch as unknown as typeof globalThis.fetch;
+
+  await sendContactEmail({ ...SAMPLE_INPUT, senderName: "Acme Contact Form" });
+
+  const [, init] = mockFetch.mock.calls[0].arguments as [string, RequestInit];
+  const body = JSON.parse(init.body as string) as {
+    sender: { name: string };
+  };
+  assert.equal(body.sender.name, "Acme Contact Form");
 });
 
 test("sendContactEmail rejects on non-2xx response", async () => {

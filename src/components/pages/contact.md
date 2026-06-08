@@ -37,7 +37,7 @@ The form uses one of three delivery tiers, selected by `PUBLIC_FORM_ENDPOINT` at
 
 1. **Unset (default)** — submission opens a pre-filled `mailto:` in the visitor's mail client. Zero config.
 2. **`/api/contact`** — POSTs to the bundled Cloudflare Pages Function (`functions/api/contact.ts`), which validates the payload, verifies a Turnstile token (when `PUBLIC_TURNSTILE_SITE_KEY` is set), and delivers via Brevo transactional email.
-3. **Any other URL** — POSTs `{ name, email, message, honeypot, turnstileToken }` JSON to that URL; use for BYO external form services.
+3. **Any other URL** — POSTs `{ name, email, message, honeypot, turnstileToken }` JSON to that URL; use for BYO external form services. You must add the endpoint's host to the `connect-src` directive in `public/_headers`, or the browser will silently block the fetch.
 
 Note: `contact.info.email` (the i18n key) is the address **displayed** in the contact-info sidebar and used for the mailto fallback link. `CONTACT_RECIPIENT` (a Cloudflare Pages secret) is where Brevo **delivers** mail in the function tier — these are independent.
 
@@ -63,7 +63,7 @@ Note: `contact.info.email` (the i18n key) is the address **displayed** in the co
 
 - **Page entry is required.** If no `pages` collection entry with `translationKey: "contact"` exists for the locale, the component redirects to `/404`. Both DE and EN entries must be present.
 - **`heroImage` is optional.** When absent, the hero is single-column. When present, a two-column grid splits text and image. Hero heading and lead paragraph come from `entry.data.title` / `entry.data.description`; SEO title and meta description come from `t("contact.title")` / `t("contact.description")` via `<BaseLayout>`.
-- **Three delivery tiers — see the Example section.** The active tier is determined at build time by `PUBLIC_FORM_ENDPOINT`.
+- **Three delivery tiers — see the Example section.** The active tier is determined at build time by `PUBLIC_FORM_ENDPOINT`. For Tier 3 (any external URL), add the endpoint's host to `connect-src` in `public/_headers` — the browser blocks cross-origin fetches that aren't in the allowlist.
 - **Spam protection (function tier only).** A hidden honeypot field is always present. When `PUBLIC_TURNSTILE_SITE_KEY` is set, Cloudflare Turnstile loads from `challenges.cloudflare.com` and the token is verified server-side before delivery. Set `PUBLIC_TURNSTILE_SITE_KEY` to an empty string to disable Turnstile (honeypot still active).
 - **Displayed email ≠ delivery recipient.** `contact.info.email` (in `de.json` / `en.json`) is what visitors see and what the mailto link uses. `CONTACT_RECIPIENT` (a Cloudflare Pages secret, never a `PUBLIC_*` var) is where Brevo sends mail in the function tier.
 - **Privacy notice.** The form collects name, email, and message only. No data is stored server-side; it is forwarded immediately via Brevo and discarded.
