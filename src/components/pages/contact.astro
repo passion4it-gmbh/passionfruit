@@ -154,6 +154,7 @@ const inputClasses =
             data-msg-success={t("contact.form.success")}
             data-msg-error={t("contact.form.error")}
             data-msg-send={t("contact.form.send")}
+            data-lang={lang}
             novalidate
             class="card flex flex-col gap-5 p-8"
           >
@@ -314,6 +315,7 @@ const inputClasses =
     ) as HTMLParagraphElement | null;
 
     const endpoint = form.dataset.endpoint ?? "";
+    const lang = form.dataset.lang ?? "en";
     const contactEmail = form.dataset.contactEmail ?? "";
     const msgSending = form.dataset.msgSending ?? "Sending...";
     const msgSuccess = form.dataset.msgSuccess ?? "Message sent.";
@@ -363,6 +365,7 @@ const inputClasses =
               message,
               honeypot,
               turnstileToken,
+              lang,
             }),
           });
 
