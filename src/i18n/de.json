@@ -52,7 +52,10 @@
       "send": "Absenden",
       "sending": "Wird gesendet...",
       "success": "Vielen Dank! Ihre Nachricht wurde gesendet.",
-      "error": "Leider ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+      "error": "Leider ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      "privacyNoticePrefix": "Mit dem Absenden stimmen Sie unserer ",
+      "privacyLinkLabel": "Datenschutzerklärung",
+      "privacyNoticeSuffix": " zu."
     }
   },
   "error": {

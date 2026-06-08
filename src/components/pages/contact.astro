@@ -6,7 +6,7 @@ import { useTranslations } from "~/i18n";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import Button from "~/components/Button.astro";
 import Prose from "~/components/Prose.astro";
-import { getAlternateCollectionSlug } from "~/lib/page-registry";
+import { getAlternateCollectionSlug, findPageByKey } from "~/lib/page-registry";
 import { Mail, Phone, MapPin, Send } from "@lucide/astro";
 
 interface Props {
@@ -35,7 +35,17 @@ const alternateSlug = await getAlternateCollectionSlug(
 const heroImage = entry.data.heroImage;
 
 const formEndpoint = import.meta.env.PUBLIC_FORM_ENDPOINT;
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 const contactEmail = t("contact.info.email");
+
+const privacyPage = findPageByKey("privacy");
+const privacyHref = privacyPage
+  ? lang === "de"
+    ? "/" + privacyPage.slug.de
+    : "/en/" + privacyPage.slug.en
+  : lang === "de"
+    ? "/datenschutz"
+    : "/en/privacy";
 
 const inputClasses =
   "w-full px-4 py-3 rounded-[var(--radius-md)] border border-border bg-surface-elevated text-text placeholder:text-muted/50 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent transition-all duration-[var(--transition-fast)]";
@@ -199,6 +209,38 @@ const inputClasses =
             >
             </div>
 
+            {/* Honeypot — hidden from real users, traps bots */}
+            <div class="sr-only" aria-hidden="true">
+              <label for="company">Company</label>
+              <input
+                id="company"
+                type="text"
+                name="company"
+                tabindex="-1"
+                autocomplete="off"
+              />
+            </div>
+
+            {/* Turnstile widget — only rendered when sitekey is configured */}
+            {
+              turnstileSiteKey && (
+                <div
+                  class="cf-turnstile"
+                  data-sitekey={turnstileSiteKey}
+                  data-theme="auto"
+                />
+              )
+            }
+
+            {/* Privacy notice */}
+            <p class="text-sm text-muted">
+              {t("contact.form.privacyNoticePrefix")}
+              <a href={privacyHref} class="underline hover:text-accent">
+                {t("contact.form.privacyLinkLabel")}
+              </a>
+              {t("contact.form.privacyNoticeSuffix")}
+            </p>
+
             <Button
               type="submit"
               variant="primary"
@@ -236,6 +278,17 @@ const inputClasses =
       </div>
     </div>
   </section>
+
+  {
+    turnstileSiteKey && (
+      <script
+        is:inline
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+        async
+        defer
+      />
+    )
+  }
 </BaseLayout>
 
 <script>
@@ -290,12 +343,27 @@ const inputClasses =
         errorBox.classList.add("hidden");
       }
 
+      const honeypotInput = form.querySelector<HTMLInputElement>(
+        'input[name="company"]',
+      );
+      const turnstileInput = form.querySelector<HTMLInputElement>(
+        'input[name="cf-turnstile-response"]',
+      );
+      const honeypot = honeypotInput?.value ?? "";
+      const turnstileToken = turnstileInput?.value ?? "";
+
       if (endpoint) {
         try {
           const response = await fetch(endpoint, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, email, message }),
+            body: JSON.stringify({
+              name,
+              email,
+              message,
+              honeypot,
+              turnstileToken,
+            }),
           });
 
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
