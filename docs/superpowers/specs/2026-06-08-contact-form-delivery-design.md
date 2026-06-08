@@ -41,6 +41,13 @@ the form works from minute zero, before any provider is wired up.
 This improves the **template**. No real (passion4it) contact details enter the repo;
 "direct it to my business" is a per-deployment recipient secret, set at deploy time.
 
+The canonical first consumer is the public showcase at `passionfruit.passion4it.de` — a
+deployment of this template that demonstrates the framework's features. Its
+`CONTACT_RECIPIENT` Cloudflare secret points at a passion4it inbox, so inbound demo
+inquiries are captured as leads. The displayed contact email on that showcase stays the
+generic fixture (consistent with the rest of the Greenleaf demo content); only delivery
+is real. Displayed ≠ delivered, by design.
+
 ## 3. Decisions
 
 | #   | Decision                                                                                                                                                                                                                                                                        | Why                                                                                                                                                                      |
@@ -164,12 +171,11 @@ no-code form services ("sign up, get key, paste").
 - Manual: Tier 1 (mailto) unaffected with no env; Tier 2 end-to-end on a preview deploy
   after `/deploy` wiring.
 
-## 11. Open questions for review
+## 11. Resolved decisions (review answers)
 
-1. **Provider:** Brevo confirmed as the shipped reference adapter (EU residency was the
-   deciding factor). Anything else you want documented as a first-class alternative?
-2. **Privacy gate:** notice line (recommended) vs. a required consent checkbox before the
-   form can submit — which do you want as the template default?
-3. **Routing confirmation:** "direct it to PASSION4IT" is handled as a deploy-time
-   `CONTACT_RECIPIENT` secret on your deployment, with template fixtures left generic.
-   Confirm that matches your intent (vs. anything that would put real details in the repo).
+1. **Provider:** Brevo only for now — single shipped reference adapter. No second provider
+   pre-documented; the seam keeps swapping cheap if one is wanted later.
+2. **Privacy gate:** notice line beside submit (no blocking consent checkbox). Matches D9.
+3. **Routing:** confirmed deploy-time `CONTACT_RECIPIENT` secret. Template fixtures stay
+   generic; the `passionfruit.passion4it.de` showcase sets the secret to a passion4it inbox
+   (see §2). Nothing real is committed to the repo.
