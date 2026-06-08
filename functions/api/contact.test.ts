@@ -210,6 +210,34 @@ test("validation: message > 5000 chars → 400 validation", async () => {
   assert.equal(brevoCalls.length, 0);
 });
 
+// 7. Locale forwarding: lang:"de" → subject starts with "Kontaktanfrage von"
+test("forwards de locale → German subject to Brevo", async () => {
+  let capturedInit: RequestInit | undefined;
+  const mockFetch = mock.fn((url: string, init?: RequestInit) => {
+    if (url === BREVO_URL) {
+      capturedInit = init;
+    }
+    return Promise.resolve(new Response(null, { status: 201 }));
+  });
+  globalThis.fetch = mockFetch as unknown as typeof globalThis.fetch;
+
+  const ctx = makeContext({ ...VALID_BODY, lang: "de" }, FULL_ENV);
+  const response: Response = await onRequestPost(ctx);
+
+  assert.equal(response.status, 200);
+  const responseBody = (await response.json()) as { ok: boolean };
+  assert.equal(responseBody.ok, true);
+
+  assert.ok(capturedInit?.body, "Brevo request body should be captured");
+  const brevoPayload = JSON.parse(capturedInit!.body as string) as {
+    subject: string;
+  };
+  assert.ok(
+    brevoPayload.subject.startsWith("Kontaktanfrage von"),
+    `Expected German subject, got: ${brevoPayload.subject}`,
+  );
+});
+
 // 6. Config: missing BREVO_API_KEY → 500 config, Brevo not called
 test("config: missing BREVO_API_KEY → 500 config", async () => {
   const mockFetch = mock.fn(() =>

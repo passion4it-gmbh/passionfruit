@@ -14,6 +14,7 @@ interface ContactBody {
   message?: string;
   honeypot?: string;
   turnstileToken?: string;
+  lang?: string;
 }
 
 type JsonErrorCode = "validation" | "config" | "delivery";
@@ -90,6 +91,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   // 6. Dispatch
+  const lang: "de" | "en" = body.lang === "de" ? "de" : "en";
   try {
     await sendContactEmail({
       name,
@@ -99,6 +101,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       sender,
       apiKey,
       senderName: env.CONTACT_SENDER_NAME,
+      lang,
     });
   } catch {
     return json({ ok: false, error: "delivery" }, 502);
