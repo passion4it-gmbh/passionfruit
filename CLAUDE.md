@@ -83,6 +83,20 @@ You can run either, both, or neither. Most users want GA4 (familiar dashboard); 
 
 **Google Tag Manager** — `PUBLIC_GTM_CONTAINER_ID` (format `GTM-XXXXXXX`). Use this instead of GA4 direct when you need a tag-management layer (e.g. multiple tracking pixels, custom event triggers, A/B testing tools). Loads the GTM container only after analytics consent is granted; uses Consent Mode v2 with `analytics_storage` granted on consent and all ad\_\* signals permanently denied (passionfruit has no marketing category). GTM, GA4, and PostHog are all independent — each is env-var gated, so any combination works.
 
+### Contact form delivery
+
+Three tiers, selected by `PUBLIC_FORM_ENDPOINT` at build time:
+
+- **Unset (default)** — form submission opens a pre-filled `mailto:`. Zero config; no server required.
+- **`/api/contact`** — POSTs to the bundled Cloudflare Pages Function (`functions/api/contact.ts`), which validates the payload, verifies Turnstile (when `PUBLIC_TURNSTILE_SITE_KEY` is set), and delivers via Brevo transactional email.
+- **Any other URL** — POSTs `{ name, email, message, honeypot, turnstileToken }` JSON to that URL; use for BYO external form services.
+
+**Credentials are Cloudflare secrets, never `PUBLIC_*`.** Set these in Cloudflare Pages → Settings → Environment variables → Add secret: `CONTACT_RECIPIENT` (delivery inbox), `CONTACT_SENDER` (Brevo-verified From: address), `BREVO_API_KEY`, `TURNSTILE_SECRET_KEY`. Never commit them to `.env`.
+
+**Displayed email ≠ delivery recipient.** `contact.info.email` (i18n fixture in `de.json` / `en.json`) is what visitors see and what the mailto fallback uses. `CONTACT_RECIPIENT` is where Brevo actually sends mail — they are independent and can differ.
+
+**Turnstile CSP host:** `challenges.cloudflare.com` — already present in `public/_headers`. Run `/deploy` for automated wiring of all secrets and env vars (Step 9).
+
 ## 10. Routing
 
 - URL scheme: **apex-locale** — DE at root (`/`), EN under `/en/`.
@@ -163,7 +177,7 @@ The deploy job is gated on `CLOUDFLARE_PROJECT_NAME` being set — when unset, t
 
 **Site URL:** Update `site` in `astro.config.mjs` after deployment. This affects canonical URLs, sitemap, and OG meta tags.
 
-**Security headers + caching** live in `public/_headers` (Cloudflare Pages auto-picks this up). Includes HSTS, CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and long-cache rules for `/_astro/*`. HTML pages get `max-age=60, must-revalidate` — short enough that copy edits propagate within a minute, long enough to skip the revalidation round-trip on back/forward navigation. The CSP is scoped to what's actually used (PostHog + GA4); **if you add a new third-party script, iframe, or asset host, update the CSP or it will be blocked silently in the browser console.**
+**Security headers + caching** live in `public/_headers` (Cloudflare Pages auto-picks this up). Includes HSTS, CSP, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, and long-cache rules for `/_astro/*`. HTML pages get `max-age=60, must-revalidate` — short enough that copy edits propagate within a minute, long enough to skip the revalidation round-trip on back/forward navigation. The CSP is scoped to what's actually used (PostHog + GA4 + `challenges.cloudflare.com` for Turnstile); **if you add a new third-party script, iframe, or asset host, update the CSP or it will be blocked silently in the browser console.**
 
 **CSP violation reporting** is opt-in: when `PUBLIC_POSTHOG_API_KEY` is set at build time, `scripts/postbuild-headers.mjs` injects `Reporting-Endpoints` + `report-uri`/`report-to` directives pointing at PostHog's `/report/` ingest. Violations show up in the PostHog dashboard under Reports. The script is a no-op without the key, so forks ship safely with reporting disabled. The reporting URL is tagged `v=1` — bump in the script when materially changing the CSP so historical noise doesn't drown out fresh regressions.
 
