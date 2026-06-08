@@ -166,6 +166,90 @@ If the user wants to use their own domain:
 
 After adding a custom domain, update `astro.config.mjs` with the custom domain URL.
 
+## Step 9: Wire the contact form (optional)
+
+Ask:
+
+> "Do you want a working contact form that delivers emails, or is the default mailto link fine for now?"
+
+- **mailto is fine** — stop here. The form works out of the box with a `mailto:` fallback; nothing to configure.
+- **Working email delivery** — proceed.
+
+### 9a. Create a Turnstile widget
+
+Using the API token and Account ID already collected in Steps 3–4, call the Cloudflare API to create a Turnstile widget for the site's domain. Replace `<account_id>`, `<token>`, and `<site-domain>` with the values you have:
+
+```bash
+curl -s -X POST "https://api.cloudflare.com/client/v4/accounts/<account_id>/challenges/widgets" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"<project> contact","domains":["<site-domain>"],"mode":"managed"}'
+```
+
+From the response `result`, capture:
+
+- `sitekey` → used as `PUBLIC_TURNSTILE_SITE_KEY`
+- `secret` → used as `TURNSTILE_SECRET_KEY`
+
+**If the call returns 403:** The token needs two additional scopes — **Turnstile › Edit** and **Account Settings › Read**. Either edit the existing token at `https://dash.cloudflare.com/profile/api-tokens` to add those scopes, or create the widget manually in the Cloudflare dashboard under **Turnstile** and copy the sitekey and secret from there.
+
+### 9b. Collect provider details from the user
+
+Ask:
+
+> "To send contact-form emails, I need three things:
+>
+> 1. **Brevo API key** — from https://app.brevo.com → My account → SMTP & API → API Keys
+> 2. **Sender address** — a verified sender or domain in Brevo. **Important:** Brevo requires you to verify a sender address (or domain) before transactional emails will go through. You can verify one at https://app.brevo.com → Senders & IPs → Senders. This is the address that will appear in the From field.
+> 3. **Recipient inbox** — the email address where contact-form submissions should land.
+>
+> This is the one step I can't automate — Brevo's sender verification requires a human to click a confirmation link."
+
+Wait for all three values before proceeding.
+
+### 9c. Set the Pages project env vars
+
+Patch the Cloudflare Pages project with all six variables. Replace placeholders with real values:
+
+```bash
+curl -s -X PATCH "https://api.cloudflare.com/client/v4/accounts/<account_id>/pages/projects/<project_name>" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "deployment_configs": {
+      "production": {
+        "env_vars": {
+          "PUBLIC_FORM_ENDPOINT":       { "type": "plain_text",   "value": "/api/contact" },
+          "PUBLIC_TURNSTILE_SITE_KEY":  { "type": "plain_text",   "value": "<sitekey>" },
+          "BREVO_API_KEY":              { "type": "secret_text",  "value": "<brevo-api-key>" },
+          "TURNSTILE_SECRET_KEY":       { "type": "secret_text",  "value": "<widget-secret>" },
+          "CONTACT_RECIPIENT":          { "type": "secret_text",  "value": "<recipient-inbox>" },
+          "CONTACT_SENDER":             { "type": "secret_text",  "value": "<verified-sender>" }
+        }
+      }
+    }
+  }'
+```
+
+Mirror the same block into `preview` if the user wants contact-form submissions to work on preview deployments too (replace `"production"` with `"preview"` and repeat the patch).
+
+**Important:** `PUBLIC_FORM_ENDPOINT` and `PUBLIC_TURNSTILE_SITE_KEY` are **build-time** variables — Astro inlines them at build. The other four are read at request time by the Pages Function and can be updated without a rebuild. A new deploy is required to pick up the two `PUBLIC_*` values.
+
+### 9d. Trigger a redeploy
+
+Trigger a fresh build so Astro inlines the new `PUBLIC_*` values:
+
+```bash
+git commit --allow-empty -m "chore: trigger redeploy for contact-form env vars"
+git push
+```
+
+Alternatively, the user can go to **Cloudflare Pages → your project → Deployments → Retry deployment** on the latest production deployment.
+
+Once the build completes, the contact form will validate Turnstile tokens server-side and deliver submissions via Brevo.
+
+> **Note:** The passionfruit showcase at `passionfruit.passion4it.de` has `CONTACT_RECIPIENT` pointed at a passion4it inbox so the form is live. Full design rationale and implementation details are in `docs/superpowers/specs/2026-06-08-contact-form-delivery-design.md`.
+
 ## Troubleshooting
 
 **Deploy fails with "Project not found":**
