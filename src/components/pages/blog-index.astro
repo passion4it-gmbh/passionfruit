@@ -61,7 +61,10 @@ const posts = allPosts
         ) : (
           <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post, i) => (
-              <div class="anim-card-enter" style={`--delay: ${i * 100}ms`}>
+              <div
+                class="anim-card-enter h-full"
+                style={`--delay: ${i * 100}ms`}
+              >
                 <BlogCard entry={post} lang={lang} />
               </div>
             ))}
