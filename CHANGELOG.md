@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.1.0](https://github.com/passion4it-gmbh/passionfruit/compare/v1.0.0...v1.1.0) (2026-06-10)
+
+
+### Features
+
+* contact form delivery (Cloudflare Function + Brevo, Turnstile, mailto fallback) ([#35](https://github.com/passion4it-gmbh/passionfruit/issues/35)) ([ffecd69](https://github.com/passion4it-gmbh/passionfruit/commit/ffecd69a80d8e018a8b4a116e7fefe2f79d1a70c))
+
+
+### Bug Fixes
+
+* **blog:** eliminate card hover ghost and equalize card heights ([#36](https://github.com/passion4it-gmbh/passionfruit/issues/36)) ([742463c](https://github.com/passion4it-gmbh/passionfruit/commit/742463c780ceab2f07e62cf64051bd4b90a6f556))
+* solid header background while mobile menu is open ([#37](https://github.com/passion4it-gmbh/passionfruit/issues/37)) ([2c9876d](https://github.com/passion4it-gmbh/passionfruit/commit/2c9876d11d55be6a2f27df78d7f70796118550c8))
+* spec 1 cleanups — skeleton i18n, editorial-quote type, hero contrast ([#33](https://github.com/passion4it-gmbh/passionfruit/issues/33)) ([343d058](https://github.com/passion4it-gmbh/passionfruit/commit/343d058757e90f8db61b984173c772a032c9afae))
+
 ## [1.0.0](https://github.com/passion4it-gmbh/passionfruit/compare/v0.6.0...v1.0.0) (2026-05-29)
 
 
