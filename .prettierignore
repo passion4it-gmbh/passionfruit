@@ -20,3 +20,7 @@ src/components/CLAUDE.md
 src/components/PostHogAnalytics.astro
 src/components/GoogleAnalytics.astro
 src/components/GTMAnalytics.astro
+
+# pnpm owns its lockfile format — prettier's quote style fights pnpm's writer,
+# producing a full-file phantom diff on every `pnpm build`
+pnpm-lock.yaml
