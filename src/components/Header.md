@@ -7,7 +7,7 @@ tags: [layout]
 
 ## Purpose
 
-Renders the persistent top bar of every page: the site logo, a horizontal desktop nav, a `LanguageSwitcher`, and a collapsible mobile hamburger menu. Handles scroll-aware background for the `on-dark` variant (transparent at top, `bg-surface-dark/80` after 80 px of scroll).
+Renders the persistent top bar of every page: the site logo, a horizontal desktop nav, a `LanguageSwitcher`, and a collapsible mobile hamburger menu. Handles state-aware background for the `on-dark` variant (transparent at top, `bg-surface-dark/80` after 80 px of scroll or while the mobile menu is open).
 
 ## When to use
 
@@ -59,6 +59,6 @@ Nav links are hardcoded as `navItems` in the component frontmatter. Localized sl
 
 - **Nav data source.** Nav items are a static array inside `Header.astro`, not derived from `page-registry.ts`. If you add or rename a page, update both `page-registry.ts` and the `navItems` array.
 - **Mobile menu JS.** The mobile toggle is driven by an inline `<script>` that re-initialises on `astro:after-swap`. If you add a second `Header` to a page the script will wire up duplicate listeners.
-- **Scroll transition scope.** The scroll-aware bg swap only activates when `variant="on-dark"` (detected via the presence of `bg-transparent` on the element). On `on-light` pages the header remains `bg-surface/80` regardless of scroll position.
+- **Background state.** The script toggles a `data-solid` attribute on the header (`isOpen || scrollY > 80`); the `on-dark` variant styles it via `data-solid:` Tailwind variants. The menu-open condition is load-bearing: the open mobile menu grows the sticky header beyond the hero's `-mt-16` pull-up in `BaseLayout`, so a still-transparent header would show the light page body behind the menu links. On `on-light` pages the attribute is set but unstyled — the header stays `bg-surface/80` regardless.
 - **Keyboard.** Pressing `Escape` while the mobile menu is open closes it and returns focus to the toggle button.
 - **No slots.** Header renders no `<slot />`. Extra content (e.g., banners) belongs above or below the `<Header />` call in the layout.

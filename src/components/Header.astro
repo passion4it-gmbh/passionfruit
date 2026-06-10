@@ -41,8 +41,14 @@ function isActive(slug: string): boolean {
 }
 
 const isOnDark = variant === "on-dark";
-const headerBg = isOnDark ? "bg-transparent" : "bg-surface/80";
-const headerBorder = isOnDark ? "border-transparent" : "border-border/50";
+// The on-dark header is transparent over the hero but must turn solid when
+// scrolled or when the mobile menu is open (script toggles `data-solid`).
+const headerBg = isOnDark
+  ? "bg-transparent data-solid:bg-surface-dark/80"
+  : "bg-surface/80";
+const headerBorder = isOnDark
+  ? "border-transparent data-solid:border-white/5"
+  : "border-border/50";
 const logoTextColor = isOnDark ? "text-text-on-dark" : "text-text-heading";
 const navLinkBase =
   "text-sm font-medium transition-colors duration-[var(--transition-fast)]";
@@ -140,15 +146,23 @@ const hamburgerColor = isOnDark ? "text-text-on-dark" : "text-text-heading";
 </header>
 
 <script>
-  function initMobileMenu() {
+  function initHeader() {
+    const header = document.getElementById("site-header");
     const toggle = document.getElementById("mobile-menu-toggle");
     const menu = document.getElementById("mobile-menu");
     const hamburgerIcon = document.getElementById("hamburger-icon");
     const closeIcon = document.getElementById("close-icon");
 
-    if (!toggle || !menu) return;
+    if (!header || !toggle || !menu) return;
 
     let isOpen = false;
+
+    // The open mobile menu grows the sticky header beyond the hero's -mt-16
+    // pull-up, so the page's light body would show through a transparent
+    // header — it must go solid while open, not only after scrolling.
+    function syncBackground() {
+      header!.toggleAttribute("data-solid", isOpen || window.scrollY > 80);
+    }
 
     function open() {
       isOpen = true;
@@ -157,6 +171,7 @@ const hamburgerColor = isOnDark ? "text-text-on-dark" : "text-text-heading";
       toggle!.setAttribute("aria-label", "Close menu");
       hamburgerIcon?.classList.add("hidden");
       closeIcon?.classList.remove("hidden");
+      syncBackground();
     }
 
     function close() {
@@ -166,6 +181,7 @@ const hamburgerColor = isOnDark ? "text-text-on-dark" : "text-text-heading";
       toggle!.setAttribute("aria-label", "Open menu");
       hamburgerIcon?.classList.remove("hidden");
       closeIcon?.classList.add("hidden");
+      syncBackground();
     }
 
     toggle.addEventListener("click", () => {
@@ -183,30 +199,11 @@ const hamburgerColor = isOnDark ? "text-text-on-dark" : "text-text-heading";
     menu.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", close);
     });
+
+    window.addEventListener("scroll", syncBackground, { passive: true });
+    syncBackground();
   }
 
-  function initHeaderScroll() {
-    const header = document.getElementById("site-header");
-    if (!header || !header.classList.contains("bg-transparent")) return;
-
-    function update() {
-      if (window.scrollY > 80) {
-        header!.classList.replace("bg-transparent", "bg-surface-dark/80");
-        header!.classList.replace("border-transparent", "border-white/5");
-      } else {
-        header!.classList.replace("bg-surface-dark/80", "bg-transparent");
-        header!.classList.replace("border-white/5", "border-transparent");
-      }
-    }
-
-    window.addEventListener("scroll", update, { passive: true });
-    update();
-  }
-
-  initMobileMenu();
-  initHeaderScroll();
-  document.addEventListener("astro:after-swap", () => {
-    initMobileMenu();
-    initHeaderScroll();
-  });
+  initHeader();
+  document.addEventListener("astro:after-swap", initHeader);
 </script>
