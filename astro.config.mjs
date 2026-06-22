@@ -1,8 +1,28 @@
 import { defineConfig } from "astro/config";
-import { unified } from "@astrojs/markdown-remark";
+import { satteri } from "@astrojs/markdown-satteri";
 import react from "@astrojs/react";
 import tailwindcss from "@tailwindcss/vite";
-import rehypeExternalLinks from "rehype-external-links";
+
+// Open external links in a new tab with safe rel attributes. Mirrors the
+// defaults of the rehype-external-links plugin (http(s) and protocol-relative
+// URLs only — mailto:, tel:, and in-site links are left untouched), ported to
+// a Sätteri hast visitor now that Sätteri is Astro's Markdown engine.
+const externalLinks = {
+  name: "external-links",
+  element: {
+    filter: ["a"],
+    visit(node, ctx) {
+      const href = node.properties?.href;
+      if (
+        typeof href === "string" &&
+        (/^https?:\/\//i.test(href) || href.startsWith("//"))
+      ) {
+        ctx.setProperty(node, "target", "_blank");
+        ctx.setProperty(node, "rel", ["noopener", "noreferrer"]);
+      }
+    },
+  },
+};
 
 export default defineConfig({
   site: "https://example.com",
@@ -10,14 +30,7 @@ export default defineConfig({
   compressHTML: true,
   trailingSlash: "always",
   markdown: {
-    processor: unified({
-      rehypePlugins: [
-        [
-          rehypeExternalLinks,
-          { target: "_blank", rel: ["noopener", "noreferrer"] },
-        ],
-      ],
-    }),
+    processor: satteri({ hastPlugins: [externalLinks] }),
   },
   i18n: {
     locales: ["de", "en"],
