@@ -18,7 +18,9 @@ import {
   buildJobPostingLd,
   buildEventLd,
   buildReviewLd,
+  getSiteIdentity,
 } from "~/lib/structured-data";
+import { useTranslations } from "~/i18n";
 
 export async function getStaticPaths() {
   return getAllPaths();
@@ -41,6 +43,10 @@ type Props =
 
 const props = Astro.props as Props;
 const { lang, slug } = props;
+
+// Brand identity for JSON-LD — derived from config + i18n, never hardcoded.
+const { t } = useTranslations(lang);
+const siteIdentity = getSiteIdentity(Astro.site, t("site.name"));
 
 type AstroPageDefault =
   (typeof import("~/components/pages/about.astro"))["default"];
@@ -91,26 +97,27 @@ if (props.kind === "collection-detail") {
       `${Astro.site?.href ?? ""}og-default-${lang}.png`,
       canonicalUrl,
       lang,
+      siteIdentity,
     );
   }
 
   if (props.collection === "careers") {
     const careersEntry = props.entry as CollectionEntry<"careers">;
     const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
-    jobPostingLd = buildJobPostingLd(careersEntry, canonicalUrl);
+    jobPostingLd = buildJobPostingLd(careersEntry, canonicalUrl, siteIdentity);
     collectionDescription = careersEntry.data.summary;
   }
 
   if (props.collection === "events") {
     const eventEntry = props.entry as CollectionEntry<"events">;
     const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
-    eventLd = buildEventLd(eventEntry, canonicalUrl, lang);
+    eventLd = buildEventLd(eventEntry, canonicalUrl, lang, siteIdentity);
   }
 
   if (props.collection === "caseStudies") {
     const csEntry = props.entry as CollectionEntry<"caseStudies">;
     const canonicalUrl = new URL(Astro.url.pathname, Astro.site).href;
-    reviewLd = buildReviewLd(csEntry, canonicalUrl, lang);
+    reviewLd = buildReviewLd(csEntry, canonicalUrl, lang, siteIdentity);
   }
 } else {
   const pageEntry = findPageBySlug(lang, slug);

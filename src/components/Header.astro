@@ -71,9 +71,9 @@ const hamburgerColor = isOnDark ? "text-text-on-dark" : "text-text-heading";
       <a
         href={homeHref}
         class={`text-lg font-bold tracking-tight ${logoTextColor} hover:opacity-80 transition-opacity`}
-        aria-label="Greenleaf Digital – Home"
+        aria-label={`${t("site.name")} – Home`}
       >
-        Greenleaf Digital
+        {t("site.name")}
       </a>
 
       <!-- Desktop nav -->

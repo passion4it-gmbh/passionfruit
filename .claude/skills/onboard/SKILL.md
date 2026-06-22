@@ -71,13 +71,11 @@ Ask the user:
 1. Crawl the site (or ask the user to describe the pages)
 2. Identify: company name, tagline, pages, colors, content structure
 3. Run through the same personalization steps below, pre-filling answers from the existing site
-4. After setup, tell the user:
+4. After setup, offer to rebuild the existing content:
 
-> "The template is now configured for your business. To rebuild your existing site's content and design, use `/goal` with this instruction:
->
-> **Goal:** Rebuild [existing-url] as a passionfruit site. Every page, every piece of content, every feature — but with a modern design, better performance, and bilingual support. Use the existing site as the reference. Visit each page, extract the content, and recreate it here. The result should be feature-identical but visually superior."
->
-> This will systematically work through every page until your new site matches the old one — just better.
+> "The template is now configured for your business. I can rebuild your existing site page by page — just tell me to go ahead, and I'll work through [existing-url], extract each page's content, and recreate it here with a modern design, better performance, and bilingual support. The result will be feature-identical but visually superior."
+
+Then, if the user agrees, work through the pages systematically until the new site matches the old one — just better.
 
 ## Questions (for fresh start)
 
@@ -88,7 +86,7 @@ Ask these ONE AT A TIME using the AskUserQuestion tool:
 3. "What's your primary language?" (German at root, or English at root?)
 4. "Do you need a second language?" If no: remove /en/ pages, strip i18n JSON to single locale, disable bilingual check, simplify page-registry to single-slug entries. If yes: ask which locale and configure accordingly.
 5. "Pick an accent color" — offer 4 presets (indigo #6366f1, emerald #10b981, amber #f59e0b, rose #f43f5e) or let them describe their brand colors
-6. "Which pages do you need?" — multi-select: Home, About, Services, Blog, Team, Contact, Privacy, Imprint
+6. "Which pages and sections do you need?" — multi-select: Home, About, Services, Blog, Team, Contact, Privacy, Imprint, Careers, Case Studies, Events
 7. "Contact details?" — email, phone, address for footer, contact page, and legal pages
 8. "Social media links?" — LinkedIn, Instagram, X/Twitter, etc.
 
@@ -106,31 +104,53 @@ rm -f CHANGELOG.md
 
 These files only apply to the passionfruit template itself. Derived projects don't release passionfruit-framework versions.
 
-Replace all "Greenleaf Digital" references with the company name across:
+### Set the brand identity (one source of truth)
 
-- `src/i18n/de.json` and `src/i18n/en.json` (site.name, site.tagline, site.description, footer.copyright)
-- `src/lib/structured-data.ts` (ORGANIZATION_LD name)
-- `src/layouts/BaseLayout.astro` (title suffix)
-- `README.md` — replace the upstream marketing content (banner, "What You Get", "Why Not WordPress", "Built With") with a short, business-specific README. **Keep** the "Staying Current" section verbatim — it tells the site owner how to pull in passionfruit improvements over time.
+Brand name, URL, and logo are **derived from config + i18n** — never hardcoded in component or library code. Change them in these few places and they propagate everywhere (header, footer, page titles, JSON-LD, sitemap):
 
-Update `astro.config.mjs` site URL if provided.
+- `src/i18n/de.json` and `src/i18n/en.json` — `site.name`, `site.tagline`, `site.description`, `footer.copyright`, plus any navigation labels
+- `astro.config.mjs` — the `site` URL (drives canonical URLs, sitemap, OG tags, JSON-LD)
+- `src/styles/global.css` — accent tokens `--color-accent`, `--color-accent-hover`, `--color-accent-glow`
 
-Update `global.css` accent color tokens (--color-accent, --color-accent-hover, --color-accent-glow).
+Do **not** edit `structured-data.ts`, `BaseLayout.astro`, `Header.astro`, or `Footer.astro` for branding — they read `site.name` and `Astro.site` already. The `pnpm build` fixture check fails if a brand literal is ever reintroduced into code.
 
-Remove unused pages from:
+### Rewrite the fixture content
 
-- `src/components/pages/` directory
-- `PAGES` array in `src/lib/page-registry.ts`
-- Navigation items in Header.astro and Footer.astro
-- Content collection entries that belong to removed pages
+The template ships example content branded "Greenleaf Digital". Rewrite or remove it for every collection the user keeps, in **both** `de/` and `en/`:
 
-Update legal pages (privacy, imprint) with actual company info and address.
+- `src/content/blog/` — example posts
+- `src/content/team/` — example team members
+- `src/content/pages/` — about / services / privacy / imprint copy (put real company name + address in the legal pages)
+- `src/content/careers/` — example job postings (delete the collection if no Careers section)
+- `src/content/caseStudies/` — example case studies (delete if not used)
+- `src/content/events/` — example events (delete if not used)
+- `src/data/testimonials.ts` — example testimonial `quote` / `author` / `company` values (rewrite, or empty the arrays)
 
-Rewrite CLAUDE.md section 1 with actual company context (name, what they do, which pages exist).
+### Remove unused pages and collections
 
-Update STYLE_GUIDE.md with chosen colors.
+For anything the user did NOT pick in Q6:
 
-Update i18n JSON files with company name, tagline, and adjusted navigation labels.
+- `src/components/pages/` — delete the page component
+- `PAGES` array in `src/lib/page-registry.ts` — delete the entry
+- Navigation items in `Header.astro` and `Footer.astro`
+- The collection's entries under `src/content/<name>/`
+
+Also delete `src/pages/design-floor/` — it's a dev-only design showcase, not part of any shipped site.
+
+### Update the docs
+
+- Rewrite CLAUDE.md section 1 with the real company context (name, what they do, which pages/collections exist)
+- Update STYLE_GUIDE.md with the chosen colors
+- `README.md` — replace upstream marketing content (banner, "What You Get", "Why Not WordPress", "Tech Stack") with a short, business-specific README. **Keep** the "Staying Current" section verbatim — it tells the owner how to pull in passionfruit improvements over time.
+
+### Verify nothing was missed
+
+```bash
+rg -i greenleaf src/   # expect: no matches
+pnpm build             # runs the fixture gate + bilingual check
+```
+
+If `rg` finds anything, rewrite it before committing.
 
 ## Final step
 

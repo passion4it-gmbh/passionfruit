@@ -16,11 +16,14 @@ Project content is **bilingual (DE + EN) by default**. The build refuses to ship
 
 ## Collections at a glance
 
-| Type     | Path                              | Required frontmatter                                                                                  | Helper command       |
-| -------- | --------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------- |
-| Blog     | `src/content/blog/{de,en}/*.md`   | `translationKey`, `title`, `description`, `publishedAt`, `author`, `tags`. Optional: `featured`, `heroImage` | `/new-post`          |
-| Team     | `src/content/team/{de,en}/*.md`   | `translationKey`, `name`, `role`, `displayOrder`. Optional: `specializations`, `photo`, `socials`     | `/new-team-member`   |
-| Pages    | `src/content/pages/{de,en}/*.md`  | `translationKey`, `title`, `description`. Optional: `heroImage`                                       | _(manual)_           |
+| Type        | Path                                   | Required frontmatter                                                                                          | Helper command     |
+| ----------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------ |
+| Blog        | `src/content/blog/{de,en}/*.md`        | `translationKey`, `title`, `description`, `publishedAt`, `author`, `tags`. Optional: `featured`, `heroImage`  | `/new-post`        |
+| Team        | `src/content/team/{de,en}/*.md`        | `translationKey`, `name`, `role`, `displayOrder`. Optional: `specializations`, `photo`, `socials`            | `/new-team-member` |
+| Pages       | `src/content/pages/{de,en}/*.md`       | `translationKey`, `title`, `description`. Optional: `heroImage`                                              | _(manual)_         |
+| Careers     | `src/content/careers/{de,en}/*.md`     | `translationKey`, `title`, `location`, `employmentType`, `applyUrl`, `summary`, `postedAt`. Optional: `department`, `seniority`, `closesAt`, `salaryMin`/`salaryMax`/`salaryCurrency`, `tags` | _(manual)_         |
+| Events      | `src/content/events/{de,en}/*.md`      | `translationKey`, `title`, `summary`, `startsAt`, `category`, `location`. Optional: `endsAt`, `tags`, `registrationUrl`, `heroImage`, `speakers` | _(manual)_         |
+| Case Studies | `src/content/caseStudies/{de,en}/*.md` | `translationKey`, `personName`, `personRole`, `clientName`, `category`, `quote`, `portraitImage`. Optional: `tags`, `portraitFit`, `videoId`, `publishedAt` | _(manual)_         |
 
 Image paths in frontmatter are **relative to the markdown file**, not to the project root — e.g. `../../../assets/blog/<slug>.png` from a blog post, or `./_images/hero.jpg` if collocated.
 
@@ -77,7 +80,7 @@ URL scheme is **apex-locale**: DE lives at the root (`/`), EN under `/en/`. Loca
 Every `.astro` component under `src/components/` has a sidecar `.md` file next to it (same basename). The sidecar is the component's living doc: purpose, props, usage examples, and design rationale.
 
 - **Before editing or composing with a component, read its sidecar first.**
-- **When creating a new component, create the sidecar in the same commit.** The prebuild check (`scripts/check-component-sidecars.mjs`) exits 1 if any `.astro` file is missing its pair.
+- **When creating a new component, create the sidecar in the same commit.** The prebuild check (`scripts/check-component-docs.mjs`) exits 1 if any `.astro` file is missing its pair.
 - The canonical sidecar contract and template live in `docs/superpowers/specs/2026-05-28-component-sidecar-docs-design.md` § "Sidecar contract".
 - See `src/components/CollectionFilter.md` for a representative sidecar to understand the expected shape.
 - **`src/components/CLAUDE.md` is partially auto-generated.** The block between `<!-- catalog:start -->` and `<!-- catalog:end -->` is regenerated on every build and by `pnpm sync:component-catalog`. Never edit inside those markers — changes go in the individual sidecars.

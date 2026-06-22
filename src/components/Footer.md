@@ -38,6 +38,7 @@ import Footer from "~/components/Footer.astro";
 
 | Key                   | DE                                       | EN                             |
 | --------------------- | ---------------------------------------- | ------------------------------ |
+| `site.name`           | Greenleaf Digital                        | Greenleaf Digital              |
 | `navigation.home`     | Startseite                               | Home                           |
 | `navigation.about`    | Über uns                                 | About                          |
 | `navigation.services` | Leistungen                               | Services                       |

@@ -133,7 +133,9 @@ function collectCollectionBlocks(
 }
 
 export const GET: APIRoute = async ({ site }) => {
-  const siteUrl = site ?? new URL("https://greenleaf.digital");
+  // `site` is set in astro.config.mjs; this fallback only guards local/test
+  // runs without it. Mirrors the config default rather than any brand domain.
+  const siteUrl = site ?? new URL("https://example.com");
 
   const [blog, team, careers, events, caseStudies] = await Promise.all([
     getCollection("blog"),

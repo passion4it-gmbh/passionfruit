@@ -8,32 +8,38 @@ import type { Locale } from "~/i18n";
 
 export type { Locale };
 
-const SITE_URL = "https://example.com";
-const LOGO_URL = `${SITE_URL}/logos/greenleaf-digital.svg`;
+/** Brand identity resolved at render time, threaded into every JSON-LD builder. */
+export interface SiteIdentity {
+  /** Organization / site name — from the `site.name` i18n string. */
+  name: string;
+  /** Absolute site origin, no trailing slash — from `Astro.site`. */
+  url: string;
+  /** Absolute logo URL — the site favicon, which `/brand` owns. */
+  logoUrl: string;
+}
 
-export const ORGANIZATION_LD = {
-  "@id": `${SITE_URL}/#organization`,
-  name: "Greenleaf Digital",
-  url: SITE_URL,
-  logo: LOGO_URL,
-} as const;
+/**
+ * Derive the brand identity from Astro's configured `site` and the localized
+ * name. Keeps brand strings out of this module entirely: an onboarded site
+ * changes the `site.name` i18n string and `astro.config.mjs` `site` — never
+ * this file.
+ */
+export function getSiteIdentity(
+  site: URL | undefined,
+  name: string,
+): SiteIdentity {
+  const url = (site?.href ?? "https://example.com").replace(/\/+$/, "");
+  return { name, url, logoUrl: `${url}/favicon.svg` };
+}
 
-export const WEBSITE_LD = {
-  "@id": `${SITE_URL}/#website`,
-  url: SITE_URL,
-  name: "Greenleaf Digital",
-  publisher: { "@id": `${SITE_URL}/#organization` },
-  inLanguage: ["de-DE", "en-US"],
-} as const;
-
-export const PUBLISHER_REF = {
-  "@type": "Organization",
-  name: "Greenleaf Digital",
-  logo: {
-    "@type": "ImageObject",
-    url: LOGO_URL,
-  },
-} as const;
+/** Organization node reused as blog publisher and event organizer. */
+function publisherRef(id: SiteIdentity): Record<string, unknown> {
+  return {
+    "@type": "Organization",
+    name: id.name,
+    logo: { "@type": "ImageObject", url: id.logoUrl },
+  };
+}
 
 export interface BlogAuthor {
   name: string;
@@ -51,6 +57,7 @@ const SCHEMA_EMPLOYMENT_TYPE: Record<string, string> = {
 export function buildJobPostingLd(
   entry: CollectionEntry<"careers">,
   canonicalUrl: string,
+  id: SiteIdentity,
 ): Record<string, unknown> {
   const d = entry.data;
   const ld: Record<string, unknown> = {
@@ -63,9 +70,9 @@ export function buildJobPostingLd(
       SCHEMA_EMPLOYMENT_TYPE[d.employmentType] ?? d.employmentType,
     hiringOrganization: {
       "@type": "Organization",
-      name: "Greenleaf Digital",
-      sameAs: SITE_URL,
-      logo: LOGO_URL,
+      name: id.name,
+      sameAs: id.url,
+      logo: id.logoUrl,
     },
     jobLocation: {
       "@type": "Place",
@@ -114,6 +121,7 @@ export function buildEventLd(
   entry: CollectionEntry<"events">,
   canonicalUrl: string,
   lang: Locale,
+  id: SiteIdentity,
 ): Record<string, unknown> {
   const loc = entry.data.location;
 
@@ -146,7 +154,7 @@ export function buildEventLd(
     ...(entry.data.registrationUrl
       ? { offers: { "@type": "Offer", url: entry.data.registrationUrl } }
       : {}),
-    organizer: PUBLISHER_REF,
+    organizer: publisherRef(id),
     url: canonicalUrl,
     inLanguage: lang === "de" ? "de-DE" : "en-US",
   };
@@ -156,6 +164,7 @@ export function buildReviewLd(
   entry: CollectionEntry<"caseStudies">,
   canonicalUrl: string,
   lang: Locale,
+  id: SiteIdentity,
 ): Record<string, unknown> {
   return {
     "@context": "https://schema.org/",
@@ -177,8 +186,8 @@ export function buildReviewLd(
     },
     itemReviewed: {
       "@type": "Organization",
-      name: ORGANIZATION_LD.name,
-      url: ORGANIZATION_LD.url,
+      name: id.name,
+      url: id.url,
     },
     ...(entry.data.publishedAt
       ? { datePublished: entry.data.publishedAt.toISOString() }
@@ -194,6 +203,7 @@ export function buildBlogPostingLd(
   imageUrl: string,
   canonicalUrl: string,
   lang: Locale,
+  id: SiteIdentity,
 ): Record<string, unknown> {
   return {
     "@context": "https://schema.org/",
@@ -204,10 +214,10 @@ export function buildBlogPostingLd(
     datePublished: entry.data.publishedAt.toISOString(),
     author: {
       "@type": "Person",
-      name: author?.name ?? "Greenleaf Digital",
+      name: author?.name ?? id.name,
       ...(author?.role ? { jobTitle: author.role } : {}),
     },
-    publisher: PUBLISHER_REF,
+    publisher: publisherRef(id),
     mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
     inLanguage: lang === "de" ? "de-DE" : "en-US",
   };

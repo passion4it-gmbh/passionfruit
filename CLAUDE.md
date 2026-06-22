@@ -59,6 +59,10 @@ See CONTRIBUTING.md for full details. Summary:
 
 **Event:** `src/content/events/{de,en}/<slug>.md` — needs translationKey, title, summary, startsAt, category, location. Routed under `/veranstaltungen/<slug>/` (DE) and `/en/events/<slug>/` (EN). Index page at `events-index` registry key.
 
+**Job posting:** `src/content/careers/{de,en}/<slug>.md` — needs translationKey, title, location, employmentType, applyUrl, summary, postedAt. Routed under `/karriere/<slug>/` (DE) and `/en/careers/<slug>/` (EN). Index at `careers-index`.
+
+**Case study:** `src/content/caseStudies/{de,en}/<slug>.md` — needs translationKey, personName, personRole, clientName, category, quote, portraitImage. Routed under `/referenzen/<slug>/` (DE) and `/en/case-studies/<slug>/` (EN). Index at `case-studies-index`.
+
 **Translations:** Always update both `src/i18n/de.json` and `src/i18n/en.json` in lockstep. Nested key structure, accessed via `t('section.key')`.
 
 ## 7. Component conventions
@@ -115,6 +119,7 @@ Before committing:
 - [ ] No `any` in TypeScript
 - [ ] Mobile layout intact at 375px
 - [ ] No hex literals in components
+- [ ] No brand/fixture literals in code — name/URL/logo come from `t('site.name')` + `Astro.site` (the `check-fixtures` gate enforces this)
 - [ ] New collection entries have `translationKey` in both locales
 - [ ] New i18n strings added to both `de.json` and `en.json`
 - [ ] Changes align with STYLE_GUIDE.md
@@ -163,6 +168,8 @@ Options: `--size` (1536x1024 for landscapes, 1024x1536 for portraits), `--qualit
 **Link checker** (linkinator): runs against built `dist/` output after `astro build`. Catches broken internal links — pages referenced in nav or content that don't exist. Runs in CI after build.
 
 **Alt text** enforcement: `jsx-a11y/alt-text` is set to `error` (not warn) in the a11y ESLint config. Missing alt text on images blocks the build.
+
+**Fixture-brand gate** (`scripts/check-fixtures.mjs`, runs as `prebuild`): fails the build if the fixture brand ("Greenleaf") is hardcoded into shipped code (`.astro`/`.ts`/`.tsx`/`.js`/`.mjs`/`.css` under `src/`). Brand identity must come from the `site.name` i18n string + `Astro.site`, never literals — this keeps the template/instance seam clean so `/onboard` only edits content + i18n, never component or library code. Replaceable fixtures (`src/content`, `src/i18n`, `src/data`) and the dev-only `src/pages/design-floor` showcase are exempt. Tested in `scripts/check-fixtures.test.mjs`.
 
 ## 14. Deployment
 

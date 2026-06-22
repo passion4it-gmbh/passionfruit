@@ -43,15 +43,16 @@ import Header from "~/components/Header.astro";
 
 ## i18n keys
 
-| Key                      | DE         | EN           |
-| ------------------------ | ---------- | ------------ |
-| `navigation.home`        | Startseite | Home         |
-| `navigation.about`       | Über uns   | About        |
-| `navigation.services`    | Leistungen | Services     |
-| `navigation.blog`        | Blog       | Blog         |
-| `navigation.caseStudies` | Referenzen | Case Studies |
-| `navigation.team`        | Team       | Team         |
-| `navigation.contact`     | Kontakt    | Contact      |
+| Key                      | DE                | EN                |
+| ------------------------ | ----------------- | ----------------- |
+| `site.name`              | Greenleaf Digital | Greenleaf Digital |
+| `navigation.home`        | Startseite        | Home              |
+| `navigation.about`       | Über uns          | About             |
+| `navigation.services`    | Leistungen        | Services          |
+| `navigation.blog`        | Blog              | Blog              |
+| `navigation.caseStudies` | Referenzen        | Case Studies      |
+| `navigation.team`        | Team              | Team              |
+| `navigation.contact`     | Kontakt           | Contact           |
 
 Nav links are hardcoded as `navItems` in the component frontmatter. Localized slugs (`ueber-uns` ↔ `about`, `leistungen` ↔ `services`, etc.) are defined inline via `lang === "de"` ternaries — `page-registry.ts` is not imported; the two must be kept in sync manually.
 

@@ -50,9 +50,9 @@ const legalLinks: NavLink[] = [
         <a
           href={getLocalizedPath("", lang)}
           class="inline-block text-lg font-bold tracking-tight text-text-on-dark hover:opacity-80 transition-opacity mb-4"
-          aria-label="Greenleaf Digital – Home"
+          aria-label={`${t("site.name")} – Home`}
         >
-          Greenleaf Digital
+          {t("site.name")}
         </a>
         <p class="text-sm text-text-on-dark/70 leading-relaxed">
           {t("site.tagline")}
