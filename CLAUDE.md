@@ -26,17 +26,18 @@ This is not optional. These files are the project's memory. If they drift from r
 
 ## 4. Tech stack
 
-| Tool            | Version / notes                                                              |
-| --------------- | ---------------------------------------------------------------------------- |
-| Astro           | 6, static output                                                             |
-| Tailwind        | v4 via `@tailwindcss/vite` (theme in `src/styles/global.css` `@theme` block) |
-| TypeScript      | strict — no `any`, ever                                                      |
-| Package manager | pnpm                                                                         |
-| Icons           | `@lucide/astro` (no emojis)                                                  |
-| Consent         | vanilla-cookieconsent                                                        |
-| Analytics       | PostHog (EU instance, env-var-gated)                                         |
-| Font            | Inter Variable (self-hosted via `@fontsource-variable/inter`)                |
-| React           | Dependency present; only use when interactivity genuinely demands it         |
+| Tool            | Version / notes                                                                                  |
+| --------------- | ------------------------------------------------------------------------------------------------ |
+| Astro           | 7, static output                                                                                 |
+| Markdown        | Sätteri (Astro 7's native engine); external links handled by a hast plugin in `astro.config.mjs` |
+| Tailwind        | v4 via `@tailwindcss/vite` (theme in `src/styles/global.css` `@theme` block)                     |
+| TypeScript      | strict — no `any`, ever                                                                          |
+| Package manager | pnpm                                                                                             |
+| Icons           | `@lucide/astro` (no emojis)                                                                      |
+| Consent         | vanilla-cookieconsent                                                                            |
+| Analytics       | PostHog (EU instance, env-var-gated)                                                             |
+| Font            | Inter Variable (self-hosted via `@fontsource-variable/inter`)                                    |
+| React           | Dependency present; only use when interactivity genuinely demands it                             |
 
 ## 5. Bilingual rule
 
