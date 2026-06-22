@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/passion4it-gmbh/passionfruit/compare/v1.1.0...v1.1.1) (2026-06-22)
+
+
+### Bug Fixes
+
+* **template:** derive brand identity from i18n + add fixture-leak gate ([#43](https://github.com/passion4it-gmbh/passionfruit/issues/43)) ([6d0f66c](https://github.com/passion4it-gmbh/passionfruit/commit/6d0f66c3bdebce8e9d5fdd3b7fb070be0789f3df))
+
 ## [1.1.0](https://github.com/passion4it-gmbh/passionfruit/compare/v1.0.0...v1.1.0) (2026-06-10)
 
 
