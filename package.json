@@ -35,6 +35,7 @@
     "check:links": "linkinator ./dist --recurse --skip \"^(?!http://localhost)\" --verbosity error",
     "check:all": "pnpm check:spelling && pnpm lint:a11y && pnpm build && pnpm check:links",
     "sync:component-catalog": "node scripts/check-component-docs.mjs --root=src/components",
+    "generate-og": "tsx scripts/generate-og.ts",
     "generate-image": "tsx scripts/generate-image.ts",
     "prepare": "lefthook install --force"
   },

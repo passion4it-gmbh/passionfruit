@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/passion4it-gmbh/passionfruit/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-6366f1?style=flat-square"></a>
-  <a href="https://astro.build"><img alt="Astro 6" src="https://img.shields.io/badge/Astro-6-6366f1?style=flat-square&logo=astro&logoColor=white"></a>
+  <a href="https://astro.build"><img alt="Astro 7" src="https://img.shields.io/badge/Astro-7-6366f1?style=flat-square&logo=astro&logoColor=white"></a>
   <a href="https://www.typescriptlang.org"><img alt="TypeScript strict" src="https://img.shields.io/badge/TypeScript-strict-6366f1?style=flat-square&logo=typescript&logoColor=white"></a>
   <a href="https://tailwindcss.com"><img alt="Tailwind CSS v4" src="https://img.shields.io/badge/Tailwind_CSS-v4-6366f1?style=flat-square&logo=tailwindcss&logoColor=white"></a>
   <a href="https://pages.cloudflare.com"><img alt="Deploy: Cloudflare Pages" src="https://img.shields.io/badge/deploy-Cloudflare_Pages-6366f1?style=flat-square&logo=cloudflare&logoColor=white"></a>
@@ -80,7 +80,7 @@ Claude Code skills are interactive commands that guide you through tasks step by
 
 <table>
 <tr>
-<td><a href="https://astro.build"><strong>Astro 6</strong></a></td>
+<td><a href="https://astro.build"><strong>Astro 7</strong></a></td>
 <td>Static site generation — fast builds, zero JS by default</td>
 </tr>
 <tr>

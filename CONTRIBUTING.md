@@ -32,7 +32,7 @@ For users who installed the passionfruit plugin without cloning the template fir
 
 ### Astro Docs MCP (recommended)
 
-Add the first-party Astro Docs MCP for current Astro 6 docs without web search:
+Add the first-party Astro Docs MCP for current Astro 7 docs without web search:
 
 ```bash
 claude mcp add --transport http astro https://mcp.docs.astro.build/mcp

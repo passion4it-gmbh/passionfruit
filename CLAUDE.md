@@ -243,15 +243,18 @@ The template ships its own Claude Code configuration. Two layers cooperate.
 
 **Project-local skills** live in `.claude/skills/` and auto-load when the repo is opened. They cover the things downstream users actually do:
 
-| Skill                      | Trigger                                                                                       |
-| -------------------------- | --------------------------------------------------------------------------------------------- |
-| `create-passionfruit-site` | Triggers outside any passionfruit repo when the user asks to start a new passionfruit site    |
-| `passionfruit-content`     | Auto-loads on any content/i18n edit — bilingual rules, frontmatter shapes, page-registry care |
-| `onboard`                  | `/onboard` or "Greenleaf Digital" still present in the repo                                   |
-| `brand`                    | `/brand`                                                                                      |
-| `deploy`                   | `/deploy`                                                                                     |
-| `new-post`                 | `/new-post`                                                                                   |
-| `new-team-member`          | `/new-team-member`                                                                            |
+| Skill                      | Trigger                                                                                         |
+| -------------------------- | ----------------------------------------------------------------------------------------------- |
+| `create-passionfruit-site` | Triggers outside any passionfruit repo when the user asks to start a new passionfruit site      |
+| `passionfruit-content`     | Auto-loads on any content/i18n edit — bilingual rules, frontmatter shapes, page-registry care   |
+| `passionfruit-design`      | Auto-loads on `.astro`/`.css` edits — design tokens, primitive selection, no-hex-in-components  |
+| `passionfruit-a11y`        | Auto-loads on `aria-*`/`alt`/interactive-element edits — WCAG, alt-text, focus, reduced-motion  |
+| `passionfruit-perf`        | Auto-loads on media/layout/page edits — image-loading, no-JS-when-CSS-suffices, third-party CSP |
+| `onboard`                  | `/onboard` or "Greenleaf Digital" still present in the repo                                     |
+| `brand`                    | `/brand`                                                                                        |
+| `deploy`                   | `/deploy`                                                                                       |
+| `new-post`                 | `/new-post`                                                                                     |
+| `new-team-member`          | `/new-team-member`                                                                              |
 
 **Plugins** are declared in `.claude/settings.json` under `enabledPlugins`. The template enables four from the default `claude-plugins-official` marketplace:
 
@@ -268,4 +271,4 @@ Process-discipline plugins like `superpowers` are intentionally **not** enabled 
 
 **MCP servers** to recommend to downstream users:
 
-- **Astro Docs MCP** — `https://mcp.docs.astro.build/mcp`. First-party from the Astro team; gives Claude up-to-date Astro 6 docs without web search. Add via `claude mcp add --transport http astro https://mcp.docs.astro.build/mcp` or the equivalent UI step.
+- **Astro Docs MCP** — `https://mcp.docs.astro.build/mcp`. First-party from the Astro team; gives Claude up-to-date Astro 7 docs without web search. Add via `claude mcp add --transport http astro https://mcp.docs.astro.build/mcp` or the equivalent UI step.
