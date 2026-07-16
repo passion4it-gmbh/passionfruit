@@ -23,13 +23,19 @@
 
 ## Quick Start
 
+**Easiest — no install needed:**
+
 ```
 1. Click "Use this template" on GitHub → create your repo
-2. Clone it and open with Claude Code
+2. Open claude.ai/code and connect your new repo
 3. Type /onboard
 ```
 
+**Working locally instead?** Clone your repo, open the folder in the [Claude Code desktop app](https://code.claude.com/docs/en/desktop) or [CLI](https://code.claude.com/docs/en/setup), and type `/onboard` there.
+
 That's it. Claude asks about your business, sets up your site, and hands you a working website.
+
+> **Typed `/onboard` and nothing happened?** You're probably in the Claude Desktop _chat_ app — that's not Claude Code. Slash commands only work in Claude Code surfaces: [claude.ai/code](https://code.claude.com/docs/en/claude-code-on-the-web), the **Code** tab of the [desktop app](https://code.claude.com/docs/en/desktop), the terminal CLI, or the IDE extensions.
 
 **Going live?** Type `/deploy` — Claude walks you through Cloudflare Pages (free). Every push to `main` auto-deploys after that.
 
@@ -52,7 +58,7 @@ That's it. Claude asks about your business, sets up your site, and hands you a w
 
 ## Skills
 
-Claude Code skills are interactive commands that guide you through tasks step by step.
+Claude Code [skills](https://code.claude.com/docs/en/skills) are interactive commands that guide you through tasks step by step. You don't have to memorize the slash names — just say what you want ("set this site up for my business") and Claude picks the right skill.
 
 | Skill              | What it does                                                             |
 | ------------------ | ------------------------------------------------------------------------ |

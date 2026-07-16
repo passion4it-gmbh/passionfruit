@@ -24,6 +24,8 @@ This is not optional. These files are the project's memory. If they drift from r
 
 **This section is for users who created a repo from the template, not for template maintainers.** If the site still shows "Greenleaf Digital", run `/onboard` to personalize it for your business. After onboarding, run `/brand` to replace the placeholder favicon and social sharing image with your own logo. In the template source repo itself, the Greenleaf fixtures stay — they're the example data shipped to new users.
 
+**If a user says `/onboard` "doesn't work":** they are likely in the Claude Desktop _chat_ app, where repo skills and slash commands don't exist. Point them to a Claude Code surface — [claude.ai/code](https://code.claude.com/docs/en/claude-code-on-the-web) (no install), the **Code** tab of the [desktop app](https://code.claude.com/docs/en/desktop), the CLI, or an IDE extension. In any of those, plain language works too: "set this site up for my business" triggers onboarding without the slash command.
+
 ## 4. Tech stack
 
 | Tool            | Version / notes                                                                                  |
