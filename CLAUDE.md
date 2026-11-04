@@ -129,6 +129,7 @@ Before committing:
 - [ ] `--color-accent` reaches 4.5:1 on white (`scripts/check-accent-contrast.mjs` enforces this)
 - [ ] Changes align with STYLE_GUIDE.md
 - [ ] New components have a sidecar `.md`
+- [ ] Skills never invent business facts, commit placeholder text, or ask users to paste secrets into chat
 
 ## 12. Image generation
 
@@ -182,13 +183,9 @@ Options: `--size` (1536x1024 for landscapes, 1024x1536 for portraits), `--qualit
 
 **Default host: Cloudflare Pages** (free, fast, automatic HTTPS). Run `/deploy` to set it up.
 
-**Required GitHub secrets/variables:**
+**How it deploys:** connect the GitHub repo in Cloudflare (Git integration). Cloudflare builds with `pnpm build`, publishes `dist`, and adds a preview link to each pull request. No API tokens or GitHub secrets are needed.
 
-- `CLOUDFLARE_API_TOKEN` (secret) — from Cloudflare dashboard → API Tokens
-- `CLOUDFLARE_ACCOUNT_ID` (secret) — from Cloudflare dashboard sidebar
-- `CLOUDFLARE_PROJECT_NAME` (variable) — the Cloudflare Pages project name
-
-The deploy job is gated on `CLOUDFLARE_PROJECT_NAME` being set — when unset, the deploy workflow shows as "skipped" instead of failing. This keeps the template green out of the box.
+**GitHub Actions alternative:** `.github/workflows/deploy.yml` stays skipped unless `CLOUDFLARE_PROJECT_NAME` (variable), `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (secrets) are set, which keeps the template green out of the box. Don't use both, or the site deploys twice.
 
 **Site URL:** Update `site` in `astro.config.mjs` after deployment. This affects canonical URLs, sitemap, and OG meta tags.
 
@@ -206,10 +203,10 @@ The deploy job is gated on `CLOUDFLARE_PROJECT_NAME` being set — when unset, t
 2. Make changes, commit (commitlint enforces conventional commits: `feat:`, `fix:`, `chore:`, `docs:`)
 3. Push: `git push -u origin feat/<short-name>`
 4. Open a PR: `gh pr create --fill` (or via GitHub UI)
-5. Wait for CI to pass and Cloudflare to deploy a preview — the preview URL is auto-commented on the PR
+5. Wait for CI to pass and Cloudflare to deploy a preview — the preview URL appears on the PR
 6. Review the live preview (visit the URL from the PR comment)
 7. **Squash merge** when approved — this keeps `main` history linear and readable
-8. Push to `main` automatically triggers a production deploy
+8. Merging to `main` automatically triggers a production deploy
 
 **Why squash merge:** WIP commits ("fix typo", "address review") shouldn't pollute `main`. One PR = one logical change = one commit. The PR description becomes the commit message.
 
@@ -225,7 +222,7 @@ The deploy job is gated on `CLOUDFLARE_PROJECT_NAME` being set — when unset, t
   - ✅ Require status checks to pass (CI workflow)
   - ✅ Require linear history
 
-**Preview deployments:** Every PR gets a unique preview URL like `https://<branch-name>.<project>.pages.dev`. Updates on every push to the branch. The bot comment on the PR is updated in place — no spam.
+**Preview deployments:** Every PR gets a unique preview URL like `https://<branch-name>.<project>.pages.dev`, updated on every push to the branch.
 
 ## 16. Commands
 

@@ -5,15 +5,20 @@ description: Create a new bilingual blog post with proper frontmatter and both D
 
 # Create a New Blog Post
 
-Create a bilingual (DE + EN) blog post with correct frontmatter, placeholder content, and a commit.
+Create a bilingual (DE + EN) blog post with correct frontmatter, real content, and a commit.
 
 ## Gather info
 
 Ask these ONE AT A TIME using the AskUserQuestion tool:
 
 1. "What's the blog post about? Give me a title or topic."
-2. "Who's the author?"
-3. "Any tags? Pick from: KI/AI, Webentwicklung/Web Development, Design, Business, Tutorial — or add your own."
+2. "What should it say? Notes, bullet points or a rough draft are all fine."
+3. "Who's the author?"
+4. "Any tags? Pick from: KI/AI, Webentwicklung/Web Development, Design, Business, Tutorial — or add your own."
+
+## Write the post
+
+Write the post in both languages from what the user gave you. Each language should read as if a native speaker wrote it. You can explain general topics, but don't invent facts about the business, customers or numbers. Show the user the draft and adjust it before committing. Never commit placeholder text, because it would go live.
 
 ## Generate identifiers
 
@@ -55,9 +60,7 @@ heroImage: "../../../assets/blog/<asset-slug>.png"
 featured: false
 ---
 
-## <German heading>
-
-Dieser Beitrag ist noch in Arbeit. Ersetzen Sie diesen Text durch Ihren Inhalt.
+<German post body>
 ```
 
 ### `src/content/blog/en/<en-slug>.md`
@@ -74,14 +77,14 @@ heroImage: "../../../assets/blog/<asset-slug>.png"
 featured: false
 ---
 
-## <English heading>
-
-This post is still a work in progress. Replace this text with your content.
+<English post body>
 ```
+
+**Only include `heroImage` if the image file exists.** A path to a missing file fails the whole build. Posts work fine without one.
 
 ## Hero image
 
-Check if `OPENAI_API_KEY` exists in `.env`. If it does, ask:
+Check if `OPENAI_API_KEY` is set, in `.env` or the environment. If it is, ask:
 
 > "Want me to generate a hero image for this post?"
 
@@ -91,10 +94,7 @@ If yes, run:
 pnpm generate-image "<descriptive prompt for the topic>. Editorial photography style, modern and clean. No text, no logos." -o src/assets/blog/<asset-slug>.png --size 1536x1024
 ```
 
-If the key is missing, tell the user:
-
-> "To generate a hero image later, add an OPENAI_API_KEY to .env and run:
-> `pnpm generate-image \"<prompt>\" -o src/assets/blog/<asset-slug>.png --size 1536x1024`"
+If the key is missing, leave `heroImage` out and move on.
 
 ## Commit
 
@@ -103,15 +103,10 @@ IMPORTANT: Never commit a single-locale entry. Both DE and EN files must exist b
 Stage both files (and the image if generated), then commit:
 
 ```bash
-git add src/content/blog/de/<de-slug>.md src/content/blog/en/<en-slug>.md
+git add src/content/blog/de/<de-slug>.md src/content/blog/en/<en-slug>.md src/assets/blog/<asset-slug>.png  # image only if generated
 git commit -m "feat: add blog post — <translationKey>"
 ```
 
-Tell the user:
+In a cloud session, also push: `git push -u origin HEAD`.
 
-> "Blog post created! Edit the placeholder content in:
->
-> - `src/content/blog/de/<de-slug>.md`
-> - `src/content/blog/en/<en-slug>.md`
->
-> Run `pnpm dev` to preview it."
+Tell the user the post is saved in both languages. In a local session, start `pnpm dev` yourself and give them the link. In a cloud session, tell them it appears on the preview link once the pull request is open, or on the site once it's merged.

@@ -20,6 +20,7 @@ When you reach one of these decision points, take the shortcut.
 
 - **Need a CTA?** `<Button variant="..." tone="...">`.
 - **Need a color?** Check `@theme` in `src/styles/global.css` first. If missing, add a token, then use it.
+- **Need accent-colored text on a dark surface?** `text-accent-glow`, never `text-accent`.
 - **Need a font size?** Use a `--text-*` token or its matching utility class. Never raw `font-size: Xrem`.
 - **Need to display a blog/team/career/case-study/event entry as a card?** Use the per-type card (`BlogCard`, `TeamCard`, etc.). passionfruit deliberately has one card per content type, not a generic frame.
 - **Need to embed a YouTube or Spotify video?** Use the facade (`<YouTubeFacade>` / `<SpotifyFacade>`). Never embed the third-party iframe directly.

@@ -13,6 +13,8 @@ Project content is **bilingual (DE + EN) by default**. The build refuses to ship
 2. **Every i18n string lives in both `src/i18n/de.json` and `src/i18n/en.json`.** Same nested key path, different language.
 3. **Never commit a single-locale change.** `scripts/check-bilingual.mjs` runs as `prebuild` and exits 1 if pairs are missing.
 4. **`translationKey` is ASCII, kebab-case, derived from the English version of the title** — same across both locale files. It is the identifier; the slug (filename) can differ.
+5. **Never invent facts about a real business.** No made-up people, quotes, clients, numbers or awards, and no placeholder text in anything that ships. Ask the user, or leave it out.
+6. **Only reference images that exist.** A frontmatter image path to a missing file fails the whole build. `heroImage` and `photo` are optional, so omit them if there's no file.
 
 ## Collections at a glance
 
@@ -83,7 +85,7 @@ Every `.astro` component under `src/components/` has a sidecar `.md` file next t
 - **When creating a new component, create the sidecar in the same commit.** The prebuild check (`scripts/check-component-docs.mjs`) exits 1 if any `.astro` file is missing its pair.
 - The canonical sidecar contract and template live in `docs/superpowers/specs/2026-05-28-component-sidecar-docs-design.md` § "Sidecar contract".
 - See `src/components/CollectionFilter.md` for a representative sidecar to understand the expected shape.
-- **`src/components/CLAUDE.md` is partially auto-generated.** The block between `<!-- catalog:start -->` and `<!-- catalog:end -->` is regenerated on every build and by `pnpm sync:component-catalog`. Never edit inside those markers — changes go in the individual sidecars.
+- **`src/components/CLAUDE.md` is partially auto-generated.** The block between `<!-- CATALOG:START -->` and `<!-- CATALOG:END -->` is regenerated on every build and by `pnpm sync:component-catalog`. Never edit inside those markers — changes go in the individual sidecars.
 
 ## When you're stuck
 

@@ -5,7 +5,7 @@ description: Add a new bilingual team member with proper frontmatter and both DE
 
 # Add a New Team Member
 
-Create a bilingual (DE + EN) team member entry with correct frontmatter, placeholder bio, and a commit.
+Create a bilingual (DE + EN) team member entry with correct frontmatter, a real bio, and a commit.
 
 ## Gather info
 
@@ -15,6 +15,10 @@ Ask these ONE AT A TIME using the AskUserQuestion tool:
 2. "What's their role/title?" (will be translated for both locales)
 3. "What are their specializations? (e.g., Frontend, TypeScript, UI/UX, Strategy)" (will be translated for both locales)
 4. "LinkedIn URL? (optional — press enter to skip)"
+5. "What should their short bio say? A few facts are enough, and I'll write it up."
+6. "Do you have a photo of them? (optional)"
+
+This is a real person, so use only what the user told you. Don't invent their background, and never commit placeholder text, because it would go live.
 
 ## Generate identifiers
 
@@ -59,7 +63,7 @@ socials:
   linkedin: "<url if provided>"
 ---
 
-<Name> ist ein neues Mitglied unseres Teams. Ersetzen Sie diesen Text durch eine persönliche Biografie.
+<German bio>
 ```
 
 ### `src/content/team/en/<slug>.md`
@@ -76,27 +80,21 @@ socials:
   linkedin: "<url if provided>"
 ---
 
-<Name> is a new member of our team. Replace this text with a personal bio.
+<English bio>
 ```
 
 If no LinkedIn was provided, omit the `socials` block entirely.
 
+**Only include `photo` if the file exists.** A path to a missing file fails the whole build. `TeamCard` works without one.
+
 ## Team photo
 
-Check if `OPENAI_API_KEY` exists in `.env`. If it does, ask:
+Use a real photo only. Never generate a portrait of a real person.
 
-> "Want me to generate a placeholder team photo?"
+- **Local session:** ask for the file path and copy it to `src/assets/team/<photo-name>.png`.
+- **Cloud session (`CLAUDE_CODE_REMOTE=true`):** ask the user to upload it to `src/assets/team/` on GitHub (**Add file → Upload files**), then pull it.
 
-If yes, run:
-
-```bash
-pnpm generate-image "Professional headshot portrait of a friendly business person, neutral background, soft studio lighting, editorial style. No text, no logos." -o src/assets/team/<photo-name>.png --size 1024x1024
-```
-
-If the key is missing, tell the user:
-
-> "To generate a team photo later, add an OPENAI_API_KEY to .env and run:
-> `pnpm generate-image \"Professional headshot portrait...\" -o src/assets/team/<photo-name>.png --size 1024x1024`"
+If they don't have one yet, leave `photo` out. They can add it later.
 
 ## Commit
 
@@ -105,15 +103,10 @@ IMPORTANT: Never commit a single-locale entry. Both DE and EN files must exist b
 Stage both files (and the photo if generated), then commit:
 
 ```bash
-git add src/content/team/de/<slug>.md src/content/team/en/<slug>.md
+git add src/content/team/de/<slug>.md src/content/team/en/<slug>.md src/assets/team/<photo-name>.png  # photo only if provided
 git commit -m "feat: add team member — <name>"
 ```
 
-Tell the user:
+In a cloud session, also push: `git push -u origin HEAD`.
 
-> "Team member added! Edit the placeholder bio in:
->
-> - `src/content/team/de/<slug>.md`
-> - `src/content/team/en/<slug>.md`
->
-> Run `pnpm dev` to see them on the team page."
+Tell the user the team member is saved in both languages. In a local session, start `pnpm dev` yourself and give them the link. In a cloud session, tell them it appears on the preview link once the pull request is open, or on the site once it's merged.

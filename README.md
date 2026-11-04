@@ -23,6 +23,8 @@
 
 ## Quick Start
 
+**You'll need:** a GitHub account (free) and a Claude plan that includes Claude Code (Pro or higher). Hosting on Cloudflare Pages is free.
+
 **Easiest — no install needed:**
 
 ```

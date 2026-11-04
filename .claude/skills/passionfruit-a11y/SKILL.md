@@ -16,6 +16,8 @@ Accessibility is enforced at build time — `jsx-a11y/alt-text` is error-level l
 5. **Landmark roles for top-level structure.** `<main>`, `<nav>`, `<header>`, `<footer>` for top-level page structure — not generic `<div>` walls. State pages (404, 500) must wrap their content in `<main>` so screen readers can land on it.
 6. **Labelled form fields.** Every `<input>`, `<select>`, `<textarea>` has a `<label>` — visible or `class="sr-only"`. Error messages link to the field via `aria-describedby`. No placeholder-as-label tricks.
 
+7. **Accent contrast.** `--color-accent` must reach 4.5:1 on white, which the build enforces. It's tuned for light surfaces, so accent-colored text on dark surfaces uses `text-accent-glow`.
+
 ## Common mistakes
 
 - **`<img>` with no `alt`.** Build fails. If decorative, `alt=""` — not the absence of the attribute.
