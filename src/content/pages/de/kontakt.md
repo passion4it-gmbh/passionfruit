@@ -7,9 +7,3 @@ description: "Nehmen Sie Kontakt mit uns auf — wir freuen uns auf Ihr Projekt.
 ## Schreiben Sie uns
 
 Haben Sie ein Projekt im Sinn? Wir freuen uns darauf, von Ihnen zu hören. Nutzen Sie das Kontaktformular oder schreiben Sie uns direkt eine E-Mail.
-
-## So erreichen Sie uns
-
-- **E-Mail:** hello@example.com
-- **Telefon:** +49 123 456 789
-- **Adresse:** Musterstraße 1, 12345 Musterstadt

@@ -7,7 +7,7 @@ tags: [page]
 
 ## Purpose
 
-Renders the bilingual careers (job listings) index page. Queries the `careers` collection for the current locale, sorts jobs by `postedAt` descending (newest first), and displays them in a `CareerCard` grid below a dark hero. Shows an empty-state message when no openings exist.
+Renders the bilingual careers (job listings) index page. Queries the `careers` collection for the current locale, sorts jobs by `postedAt` descending (newest first), and displays them in a `CareerCard` grid below a text-only dark `AsymmetricHero` (headline left, lede right). Shows an empty-state message when no openings exist.
 
 ## When to use
 
@@ -29,7 +29,7 @@ For a single job posting detail view, the catch-all route dispatches to `CareerP
 Composes:
 
 - `<BaseLayout>` (headerVariant: "on-dark")
-- Dark hero with `site.name` eyebrow, `careers.title` heading, and `careers.description` lead
+- `<AsymmetricHero tone="dark">` (text-only): `careers.title` headline left, `careers.description` lede right
 - Job listings section (dark surface): `<CareerCard>` repeated for each locale-matching job, or `careers.noOpenings` empty-state text
 
 ## i18n keys
@@ -39,7 +39,6 @@ Composes:
 | `careers.title`       | Page `<title>`, hero heading, and SEO title      |
 | `careers.description` | Meta description and hero lead paragraph         |
 | `careers.noOpenings`  | Empty-state message when the collection is empty |
-| `site.name`           | Hero eyebrow label                               |
 
 ## Gotchas
 

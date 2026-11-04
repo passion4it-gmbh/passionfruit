@@ -28,10 +28,12 @@ const {
   class: className,
 } = Astro.props;
 
-const maxWidthByContainer: Record<Container, string> = {
+// "default" is the site-wide .container (same edge as header and footer);
+// the others only change its max-width.
+const maxWidthByContainer: Record<Container, string | undefined> = {
   narrow: "48rem",
-  default: "72rem",
-  wide: "80rem",
+  default: undefined,
+  wide: "88rem",
   full: "none",
 };
 
@@ -47,17 +49,21 @@ const maxWidth = maxWidthByContainer[containerKey];
 <Tag
   data-tone={tone}
   class:list={["pf-section", className]}
-  style={`padding-block: ${paddingVar};`}
+  style={`--pf-section-pad: ${paddingVar};`}
 >
   <div
-    class="pf-section__inner"
-    style={`max-width: ${maxWidth}; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 2rem);`}
+    class="container pf-section__inner"
+    style={maxWidth && `max-width: ${maxWidth};`}
   >
     <slot />
   </div>
 </Tag>
 
 <style>
+  .pf-section {
+    padding-block: var(--pf-section-pad);
+  }
+
   .pf-section[data-tone="surface"] {
     background-color: var(--color-surface);
     color: var(--color-text);
@@ -68,9 +74,30 @@ const maxWidth = maxWidthByContainer[containerKey];
     color: var(--color-text);
   }
 
+  /* Remap the semantic text/border tokens so everything inside a dark
+     section (headings from typography.css, archetype ledes, hairlines,
+     Tailwind text-* utilities) reads correctly without per-component
+     overrides. Light cards placed inside a dark section inherit these too —
+     keep card grids on light tones. */
   .pf-section[data-tone="dark"] {
+    --color-text: color-mix(
+      in srgb,
+      var(--color-text-on-dark) 85%,
+      transparent
+    );
+    --color-text-heading: var(--color-text-on-dark);
+    --color-muted: color-mix(
+      in srgb,
+      var(--color-text-on-dark) 65%,
+      transparent
+    );
+    --color-border: color-mix(
+      in srgb,
+      var(--color-text-on-dark) 12%,
+      transparent
+    );
     background-color: var(--color-surface-dark);
-    color: var(--color-text-on-dark);
+    color: var(--color-text);
   }
 
   /* --color-accent is tuned for white backgrounds, too dark for text here */

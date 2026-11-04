@@ -115,10 +115,8 @@
     },
     "features": {
       "title": "Was wir bieten",
-      "subtitle": "Maßgeschneiderte digitale Lösungen für Ihr Unternehmen."
-    },
-    "testimonials": {
-      "title": "Was unsere Kunden sagen"
+      "subtitle": "Maßgeschneiderte digitale Lösungen für Ihr Unternehmen.",
+      "cta": "Alle Leistungen"
     },
     "faq": {
       "title": "Häufig gestellte Fragen"
@@ -127,23 +125,19 @@
       "title": "Bereit für den nächsten Schritt?",
       "subtitle": "Lassen Sie uns gemeinsam Ihre digitale Zukunft gestalten.",
       "cta": "Kontakt aufnehmen"
+    },
+    "work": {
+      "title": "Ergebnisse, die für sich sprechen",
+      "cta": "Alle Referenzen"
+    },
+    "journal": {
+      "title": "Neues aus unserem Blog",
+      "cta": "Alle Beiträge"
     }
   },
   "services": {
     "title": "Unsere Leistungen",
-    "description": "Entdecken Sie unser Leistungsangebot.",
-    "webDesign": {
-      "title": "Webdesign",
-      "description": "Moderne, responsive Websites, die begeistern."
-    },
-    "development": {
-      "title": "Webentwicklung",
-      "description": "Technisch einwandfreie Lösungen mit modernsten Technologien."
-    },
-    "consulting": {
-      "title": "Beratung",
-      "description": "Strategische Beratung für Ihre digitale Transformation."
-    }
+    "description": "Entdecken Sie unser Leistungsangebot."
   },
   "about": {
     "title": "Über uns",

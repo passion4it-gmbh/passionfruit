@@ -1,13 +1,13 @@
 ---
 component: services
-oneLiner: Renders the bilingual services page with icon-driven service cards and a CTA
+oneLiner: Bilingual services page with dark hero, numbered FeatureList, and CTA band
 status: stable
 tags: [page]
 ---
 
 ## Purpose
 
-Renders the bilingual services page. Composes a dark hero (optional heroImage), three alternating two-column service sections (icon, heading, description, feature checklist, placeholder graphic), and a dark CTA strip pointing to the contact page.
+Renders the bilingual services page: a dark `AsymmetricHero` (optional heroImage from the `pages` collection), the services as a numbered `FeatureList`, and a `CtaBand` pointing to the contact page.
 
 ## When to use
 
@@ -19,43 +19,34 @@ For a single service detail page, create a new page component — this template 
 
 ## Props
 
-| Prop          | Type     | Required | Default | Notes                                                   |
-| ------------- | -------- | -------- | ------- | ------------------------------------------------------- |
-| `lang`        | `Locale` | yes      | —       | Drives i18n strings, feature lists, and alternate slug. |
-| `currentSlug` | `string` | yes      | —       | Passed through to `BaseLayout` for the active nav link. |
+| Prop          | Type     | Required | Default | Notes                                                       |
+| ------------- | -------- | -------- | ------- | ----------------------------------------------------------- |
+| `lang`        | `Locale` | yes      | —       | Drives i18n strings, the services list, and alternate slug. |
+| `currentSlug` | `string` | yes      | —       | Passed through to `BaseLayout` for the active nav link.     |
 
 ## Example
 
 Composes:
 
 - `<BaseLayout>` (headerVariant: "on-dark")
-- Dark hero with optional `<Image>` from the `pages` collection `heroImage`
-- Three alternating service rows (inline, no sub-component): Palette / Code / Lightbulb icons from `@lucide/astro`, feature checklists with `<CheckCircle>` icons
-- Dark CTA strip with `<Button>` → contact page
-
-Service titles, descriptions, and feature bullet lists are hardcoded in the component (with inline `lang === "de"` branching for features). Titles and descriptions use i18n keys; feature strings are hardcoded per locale.
+- `<AsymmetricHero tone="dark">` — text-only, or image-right when the `pages` entry has a `heroImage`
+- `<FeatureList>` fed by `getServices(lang)` from `src/data/services.ts`
+- `<CtaBand>` → contact page
 
 ## i18n keys
 
-| Key                                | Notes                                  |
-| ---------------------------------- | -------------------------------------- |
-| `services.title`                   | Page `<title>`, hero heading, SEO meta |
-| `services.description`             | Meta description, hero lead            |
-| `services.webDesign.title`         | First service section heading          |
-| `services.webDesign.description`   | First service section body             |
-| `services.development.title`       | Second service section heading         |
-| `services.development.description` | Second service section body            |
-| `services.consulting.title`        | Third service section heading          |
-| `services.consulting.description`  | Third service section body             |
-| `home.ctaSection.title`            | CTA strip heading (shared with Home)   |
-| `home.ctaSection.subtitle`         | CTA strip subtext (shared with Home)   |
-| `cta.contact`                      | CTA button label                       |
-| `site.name`                        | Hero eyebrow label                     |
+| Key                        | Notes                                   |
+| -------------------------- | --------------------------------------- |
+| `services.title`           | Page `<title>`, hero headline           |
+| `services.description`     | Meta description, hero lede             |
+| `home.features.title`      | FeatureList headline (shared with Home) |
+| `home.ctaSection.title`    | CTA band headline (shared with Home)    |
+| `home.ctaSection.subtitle` | CTA band lede (shared with Home)        |
+| `cta.contact`              | CTA button label                        |
 
 ## Gotchas
 
-- **`heroImage` is optional.** Sourced from the `pages` collection entry with `translationKey: "services"`. When absent, the hero is single-column text. When present, a two-column grid is used.
-- **Service features are hardcoded.** The four bullet points under each service are inline arrays with `lang === "de"` branching — not i18n keys. To customize them, edit the component source directly.
-- **Three services are hardcoded.** Adding or removing services requires editing the `services` array in the component — there is no CMS-driven service collection.
+- **`heroImage` is optional.** Sourced from the `pages` collection entry with `translationKey: "services"`. Without it the hero is text-only (headline left, lede right).
+- **Services live in `src/data/services.ts`**, per locale, as `FeatureListItem`s (`title`, `body`, `bullets`). Add, remove or reword services there — the home page teaser reads the same list.
 - **CTA heading reuses `home.ctaSection.*` keys.** This is intentional — the same copy is acceptable here. If services need a distinct CTA message, add new i18n keys and update both `de.json` and `en.json`.
 - **Bilingual page entry optional.** Unlike `contact` and legal pages, this template does not redirect on a missing page entry — the `heroImage` lookup just returns `undefined`. A missing entry is non-fatal.

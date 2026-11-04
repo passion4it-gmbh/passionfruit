@@ -1,13 +1,16 @@
 ---
-import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import { stats } from "~/data/stats";
 import type { Locale } from "~/i18n";
-import { useTranslations, getLocalizedPath } from "~/i18n";
+import { useTranslations } from "~/i18n";
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import Section from "~/components/Section.astro";
 import Button from "~/components/Button.astro";
+import Motion from "~/components/motion/Motion.astro";
 import TeamCard from "~/components/TeamCard.astro";
-import { getAlternateCollectionSlug } from "~/lib/page-registry";
+import AsymmetricHero from "~/components/sections/AsymmetricHero.astro";
+import CtaBand from "~/components/sections/CtaBand.astro";
+import { getAlternateCollectionSlug, pageHref } from "~/lib/page-registry";
 import { ArrowRight, Shield, Eye, Zap, Heart } from "@lucide/astro";
 
 interface Props {
@@ -31,26 +34,10 @@ const heroImage = pagesEntries.find(
 )?.data.heroImage;
 
 const values = [
-  {
-    icon: Shield,
-    titleKey: "about.values.quality.title",
-    descKey: "about.values.quality.description",
-  },
-  {
-    icon: Eye,
-    titleKey: "about.values.transparency.title",
-    descKey: "about.values.transparency.description",
-  },
-  {
-    icon: Zap,
-    titleKey: "about.values.innovation.title",
-    descKey: "about.values.innovation.description",
-  },
-  {
-    icon: Heart,
-    titleKey: "about.values.accessibility.title",
-    descKey: "about.values.accessibility.description",
-  },
+  { icon: Shield, key: "quality" },
+  { icon: Eye, key: "transparency" },
+  { icon: Zap, key: "innovation" },
+  { icon: Heart, key: "accessibility" },
 ];
 ---
 
@@ -62,191 +49,82 @@ const values = [
   alternateSlug={alternateSlug}
   headerVariant="on-dark"
 >
-  <!-- Hero -->
-  <section class="bg-surface-dark noise relative overflow-hidden">
-    <div class="absolute inset-0 bg-grid opacity-20"></div>
-    <div
-      class="glow-orb absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full bg-warm/10 blur-[120px] translate-y-1/3"
-    ></div>
-    <div
-      class="glow-orb absolute top-1/3 -left-20 w-[400px] h-[400px] rounded-full bg-accent/15 blur-[100px]"
-    ></div>
-    <div class="container relative z-10 pt-40 pb-20 md:pt-48 md:pb-24">
-      <div
-        class:list={[
-          "grid items-center gap-12 lg:gap-16",
-          heroImage && "lg:grid-cols-2",
-        ]}
-      >
-        <div>
-          <p
-            class="eyebrow hero-stagger text-accent-glow"
-            style="--delay: 100ms"
-          >
-            {t("about.story.eyebrow")}
-          </p>
-          <h1
-            class="text-display text-text-on-dark mt-6 max-w-3xl hero-stagger"
-            style="--delay: 200ms"
-          >
-            {t("about.story.title")}
-          </h1>
-          <p
-            class="text-body-lg text-text-on-dark/60 mt-6 max-w-2xl hero-stagger"
-            style="--delay: 400ms"
-          >
-            {t("about.story.text")}
-          </p>
-        </div>
-        {heroImage && <div class="relative hero-stagger" style="--delay: 500ms">
+  <AsymmetricHero
+    tone="dark"
+    eyebrow={t("about.story.eyebrow")}
+    headline={t("about.story.title")}
+    lede={t("about.story.text")}
+    image={heroImage}
+  />
+
+  {stats.length > 0 && <div class="container relative z-10 -mt-14">
+    <dl
+      class="grid grid-cols-2 md:grid-cols-4 gap-y-8 rounded-2xl border border-border bg-surface-elevated px-6 py-8 shadow-xl shadow-accent/5 md:divide-x md:divide-border md:py-10 hero-stagger"
+      style="--delay: 400ms"
+    >
+      {stats.map((stat) => <div class="flex flex-col-reverse text-center px-4">
+        <dt class="text-body-sm font-medium text-muted mt-1">
+          {t(stat.labelKey)}
+        </dt>
+        <dd class="text-h1 font-extrabold gradient-text">{stat.value}</dd>
+      </div>)}
+    </dl>
+  </div>}
+
+  <Section>
+    <Motion>
+      <p class="eyebrow">{t("about.values.eyebrow")}</p>
+      <h2 class="text-h1 mt-3 max-w-2xl text-balance">
+        {t("about.values.title")}
+      </h2>
+    </Motion>
+
+    <div class="grid gap-x-12 sm:grid-cols-2 mt-12">
+      {values.map((val, i) => <Motion delay={(i % 2) * 100}>
+        <div class="flex gap-5 border-t border-border py-8">
           <div
-            class="absolute -inset-8 rounded-[2rem] bg-gradient-to-br from-accent/20 via-transparent to-warm/20 blur-2xl"
-          />
-          <Image
-            src={heroImage}
-            alt=""
-            class="relative rounded-2xl shadow-2xl shadow-accent/10 ring-1 ring-white/10"
-            widths={[400, 600, 800, 1200]}
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            loading="eager"
-          />
-        </div>}
-      </div>
-    </div>
-  </section>
-
-  <!-- Stats -->
-  {stats.length > 0 && <section class="relative -mt-12 z-20">
-    <div class="container">
-      <div
-        class="glass-light rounded-2xl p-8 md:p-10 grid grid-cols-2 md:grid-cols-4 gap-8 shadow-xl shadow-accent/5 hero-stagger"
-        style="--delay: 600ms"
-      >
-        {stats.map((stat) => <div class="text-center">
-          <p class="text-h2 font-extrabold gradient-text">{stat.value}</p>
-          <p class="text-muted text-sm mt-1 font-medium">
-            {t(stat.labelKey)}
-          </p>
-        </div>)}
-      </div>
-    </div>
-  </section>}
-
-  <!-- Values -->
-  <section class="py-28 md:py-36">
-    <div class="container">
-      <div class="max-w-2xl anim-slide-up">
-        <p class="eyebrow">{t("about.values.eyebrow")}</p>
-        <h2 class="text-h2 text-text-heading mt-4">
-          {t("about.values.title")}
-        </h2>
-      </div>
-
-      <div class="grid gap-6 sm:grid-cols-2 mt-16">
-        {values.map((val, i) => <div
-          class="card group anim-card-enter"
-          style={`--delay: ${i * 100}ms`}
-        >
-          <div class="flex gap-5">
-            <div
-              class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0 transition-colors group-hover:bg-accent/20"
-            >
-              <val.icon class="w-6 h-6 text-accent" />
-            </div>
-            <div>
-              <h3 class="text-h3 text-text-heading">{t(val.titleKey)}</h3>
-              <p class="text-muted mt-2 leading-relaxed">
-                {t(val.descKey)}
-              </p>
-            </div>
+            class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0"
+          >
+            <val.icon class="w-6 h-6 text-accent" aria-hidden="true" />
           </div>
-        </div>)}
-      </div>
+          <div>
+            <h3 class="text-h3">{t(`about.values.${val.key}.title`)}</h3>
+            <p class="text-muted mt-2 leading-relaxed">
+              {t(`about.values.${val.key}.description`)}
+            </p>
+          </div>
+        </div>
+      </Motion>)}
     </div>
-  </section>
+  </Section>
 
-  <!-- Team preview -->
-  <section
-    class="py-28 md:py-36 bg-surface-dark noise relative overflow-hidden"
-  >
-    <div
-      class="absolute top-0 left-1/3 w-[500px] h-[500px] rounded-full bg-accent/10 blur-[140px] -translate-y-1/2"
-    ></div>
-    <div class="container relative z-10">
-      <div class="text-center anim-slide-up">
-        <p class="eyebrow text-accent-glow">{t("team.title")}</p>
-        <h2 class="text-h2 text-text-on-dark mt-4">{t("team.description")}</h2>
-      </div>
-
-      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 mt-16">
-        {members.map((member, i) => <div
-          class="anim-card-enter"
-          style={`--delay: ${i * 100}ms`}
-        >
-          <TeamCard entry={member} lang={lang} />
-        </div>)}
-      </div>
-
-      <div class="text-center mt-12 anim-fade">
-        <Button
-          href={getLocalizedPath("team", lang)}
-          variant="secondary"
-          tone="on-dark"
-          class="group"
-        >
+  {members.length > 0 && <Section tone="elevated">
+    <Motion>
+      <header class="flex flex-wrap items-end justify-between gap-6 mb-12">
+        <div>
+          <p class="eyebrow">{t("team.title")}</p>
+          <h2 class="text-h1 mt-3">{t("team.description")}</h2>
+        </div>
+        <Button href={pageHref("team", lang)} variant="ghost" class="group">
           {t("navigation.team")}
           <ArrowRight
             class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
+            aria-hidden="true"
           />
         </Button>
-      </div>
-    </div>
-  </section>
+      </header>
+    </Motion>
 
-  <!-- CTA -->
-  <section class="relative py-28 md:py-36 overflow-hidden">
-    <div class="container text-center anim-scale-blur">
-      <h2 class="text-h1 text-text-heading max-w-2xl mx-auto">
-        {t("home.ctaSection.title")}
-      </h2>
-      <p class="text-body-lg text-muted mt-4 max-w-lg mx-auto">
-        {t("home.ctaSection.subtitle")}
-      </p>
-      <div class="mt-10">
-        <Button
-          href={getLocalizedPath(lang === "de" ? "kontakt" : "contact", lang)}
-          variant="primary"
-          class="btn-glow group"
-        >
-          {t("cta.contact")}
-          <ArrowRight
-            class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
-          />
-        </Button>
-      </div>
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {members.map((member, i) => <Motion delay={(i % 3) * 100}>
+        <TeamCard entry={member} lang={lang} />
+      </Motion>)}
     </div>
-  </section>
+  </Section>}
+
+  <CtaBand
+    headline={t("home.ctaSection.title")}
+    lede={t("home.ctaSection.subtitle")}
+    cta={{ label: t("cta.contact"), href: pageHref("contact", lang) }}
+  />
 </BaseLayout>
-
-<script>
-  function initScrollAnimations() {
-    if (CSS.supports("animation-timeline: scroll()")) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries)
-          if (e.isIntersecting) {
-            e.target.classList.add("in-view");
-            observer.unobserve(e.target);
-          }
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
-    );
-    document
-      .querySelectorAll(
-        ".anim-card-enter, .anim-slide-up, .anim-fade, .anim-scale-blur",
-      )
-      .forEach((el) => observer.observe(el));
-  }
-  initScrollAnimations();
-  document.addEventListener("astro:after-swap", initScrollAnimations);
-</script>

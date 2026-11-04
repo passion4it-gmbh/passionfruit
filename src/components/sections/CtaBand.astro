@@ -1,0 +1,83 @@
+---
+import { ArrowRight } from "@lucide/astro";
+import Section from "~/components/Section.astro";
+import Button from "~/components/Button.astro";
+import Motion from "~/components/motion/Motion.astro";
+import type { CtaBandProps } from "~/types/sections";
+
+type Props = CtaBandProps;
+
+const { headline, lede, cta, tone = "dark", padding = "lg" } = Astro.props;
+
+const buttonTone = tone === "dark" ? "on-dark" : "on-light";
+---
+
+<Section
+  tone={tone}
+  padding={padding}
+  container="narrow"
+  class={tone === "dark" ? "pf-cta-glow" : undefined}
+>
+  <Motion effect="scale-in" duration="slow">
+    <div class="pf-cta">
+      <h2 class="text-display pf-cta__headline">{headline}</h2>
+      {lede && <p class="text-body-lg pf-cta__lede">{lede}</p>}
+      <div class="pf-cta__action">
+        <Button
+          href={cta.href}
+          variant="primary"
+          tone={buttonTone}
+          class="btn-glow group"
+        >
+          {cta.label}
+          <ArrowRight
+            class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
+            aria-hidden="true"
+          />
+        </Button>
+      </div>
+    </div>
+  </Motion>
+</Section>
+
+<style>
+  /* One light pool behind the headline: the eye lands on the ask. */
+  :global(.pf-cta-glow) {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  :global(.pf-cta-glow)::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      44rem 24rem at 50% 55%,
+      color-mix(in srgb, var(--color-accent) 26%, transparent),
+      color-mix(in srgb, var(--color-warm) 6%, transparent) 55%,
+      transparent 75%
+    );
+  }
+
+  .pf-cta {
+    text-align: center;
+  }
+
+  .pf-cta__headline {
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .pf-cta__lede {
+    margin: var(--space-6) auto 0;
+    max-width: 36rem;
+    color: var(--color-muted);
+  }
+
+  .pf-cta__action {
+    margin-top: var(--space-8);
+  }
+</style>

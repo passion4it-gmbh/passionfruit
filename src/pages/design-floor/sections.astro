@@ -8,12 +8,14 @@ import SplitFeature from "~/components/sections/SplitFeature.astro";
 import Trust from "~/components/sections/Trust.astro";
 import Comparison from "~/components/sections/Comparison.astro";
 import FAQ from "~/components/sections/FAQ.astro";
+import FeatureList from "~/components/sections/FeatureList.astro";
+import CtaBand from "~/components/sections/CtaBand.astro";
 import heroImage from "~/assets/home/hero.png";
 import blogA from "~/assets/blog/ai-websites.png";
 import blogB from "~/assets/blog/digital-transformation.png";
 import portraitA from "~/assets/case-studies/portrait-manufacturing.png";
 import portraitB from "~/assets/case-studies/portrait-shopify.png";
-import logoConsulting from "~/assets/case-studies/logo-consulting.png";
+import portraitConsulting from "~/assets/case-studies/portrait-consulting.png";
 import anna from "~/assets/team/anna.png";
 import lena from "~/assets/team/lena.png";
 import max from "~/assets/team/max.png";
@@ -127,11 +129,11 @@ const comparisonRows = [
 ];
 
 const trustLogos = [
-  { src: logoConsulting, alt: "Acme Consulting" },
-  { src: logoConsulting, alt: "Beta Partners" },
-  { src: logoConsulting, alt: "Gamma Studio" },
-  { src: logoConsulting, alt: "Delta Group" },
-  { src: logoConsulting, alt: "Epsilon Labs" },
+  { src: portraitConsulting, alt: "Acme Consulting" },
+  { src: portraitConsulting, alt: "Beta Partners" },
+  { src: portraitConsulting, alt: "Gamma Studio" },
+  { src: portraitConsulting, alt: "Delta Group" },
+  { src: portraitConsulting, alt: "Epsilon Labs" },
 ];
 
 const faqItems = [
@@ -279,5 +281,41 @@ const faqItems = [
     imagePosition="left"
     tone="dark"
     cta={{ label: "Open dark mode", href: "#" }}
+  />
+
+  <AsymmetricHero
+    eyebrow="Text only"
+    headline="No image? The lede takes the other half"
+    lede="Without an image the hero splits headline and lede across the grid, sharing a baseline, instead of leaving half the hero empty."
+    tone="dark"
+  />
+
+  <FeatureList
+    eyebrow="Feature list"
+    headline="Numbered rows when there are no pictures"
+    lede="Index, title, body and an optional checklist. Typography and hairlines do the work."
+    items={[
+      {
+        title: "Strategy",
+        body: "Find the one thing the site has to do, then cut everything else.",
+        bullets: ["Audience", "Positioning", "Sitemap", "Success metric"],
+      },
+      {
+        title: "Design",
+        body: "Tokens first, pages second — so the brand survives the next redesign.",
+        bullets: ["Type scale", "Colour tokens", "Section rhythm", "Motion"],
+      },
+      {
+        title: "Build",
+        body: "Static, fast and accessible by default.",
+      },
+    ]}
+    cta={{ label: "All services", href: "#" }}
+  />
+
+  <CtaBand
+    headline="Ready for the next step?"
+    lede="One question, one line, one button. The last thing before the footer."
+    cta={{ label: "Get in touch", href: "#" }}
   />
 </BaseLayout>
