@@ -30,7 +30,7 @@ Composes:
 
 - `<BaseLayout>` (headerVariant: "on-dark")
 - Inline dark hero section with optional `<Image>` from `pages` collection `heroImage`
-- Stats strip (glass card: 4 hardcoded stats with i18n labels)
+- Stats strip (glass card: values from `src/data/stats.ts` with i18n labels, hidden when empty)
 - Values grid (4 icon+text cards, icons from `@lucide/astro`)
 - `<TeamCard>` repeated for each locale-matching team member
 - `<Button>` → team page CTA

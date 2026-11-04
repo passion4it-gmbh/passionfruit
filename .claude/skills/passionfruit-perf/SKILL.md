@@ -16,6 +16,8 @@ passionfruit is a static-output Astro site. Performance comes from disciplined d
 5. **Update `public/_headers` CSP before adding any third-party host.** Scripts, fonts, iframes, images from a new origin all need the CSP updated first. Violations show up silently in PostHog when reporting is enabled (`PUBLIC_POSTHOG_API_KEY` set at build time triggers the `report-to` directive).
 6. **Prefer `client:idle` or `client:visible` over `client:load`** on Astro components. `client:load` blocks the main thread during hydration; `client:idle` waits for idle time and `client:visible` waits until the component is on-screen. Use `client:load` only when the component must be interactive on first paint.
 
+7. **Tracking scripts need consent.** Anything that tracks visitors loads only after `window.hasAnalyticsConsent()` is true, and must stop when `passionfruit:consent-changed` reports a withdrawal. Set host-only cookies, or `CookieConsent` can't clear them.
+
 ## Common mistakes
 
 - **Raw `<img src="...">`** instead of `<Image>` — loses AVIF/WebP, loses responsive sizing, often causes CLS.

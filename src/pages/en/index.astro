@@ -175,7 +175,7 @@ const servicesHref = getLocalizedPath("services", lang);
   </section>
 
   <!-- ═══════════ TESTIMONIALS ═══════════ -->
-  <section
+  {testimonials.length > 0 && <section
     class="py-28 md:py-40 bg-surface-dark noise relative overflow-hidden"
   >
     <div
@@ -204,10 +204,12 @@ const servicesHref = getLocalizedPath("services", lang);
         </div>)}
       </div>
     </div>
-  </section>
+  </section>}
 
   <!-- ═══════════ FAQs ═══════════ -->
-  <FAQ headline={t("home.faq.title")} items={faqItems} />
+  {faqItems.length > 0 && (
+    <FAQ headline={t("home.faq.title")} items={faqItems} />
+  )}
 
   <!-- ═══════════ CTA ═══════════ -->
   <section

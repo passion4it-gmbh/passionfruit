@@ -7,6 +7,10 @@ description: Personalize a fresh passionfruit template or migrate an existing we
 
 This skill personalizes a fresh passionfruit template for a new website, or migrates an existing website into the template.
 
+## How to work with the user
+
+The user is usually not technical. Reply in their language, use plain words, and do the technical work yourself. Only show a file path or command if they ask, or if they have to act on it. Never ask them to paste passwords, API keys or tokens into the chat.
+
 ## When to trigger
 
 - User explicitly runs `/onboard`
@@ -73,7 +77,7 @@ Ask the user:
 
 **Option B: Migrate existing site** — ask the user for the URL of their existing website. Then:
 
-1. Crawl the site (or ask the user to describe the pages)
+1. Fetch the site. If you can't reach it, which can happen in cloud sessions, ask the user to paste the text of each page or describe it
 2. Identify: company name, tagline, pages, colors, content structure
 3. Run through the same personalization steps below, pre-filling answers from the existing site
 4. After setup, offer to rebuild the existing content:
@@ -103,6 +107,17 @@ Ask these ONE AT A TIME using the AskUserQuestion tool:
 7. "Contact details?" — email, phone, address for footer, contact page, and legal pages
 8. "Details for your imprint?" (German sites need these) — legal form, who is legally responsible for the content, VAT ID, and commercial register court + number if registered
 9. "Social media links?" — LinkedIn, Instagram, X/Twitter, etc.
+10. "Do you already own a web address?" — if yes, use it for `site` in `astro.config.mjs`. If no, leave it, because `/deploy` sets it.
+
+## Real content only
+
+This site speaks for a real business, so never invent facts about it. Don't make up people, customer quotes, client names, case studies, numbers, awards, certifications, prices, opening hours or job openings.
+
+- Write copy only from what the user told you or what's on their existing site. You can word it well, but don't add claims.
+- For each collection they kept in Q6, ask for real entries. If they have none yet, remove that section as described below and tell them they can add it later. Example entries must not go live.
+- If there are no real testimonials, FAQs or stats, empty those arrays in `src/data/`. The site hides each section when it's empty.
+- Don't generate portraits of real people.
+- Tell the user what you removed or left out in your final message.
 
 ## After answers
 
@@ -123,7 +138,7 @@ These files only apply to the passionfruit template itself. Derived projects don
 Brand name, URL, and logo are **derived from config + i18n** — never hardcoded in component or library code. Change them in these few places and they propagate everywhere (header, footer, page titles, JSON-LD, sitemap):
 
 - `src/i18n/de.json` and `src/i18n/en.json` — `site.name`, `site.tagline`, `site.description`, `footer.copyright`, plus any navigation labels
-- `astro.config.mjs` — the `site` URL (drives canonical URLs, sitemap, OG tags, JSON-LD)
+- `astro.config.mjs` — the `site` URL from Q10, if they have one (drives canonical URLs, sitemap, OG tags, JSON-LD)
 - `src/styles/global.css` — accent tokens `--color-accent`, `--color-accent-hover`, `--color-accent-glow`. `pnpm build` fails if the accent is under 4.5:1 on white. For a custom color, set it and run `node scripts/check-accent-contrast.mjs`: if it fails, use the shade it prints as `--color-accent`, keep the original as `--color-accent-glow`, and tell the user why. The glow must stay readable on the dark surface.
 - `src/layouts/BaseLayout.astro` — the `theme-color` meta tag, set to the accent
 
@@ -131,7 +146,7 @@ Apart from that meta tag, do **not** edit `structured-data.ts`, `BaseLayout.astr
 
 ### Rewrite the fixture content
 
-The template ships example content branded "Greenleaf Digital". Rewrite or remove it for every collection the user keeps, in **both** `de/` and `en/`:
+The template ships example content branded "Greenleaf Digital". Replace it with real content or remove it for every collection, in **both** `de/` and `en/`:
 
 - `src/content/blog/` — example posts
 - `src/content/team/` — example team members
@@ -139,7 +154,9 @@ The template ships example content branded "Greenleaf Digital". Rewrite or remov
 - `src/content/careers/` — example job postings (delete the collection if no Careers section)
 - `src/content/caseStudies/` — example case studies (delete if not used)
 - `src/content/events/` — example events (delete if not used)
-- `src/data/testimonials.ts` — example testimonial `quote` / `author` / `company` values (rewrite, or empty the arrays)
+- `src/data/testimonials.ts` — example testimonial `quote` / `author` / `company` values (real quotes only, otherwise empty the arrays)
+- `src/data/faqs.ts` — example questions about the template itself (rewrite from what the user told you, otherwise empty the arrays)
+- `src/data/stats.ts` — the example numbers on the About page (real numbers from the user only, with their labels under `about.stats` in the i18n files, otherwise empty the array)
 
 ### Remove unused pages and collections
 
@@ -170,7 +187,7 @@ pnpm generate-og --lang <de|en>  # single-language site: only the locale you kep
 ### Verify nothing was missed
 
 ```bash
-git grep --untracked -inE 'greenleaf|musterstra|musterstadt|hello@example\.com|\+49 123 456 789|DE123456789|platzhalter|is a placeholder' -- src/content src/i18n src/data   # expect: no matches
+git grep --untracked -inE 'greenleaf|musterstra|musterstadt|hello@example\.com|\+49 123 456 789|DE123456789|platzhalter|is a placeholder|Brauche ich Programmierkenntnisse|Do I need programming skills|"98%"' -- src/content src/i18n src/data   # expect: no matches
 pnpm build   # runs the fixture, accent and bilingual gates
 ```
 

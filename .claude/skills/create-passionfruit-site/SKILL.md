@@ -38,13 +38,13 @@ Don't announce success — only speak up if something needs the user's action.
 
 Ask these ONE AT A TIME using AskUserQuestion:
 
-1. **"What should the new site be called?"** — used as the directory name and (if applicable) GitHub repo name. Validate: kebab-case, ASCII letters/digits/dashes, no spaces, doesn't already exist in cwd.
+1. **"What's the name of your business or project?"** — turn the answer into the directory and GitHub repo name yourself: kebab-case, ASCII letters/digits/dashes, not already taken in cwd. Don't ask the user to format it.
 2. **"Where should the site live?"** — three options:
    - `GitHub (public)` — needs `gh` authenticated
    - `GitHub (private)` — needs `gh` authenticated
    - `Local only` — clones from GitHub, strips remote, re-inits git
 
-If the user picks a GitHub option but `gh auth status` fails, fall back to Local only and tell the user they can `gh repo create` and push later.
+If the user picks a GitHub option but `gh auth status` fails, offer to run `gh auth login` with them. If `gh` isn't installed or they'd rather not, fall back to Local only and tell them `/deploy` will help them put it on GitHub later.
 
 ## Step 3: Scaffold
 

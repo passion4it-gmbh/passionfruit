@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
+import { stats } from "~/data/stats";
 import type { Locale } from "~/i18n";
 import { useTranslations, getLocalizedPath } from "~/i18n";
 import BaseLayout from "~/layouts/BaseLayout.astro";
@@ -50,13 +51,6 @@ const values = [
     titleKey: "about.values.accessibility.title",
     descKey: "about.values.accessibility.description",
   },
-];
-
-const stats = [
-  { value: "50+", labelKey: "about.stats.projects" },
-  { value: "98%", labelKey: "about.stats.satisfaction" },
-  { value: "12+", labelKey: "about.stats.technologies" },
-  { value: "2", labelKey: "about.stats.languages" },
 ];
 ---
 
@@ -122,7 +116,7 @@ const stats = [
   </section>
 
   <!-- Stats -->
-  <section class="relative -mt-12 z-20">
+  {stats.length > 0 && <section class="relative -mt-12 z-20">
     <div class="container">
       <div
         class="glass-light rounded-2xl p-8 md:p-10 grid grid-cols-2 md:grid-cols-4 gap-8 shadow-xl shadow-accent/5 hero-stagger"
@@ -136,7 +130,7 @@ const stats = [
         </div>)}
       </div>
     </div>
-  </section>
+  </section>}
 
   <!-- Values -->
   <section class="py-28 md:py-36">

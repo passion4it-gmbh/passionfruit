@@ -26,7 +26,12 @@ Options:
 
 ### Option A: User has a logo file
 
-Ask for the file path. Then:
+Get the file:
+
+- **Local session:** ask for the file path.
+- **Cloud session (`CLAUDE_CODE_REMOTE=true`):** there's no file path. Ask the user to upload the logo to their repo on GitHub (**Add file → Upload files**), then pull it.
+
+Then:
 
 **Always keep a `public/favicon.svg`.** `pnpm generate-og` and its tests need it, so removing it breaks CI. A raster logo gets the SVG wrapper below.
 
@@ -44,15 +49,15 @@ Ask for the file path. Then:
 
 Ask: "Describe your brand briefly — what does your company do, and what style do you prefer? (minimal, bold, playful, corporate, etc.)"
 
-Then generate:
+If `OPENAI_API_KEY` isn't set, don't send a non-technical user off to get one. Write a simple SVG mark yourself, such as their initial on a shape in the accent color, save it as `public/favicon.svg`, and show them the result.
+
+If the key is set, generate:
 
 ```bash
 pnpm generate-image "<prompt for a minimal icon suitable as a favicon, simple shapes, single subject, no text>" -o public/favicon-source.png --size 1024x1024
 ```
 
-**Remind the user:** This requires `OPENAI_API_KEY` in `.env`. If missing, prompt them to add it.
-
-After generation, create `public/favicon.svg` from the result (either use the PNG as a base64-embedded SVG, or ask the user to trace/simplify it for a proper SVG).
+After generation, create `public/favicon.svg` from the result by embedding the PNG as base64, then delete `public/favicon-source.png`.
 
 ### Option C: Skip
 
@@ -69,6 +74,8 @@ Options:
 - "Branded template (recommended)" — composes `site.name` + `site.tagline` + accent color + favicon into a clean 1200×630 PNG. Runs in under a second, no API key needed, produces one image per locale.
 - "AI generated" — describe an image and OpenAI's GPT Image model creates it. Slower, costs money, requires `OPENAI_API_KEY`.
 - "Skip" — keep whatever's already at `public/og-default-{de,en}.png`.
+
+`/onboard` already creates a branded image. If the logo changed in Step 1, run `pnpm generate-og` again so the image shows it, then skip this question unless they want something different.
 
 ### Option A: Branded template
 
@@ -109,7 +116,7 @@ Guidelines for the prompt:
 - Ideal OG dimensions: 1200×630. Using 1536x1024 gives good quality; platforms will crop to fit.
 - Example prompt: "Professional banner for [Company Name], [industry], accent color #6265f0, clean modern design, suitable as social media preview"
 
-**Remind the user:** This requires `OPENAI_API_KEY` in `.env`.
+If `OPENAI_API_KEY` isn't set, offer the branded template instead.
 
 ### Option C: Skip
 
@@ -125,7 +132,7 @@ After assets are created, verify:
    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
    ```
 
-   This is already configured in the template (line 94). No changes needed unless the user wants a different path.
+   This is already configured in the template. No changes needed unless the user wants a different path.
 
 2. **OG image:** `public/og-default-de.png` AND `public/og-default-en.png` exist. `src/layouts/BaseLayout.astro` already picks the locale-specific file:
 
