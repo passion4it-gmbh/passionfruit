@@ -7,7 +7,7 @@ tags: [layout]
 
 ## Purpose
 
-Renders the persistent top bar of every page: the site logo, a horizontal desktop nav, a `LanguageSwitcher`, and a collapsible mobile hamburger menu. Handles state-aware background for the `on-dark` variant (transparent at top, `bg-surface-dark/80` after 80 px of scroll or while the mobile menu is open).
+Renders the persistent top bar of every page: the site logo, a horizontal desktop nav, a `LanguageSwitcher`, and a collapsible mobile hamburger menu. Handles state-aware background for the `on-dark` variant (transparent at top, `bg-surface-dark/95` after 80 px of scroll or while the mobile menu is open).
 
 ## When to use
 

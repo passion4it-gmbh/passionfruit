@@ -194,7 +194,7 @@ const { lang } = Astro.props;
 <style is:global>
   /* ================================================
    COOKIE CONSENT — clean neutral theme
-   Tokens: surface #fff, accent #6366f1, border #e5e7eb
+   Tokens: surface #fff, accent from the theme, border #e5e7eb
    ================================================ */
 
   :root {
@@ -204,9 +204,9 @@ const { lang } = Astro.props;
     --cc-primary-color: #111827;
     --cc-secondary-color: #6b7280;
 
-    --cc-btn-primary-bg: #6366f1;
+    --cc-btn-primary-bg: var(--color-accent);
     --cc-btn-primary-color: #ffffff;
-    --cc-btn-primary-hover-bg: #4f46e5;
+    --cc-btn-primary-hover-bg: var(--color-accent-hover);
     --cc-btn-primary-border-color: transparent;
 
     --cc-btn-secondary-bg: #ffffff;
@@ -214,7 +214,7 @@ const { lang } = Astro.props;
     --cc-btn-secondary-hover-bg: #f9fafb;
     --cc-btn-secondary-border-color: #e5e7eb;
 
-    --cc-toggle-on-bg: #6366f1;
+    --cc-toggle-on-bg: var(--color-accent);
     --cc-toggle-off-bg: #d1d5db;
     --cc-toggle-readonly-bg: #e5e7eb;
 
@@ -275,7 +275,7 @@ const { lang } = Astro.props;
 
   #cc-main .cm__btn:focus-visible,
   #cc-main .pm__btn:focus-visible {
-    outline: 2px solid #6366f1;
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 

@@ -73,6 +73,11 @@ const maxWidth = maxWidthByContainer[containerKey];
     color: var(--color-text-on-dark);
   }
 
+  /* --color-accent is tuned for white backgrounds, too dark for text here */
+  .pf-section[data-tone="dark"] :global(.text-eyebrow) {
+    color: var(--color-accent-glow);
+  }
+
   .pf-section[data-tone="accent-wash"] {
     background-color: color-mix(
       in srgb,

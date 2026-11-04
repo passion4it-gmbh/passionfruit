@@ -99,6 +99,19 @@ jobs:
           key: deps-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
       - run: pnpm test
 
+  build-node-floor:
+    # engines.node floor: cloud sessions build on Node 22, everything else uses .nvmrc
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22.23.4
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
   build:
     needs: install
     runs-on: ubuntu-latest
