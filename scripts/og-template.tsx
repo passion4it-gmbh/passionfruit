@@ -9,6 +9,8 @@
  *   - Only <div> and <img> elements.
  *   - Every multi-child container sets `display: 'flex'`.
  *   - Absolute children sit inside a `position: 'relative'` parent.
+ *   - Content is `position: 'relative'` too: Satori follows CSS paint order,
+ *     so the absolute glow would otherwise tint it.
  *   - No className / Tailwind / CSS variables; inline style objects only.
  *   - SVG logos are inlined as data URIs (utf8-encoded) on <img src>.
  */
@@ -115,11 +117,12 @@ export function OgTemplate(props: OgTemplateProps): JSX.Element {
           left: 0,
           width: 1200,
           height: 630,
-          background: `radial-gradient(ellipse at 20% 50%, ${glowStop} 0%, transparent 60%)`,
+          background: `radial-gradient(ellipse at 20% 50%, ${glowStop} 0%, transparent 38%)`,
         }}
       />
       <div
         style={{
+          position: "relative",
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
@@ -140,12 +143,13 @@ export function OgTemplate(props: OgTemplateProps): JSX.Element {
       </div>
       <div
         style={{
+          position: "relative",
           display: "flex",
           fontSize: 72,
           fontWeight: 700,
           lineHeight: 1.08,
           letterSpacing: "-0.02em",
-          maxWidth: "92%",
+          maxWidth: 928,
         }}
       >
         {tagline}
