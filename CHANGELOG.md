@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/passion4it-gmbh/passionfruit/compare/v1.1.2...v1.2.0) (2026-11-04)
+
+
+### Features
+
+* **skills:** rework the skills for non-technical users ([#51](https://github.com/passion4it-gmbh/passionfruit/issues/51)) ([25af22a](https://github.com/passion4it-gmbh/passionfruit/commit/25af22a7545951633aeec1b276dcad249a4833b2))
+
 ## [1.1.2](https://github.com/passion4it-gmbh/passionfruit/compare/v1.1.1...v1.1.2) (2026-11-04)
 
 
