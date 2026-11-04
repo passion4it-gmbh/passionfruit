@@ -22,7 +22,7 @@ The user is usually not technical. Tell them exactly where to click, one step at
 
 Before starting, verify:
 
-1. The GitHub repo exists and has a remote (`git remote -v`). If not, help the user create one first, because Cloudflare deploys from GitHub.
+1. The GitHub repo exists and has a remote (`git remote -v`). If not, help the user create one first, because Cloudflare deploys from GitHub: use `gh repo create`, or have them create an empty repo at https://github.com/new and add it as `origin` yourself.
 2. The site builds (`pnpm build`).
 3. No template placeholders are left:
 
@@ -36,8 +36,8 @@ Before starting, verify:
 
 Cloudflare publishes `main`. Commit any open changes on a branch, then get them merged:
 
-- **Local session:** open and merge a pull request with `gh pr create` and `gh pr merge --squash`.
-- **Cloud session (`CLAUDE_CODE_REMOTE=true`):** `git push -u origin HEAD`, then give the user this link to open and merge the pull request: `https://github.com/<owner>/<repo>/compare/main...<branch>?expand=1`. `gh pr` doesn't work in cloud sessions.
+- **`gh auth status` succeeds, in a local session:** open and merge a pull request with `gh pr create` and `gh pr merge --squash`.
+- **Otherwise:** `git push -u origin HEAD`, then give the user this link to open and merge the pull request: `https://github.com/<owner>/<repo>/compare/main...<branch>?expand=1`. `gh pr` doesn't work in cloud sessions (`CLAUDE_CODE_REMOTE=true`).
 
 ## Step 2: Cloudflare account
 
