@@ -18,4 +18,4 @@ Consulta Beratung ist eine unabhängige Unternehmensberatung mit Schwerpunkt auf
 
 Greenleaf Digital entwickelte zunächst eine klare inhaltliche Positionierung: Was unterscheidet Consulta von großen Beratungshäusern? Die Antwort – persönliche Begleitung, langfristige Mandantenbeziehungen und messbare Ergebnisse – floss direkt in Texte, Struktur und Design der neuen Website ein.
 
-Das Ergebnis ist eine Website, die Vertrauen aufbaut, bevor das erste Gespräch stattfindet. Sabine Merk: „Mehrere neue Mandate sind direkt auf unsere neue Website zurückzuführen. Das hat uns die Investition mehrfach zurückgespielt."
+Das Ergebnis ist eine Website, die Vertrauen aufbaut, bevor das erste Gespräch stattfindet. Sabine Merk: „Mehrere neue Mandate sind direkt auf unsere neue Website zurückzuführen. Das hat uns die Investition mehrfach zurückgespielt.“
