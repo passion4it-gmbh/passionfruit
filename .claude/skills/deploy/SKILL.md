@@ -34,9 +34,9 @@ Before starting, verify:
 
 ## Step 1: Get the work onto `main`
 
-Cloudflare publishes `main`. Check that everything is merged there.
+Cloudflare publishes `main`. Commit any open changes on a branch, then get them merged:
 
-- **Local session:** commit, then open and merge a pull request with `gh pr create` and `gh pr merge --squash`.
+- **Local session:** open and merge a pull request with `gh pr create` and `gh pr merge --squash`.
 - **Cloud session (`CLAUDE_CODE_REMOTE=true`):** `git push -u origin HEAD`, then give the user this link to open and merge the pull request: `https://github.com/<owner>/<repo>/compare/main...<branch>?expand=1`. `gh pr` doesn't work in cloud sessions.
 
 ## Step 2: Cloudflare account
@@ -110,7 +110,7 @@ Ask:
 
 > "Right now your contact form opens the visitor's email app, which needs no setup. Do you want messages delivered straight to your inbox instead? You'd need a free Brevo account, and it takes about 15 minutes."
 
-If they're happy with email, stop here.
+If they're happy with email, skip to Step 7.
 
 Otherwise, guide them through these one at a time:
 
