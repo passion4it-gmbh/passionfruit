@@ -44,7 +44,7 @@ const isOnDark = variant === "on-dark";
 // The on-dark header is transparent over the hero but must turn solid when
 // scrolled or when the mobile menu is open (script toggles `data-solid`).
 const headerBg = isOnDark
-  ? "bg-transparent data-solid:bg-surface-dark/80"
+  ? "bg-transparent data-solid:bg-surface-dark/95"
   : "bg-surface/80";
 const headerBorder = isOnDark
   ? "border-transparent data-solid:border-white/5"
@@ -93,6 +93,7 @@ const hamburgerColor = isOnDark ? "text-text-on-dark" : "text-text-heading";
       <!-- Right: language switcher + mobile hamburger -->
       <div class="flex items-center gap-4">
         <LanguageSwitcher
+          tone={variant}
           lang={lang}
           currentSlug={currentSlug}
           alternateSlug={alternateSlug}
@@ -124,7 +125,9 @@ const hamburgerColor = isOnDark ? "text-text-on-dark" : "text-text-heading";
         href={getLocalizedPath(item.slug, lang)}
         class={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-[var(--transition-fast)] ${
           isActive(item.slug)
-            ? "bg-accent/10 text-accent"
+            ? isOnDark
+              ? "bg-accent/10 text-accent-glow"
+              : "bg-accent/10 text-accent"
             : isOnDark
               ? "text-text-on-dark/80 hover:bg-white/10 hover:text-text-on-dark"
               : "text-text hover:bg-surface-dark/5 hover:text-text-heading"

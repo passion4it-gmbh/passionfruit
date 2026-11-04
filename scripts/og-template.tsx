@@ -41,12 +41,12 @@ export interface OgTemplateProps {
 
 /**
  * Convert a `#rrggbb` hex string to an `rgba(r, g, b, a)` literal.
- * Falls back to indigo (`#6366f1`) for malformed input rather than throwing —
+ * Falls back to indigo (`#6265f0`) for malformed input rather than throwing —
  * the discovery layer already validates, so this is only defensive.
  */
 function hexToRgba(hex: string, alpha: number): string {
   const match = /^#([0-9a-fA-F]{6})$/.exec(hex);
-  const hex6 = match ? match[1] : "6366f1";
+  const hex6 = match ? match[1] : "6265f0";
   const r = parseInt(hex6.slice(0, 2), 16);
   const g = parseInt(hex6.slice(2, 4), 16);
   const b = parseInt(hex6.slice(4, 6), 16);

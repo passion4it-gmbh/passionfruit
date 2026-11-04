@@ -34,7 +34,7 @@ const href = getLocalizedPath(`${careersIndexSlug}/${entrySlug}`, lang);
   </div>
 
   <h3
-    class="text-h3 text-text-on-dark leading-tight mb-3 group-hover:text-accent transition-colors duration-200"
+    class="text-h3 text-text-on-dark leading-tight mb-3 group-hover:text-accent-glow transition-colors duration-200"
   >
     {entry.data.title}
   </h3>
@@ -91,7 +91,7 @@ const href = getLocalizedPath(`${careersIndexSlug}/${entrySlug}`, lang);
 
   .career-card:hover .career-card-arrow {
     background: color-mix(in srgb, var(--color-accent) 15%, transparent);
-    color: var(--color-accent);
+    color: var(--color-accent-glow);
     transform: translateX(2px);
   }
 </style>

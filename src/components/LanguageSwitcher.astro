@@ -6,9 +6,10 @@ interface Props {
   lang: Locale;
   currentSlug?: string;
   alternateSlug?: string;
+  tone?: "on-light" | "on-dark";
 }
 
-const { lang, currentSlug, alternateSlug } = Astro.props;
+const { lang, currentSlug, alternateSlug, tone = "on-light" } = Astro.props;
 
 const otherLang: Locale = lang === "de" ? "en" : "de";
 
@@ -32,6 +33,14 @@ const deHref =
   lang === "de" ? getLocalizedPath(currentSlug ?? "", "de") : alternateHref;
 const enHref =
   lang === "en" ? getLocalizedPath(currentSlug ?? "", "en") : alternateHref;
+
+const activeClass =
+  tone === "on-dark" ? "font-bold text-accent-glow" : "font-bold text-accent";
+const inactiveClass = `${
+  tone === "on-dark"
+    ? "text-text-on-dark/80 hover:text-text-on-dark"
+    : "text-text hover:text-accent"
+} transition-colors duration-[var(--transition-fast)]`;
 ---
 
 <div class="flex items-center gap-1 text-sm font-semibold">
@@ -39,11 +48,7 @@ const enHref =
     href={deHref}
     aria-label="Deutsch"
     aria-current={lang === "de" ? "page" : undefined}
-    class={
-      lang === "de"
-        ? "font-bold text-accent"
-        : "text-text hover:text-accent transition-colors duration-[var(--transition-fast)]"
-    }
+    class={lang === "de" ? activeClass : inactiveClass}
   >
     DE
   </a>
@@ -52,11 +57,7 @@ const enHref =
     href={enHref}
     aria-label="English"
     aria-current={lang === "en" ? "page" : undefined}
-    class={
-      lang === "en"
-        ? "font-bold text-accent"
-        : "text-text hover:text-accent transition-colors duration-[var(--transition-fast)]"
-    }
+    class={lang === "en" ? activeClass : inactiveClass}
   >
     EN
   </a>

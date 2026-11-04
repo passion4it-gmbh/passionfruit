@@ -19,6 +19,13 @@ Before starting, verify:
 1. The GitHub repo exists and has a remote (`git remote -v`)
 2. The site builds locally (`pnpm build`)
 3. The deploy workflow exists at `.github/workflows/deploy.yml`
+4. No template placeholders are left:
+
+   ```bash
+   git grep --untracked -inE 'greenleaf|musterstra|musterstadt|hello@example\.com|\+49 123 456 789|DE123456789|platzhalter|is a placeholder' -- src/content src/i18n src/data
+   ```
+
+   If this finds anything, stop and tell the user what's missing in plain language. A public German site with a placeholder imprint or privacy policy is a legal risk. Only continue if the user says this is a test site and confirms it.
 
 If the workflow file is missing, create it from the template (see bottom of this file).
 

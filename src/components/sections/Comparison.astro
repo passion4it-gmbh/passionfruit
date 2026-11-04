@@ -202,6 +202,10 @@ const { t } = useTranslations(lang);
     box-shadow: inset 0 0 0 1px
       color-mix(in srgb, var(--color-accent) 20%, transparent);
   }
+  :global(.pf-section[data-tone="dark"]) .pf-cmp__th-col--highlight,
+  :global(.pf-section[data-tone="dark"]) .pf-cmp__card-header--highlight {
+    color: var(--color-accent-glow);
+  }
   .pf-cmp__row {
     border-top: 1px solid var(--color-border);
   }

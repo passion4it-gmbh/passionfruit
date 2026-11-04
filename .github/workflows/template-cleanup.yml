@@ -35,6 +35,23 @@ jobs:
           rm -f .github/workflows/template-cleanup.yml
           rm -f CHANGELOG.md
 
+      - name: Describe this repo as a site in CLAUDE.md
+        if: steps.check.outputs.already-clean == 'false'
+        run: |
+          awk '
+            /^## 1\. Project/ {
+              print
+              print ""
+              print "This is a website built from the passionfruit template. If \"Greenleaf Digital\" still appears on the site, that is placeholder content: run `/onboard` to replace it with the real business."
+              print ""
+              skip = 1
+              next
+            }
+            /^## 2\. / { skip = 0 }
+            !skip
+          ' CLAUDE.md > CLAUDE.md.tmp
+          mv CLAUDE.md.tmp CLAUDE.md
+
       - name: Commit cleanup
         if: steps.check.outputs.already-clean == 'false'
         run: |

@@ -29,7 +29,7 @@ Premium, confident, modern — intentional, not sterile, not flashy. Depth comes
 | `--color-text`                  | `#3d4156` | Body text                                 |
 | `--color-text-heading`          | `#12132d` | Headings (near-black with blue tint)      |
 | `--color-text-on-dark`          | `#f0f0f5` | Text on dark backgrounds                  |
-| `--color-accent`                | `#6366f1` | Primary accent (swappable via `/onboard`) |
+| `--color-accent`                | `#6265f0` | Primary accent (swappable via `/onboard`) |
 | `--color-accent-hover`          | `#4f46e5` | Hover state                               |
 | `--color-accent-glow`           | `#818cf8` | Lighter accent for glows and gradients    |
 | `--color-warm`                  | `#f59e0b` | Warm accent (from passionfruit flesh)     |
@@ -41,6 +41,7 @@ Overlay scrims and shadow lifts have their own tokens (`--color-overlay-scrim-*`
 ### Usage Rules
 
 - Dark sections: `bg-surface-dark` with `.noise` overlay and `.bg-grid` pattern
+- Accent text on dark surfaces uses `text-accent-glow`, never `text-accent`: the accent is tuned for white backgrounds and misses 4.5:1 on dark
 - Glow orbs: `bg-accent/15 blur-[120px]` or `bg-warm/10 blur-[100px]`
 - Glass on dark: `.glass` class (white/5 bg, blur-20, white/8 border)
 - Glass on light: `.glass-light` class (white/65 bg, blur-20)
