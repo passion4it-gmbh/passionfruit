@@ -7,7 +7,7 @@ tags: [page]
 
 ## Purpose
 
-Renders the bilingual team page. Queries the `team` collection for the current locale, sorts members by `displayOrder`, and displays them in a responsive `TeamCard` grid below a dark hero.
+Renders the bilingual team page. Queries the `team` collection for the current locale, sorts members by `displayOrder`, and displays them in a responsive `TeamCard` grid below a text-only dark `AsymmetricHero` (headline left, lede right).
 
 ## When to use
 
@@ -29,7 +29,7 @@ For a compact team preview embedded in another page (e.g. the About page), rende
 Composes:
 
 - `<BaseLayout>` (headerVariant: "on-dark")
-- Dark hero with `site.name` eyebrow, `team.title` heading, and `team.description` lead
+- `<AsymmetricHero tone="dark">` (text-only): `team.title` headline left, `team.description` lede right
 - `<TeamCard>` repeated for each locale-matching member, sorted by `displayOrder` ascending
 
 ## i18n keys
@@ -38,7 +38,6 @@ Composes:
 | ------------------ | ------------------------------------------- |
 | `team.title`       | Page `<title>`, hero heading, and SEO title |
 | `team.description` | Meta description and hero lead paragraph    |
-| `site.name`        | Hero eyebrow label                          |
 
 ## Gotchas
 

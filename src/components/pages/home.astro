@@ -1,0 +1,156 @@
+---
+import { getCollection } from "astro:content";
+import { ArrowRight } from "@lucide/astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import Section from "~/components/Section.astro";
+import Button from "~/components/Button.astro";
+import Motion from "~/components/motion/Motion.astro";
+import BlogCard from "~/components/BlogCard.astro";
+import CaseStudyCard from "~/components/CaseStudyCard.astro";
+import AsymmetricHero from "~/components/sections/AsymmetricHero.astro";
+import FeatureList from "~/components/sections/FeatureList.astro";
+import EditorialQuote from "~/components/sections/EditorialQuote.astro";
+import FAQ from "~/components/sections/FAQ.astro";
+import CtaBand from "~/components/sections/CtaBand.astro";
+import { useTranslations, type Locale } from "~/i18n";
+import { pageHref } from "~/lib/page-registry";
+import { getServices } from "~/data/services";
+import { getTestimonials } from "~/data/testimonials";
+import { getFAQs } from "~/data/faqs";
+import heroImage from "~/assets/home/hero.png";
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const { t } = useTranslations(lang);
+
+const inLocale = <T extends { id: string }>(entries: T[]) =>
+  entries.filter((e) => e.id.startsWith(`${lang}/`));
+
+const caseStudies = inLocale(await getCollection("caseStudies"))
+  .sort(
+    (a, b) =>
+      (b.data.publishedAt?.getTime() ?? 0) -
+      (a.data.publishedAt?.getTime() ?? 0),
+  )
+  .slice(0, 3);
+
+const posts = inLocale(await getCollection("blog"))
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
+  .slice(0, 2);
+
+const [featured] = getTestimonials(lang);
+const faqItems = getFAQs(lang);
+const contactHref = pageHref("contact", lang);
+
+// Last word of the headline gets the brand gradient.
+const words = t("home.hero.headline").split(" ");
+const accentWord = words.pop();
+---
+
+<BaseLayout
+  title={t("site.name")}
+  description={t("site.description")}
+  lang={lang}
+  headerVariant="on-dark"
+>
+  <AsymmetricHero
+    tone="dark"
+    headline={t("home.hero.headline")}
+    lede={t("home.hero.subheadline")}
+    cta={{ label: t("home.hero.cta"), href: contactHref }}
+    secondaryCta={{
+      label: t("services.title"),
+      href: pageHref("services", lang),
+    }}
+    image={heroImage}
+    imageAlt=""
+  >
+    <Fragment slot="headline">
+      {`${words.join(" ")} `}<span class="gradient-text">{accentWord}</span>
+    </Fragment>
+  </AsymmetricHero>
+
+  <FeatureList
+    eyebrow={t("services.title")}
+    headline={t("home.features.title")}
+    lede={t("home.features.subtitle")}
+    items={getServices(lang)}
+    cta={{ label: t("home.features.cta"), href: pageHref("services", lang) }}
+  />
+
+  {featured && (
+    <EditorialQuote
+      tone="dark"
+      quote={featured.quote}
+      attribution={{ name: featured.author, role: featured.company }}
+    />
+  )}
+
+  {caseStudies.length > 0 && <Section>
+    <Motion>
+      <header class="flex flex-wrap items-end justify-between gap-6 mb-12">
+        <div class="max-w-2xl">
+          <p class="eyebrow">{t("caseStudies.title")}</p>
+          <h2 class="text-h1 mt-3 text-balance">{t("home.work.title")}</h2>
+        </div>
+        <Button
+          href={pageHref("case-studies-index", lang)}
+          variant="ghost"
+          class="group"
+        >
+          {t("home.work.cta")}
+          <ArrowRight
+            class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
+            aria-hidden="true"
+          />
+        </Button>
+      </header>
+    </Motion>
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {caseStudies.map((entry, i) => <Motion delay={i * 100}>
+        <CaseStudyCard entry={entry} lang={lang} />
+      </Motion>)}
+    </div>
+  </Section>}
+
+  {posts.length > 0 && <Section tone="elevated">
+    <div class="grid gap-12 lg:grid-cols-12 lg:gap-6">
+      <div class="lg:col-span-4">
+        <Motion>
+          <p class="eyebrow">{t("blog.title")}</p>
+          <h2 class="text-h1 mt-3 text-balance">{t("home.journal.title")}</h2>
+          <p class="text-body-lg text-muted mt-4">{t("blog.description")}</p>
+          <Button
+            href={pageHref("blog-index", lang)}
+            variant="ghost"
+            class="group mt-6"
+          >
+            {t("home.journal.cta")}
+            <ArrowRight
+              class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
+              aria-hidden="true"
+            />
+          </Button>
+        </Motion>
+      </div>
+      <div class="grid gap-8 sm:grid-cols-2 lg:col-span-8">
+        {posts.map((entry, i) => <Motion delay={i * 100}>
+          <BlogCard entry={entry} lang={lang} />
+        </Motion>)}
+      </div>
+    </div>
+  </Section>}
+
+  {faqItems.length > 0 && (
+    <FAQ headline={t("home.faq.title")} items={faqItems} />
+  )}
+
+  <CtaBand
+    headline={t("home.ctaSection.title")}
+    lede={t("home.ctaSection.subtitle")}
+    cta={{ label: t("home.ctaSection.cta"), href: contactHref }}
+  />
+</BaseLayout>

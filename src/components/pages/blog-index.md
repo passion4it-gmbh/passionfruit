@@ -7,7 +7,7 @@ tags: [page]
 
 ## Purpose
 
-Renders the bilingual blog index page. Queries the `blog` collection for the current locale, sorts posts newest-first, and displays them in a responsive grid of `BlogCard` components below a dark hero.
+Renders the bilingual blog index page. Queries the `blog` collection for the current locale, sorts posts newest-first, and displays them in a responsive grid of `BlogCard` components below a text-only dark `AsymmetricHero` (headline left, lede right).
 
 ## When to use
 
@@ -29,7 +29,7 @@ For a single post full-page view, use `BlogPost` via the content-collection dyna
 Composes:
 
 - `<BaseLayout>` (headerVariant: "on-dark")
-- Dark hero section with `site.name` eyebrow, `blog.title` heading, and `blog.description` lead
+- `<AsymmetricHero tone="dark">` (text-only): `blog.title` headline left, `blog.description` lede right
 - `<BlogCard>` repeated for each locale-matching post, or `blog.noPosts` empty-state text
 
 ## i18n keys
@@ -39,7 +39,6 @@ Composes:
 | `blog.title`       | Page `<title>`, hero heading, and SEO title |
 | `blog.description` | Meta description and hero lead paragraph    |
 | `blog.noPosts`     | Empty-state message when no posts exist     |
-| `site.name`        | Hero eyebrow label                          |
 
 ## Gotchas
 

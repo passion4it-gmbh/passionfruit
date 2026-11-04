@@ -7,7 +7,7 @@ tags: [page]
 
 ## Purpose
 
-Renders the bilingual About page. Composes an inline dark hero (optional heroImage), a floating stats strip, a four-value grid, a full team preview using `TeamCard`, and a contact CTA section.
+Renders the bilingual About page. Composes a dark `AsymmetricHero` (optional heroImage), a stats card overlapping the hero edge, a four-value grid, a team preview using `TeamCard`, and a `CtaBand` to the contact page.
 
 ## When to use
 
@@ -29,12 +29,11 @@ Do not use as a standalone component. For a compact team preview embedded in ano
 Composes:
 
 - `<BaseLayout>` (headerVariant: "on-dark")
-- Inline dark hero section with optional `<Image>` from `pages` collection `heroImage`
-- Stats strip (glass card: values from `src/data/stats.ts` with i18n labels, hidden when empty)
-- Values grid (4 icon+text cards, icons from `@lucide/astro`)
-- `<TeamCard>` repeated for each locale-matching team member
-- `<Button>` → team page CTA
-- `<Button>` → contact page CTA
+- `<AsymmetricHero tone="dark">` with optional `heroImage` from the `pages` collection
+- Stats `<dl>` on a solid elevated card, pulled up over the hero edge (values from `src/data/stats.ts` with i18n labels, hidden when empty)
+- Values in a `<Section>`: 2×2 icon rows separated by hairlines, icons from `@lucide/astro`
+- Team preview `<Section tone="elevated">`: `<TeamCard>` per locale-matching member, ghost `<Button>` → team page
+- `<CtaBand>` → contact page
 
 ## i18n keys
 
@@ -62,14 +61,15 @@ Composes:
 | `team.title`                             | Team section eyebrow               |
 | `team.description`                       | Team section heading               |
 | `navigation.team`                        | Team CTA button label              |
-| `home.ctaSection.title`                  | Contact CTA heading                |
+| `home.ctaSection.title`                  | CTA band headline                  |
 | `home.ctaSection.subtitle`               | Contact CTA subtext                |
 | `cta.contact`                            | Contact CTA button label           |
 
 ## Gotchas
 
-- **`heroImage` is optional.** When absent, the hero fills the full column width. When present, a two-column grid splits text and image.
+- **`heroImage` is optional.** When absent, the hero is text-only (headline left, lede right). When present, the image takes the right column.
+- **The stats card must stay solid.** It overlaps the dark hero via a negative top margin; a translucent (glass) surface turns muddy grey over the dark edge.
 - **Team is queried at build time.** `getCollection("team")` is called inside the component — changes to team entries require a rebuild.
-- **Stats values are hardcoded** (`50+`, `98%`, `12+`, `2`). Replace them in the component source, not via i18n.
+- **Stats values live in `src/data/stats.ts`** (`50+`, `98%`, ...); their labels are i18n keys under `about.stats`. Empty the array to hide the card.
 - **Bilingual slug pair required.** Both `de` and `en` entries with `translationKey: "about"` must exist in `src/content/pages/`. Missing either causes a redirect to `/404` at the alternate-slug lookup.
 - **`getAlternateCollectionSlug`** is called for the hreflang link. If the alternate locale page entry is missing, the alternate slug will be `undefined` and the hreflang tag will be absent.

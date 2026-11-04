@@ -1,9 +1,9 @@
 ---
-import { Image } from "astro:assets";
 import { getCollection, render } from "astro:content";
 import type { Locale } from "~/i18n";
 import { useTranslations } from "~/i18n";
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import AsymmetricHero from "~/components/sections/AsymmetricHero.astro";
 import Button from "~/components/Button.astro";
 import Prose from "~/components/Prose.astro";
 import { getAlternateCollectionSlug, findPageByKey } from "~/lib/page-registry";
@@ -59,60 +59,18 @@ const inputClasses =
   alternateSlug={alternateSlug}
   headerVariant="on-dark"
 >
-  <section class="bg-surface-dark noise relative overflow-hidden">
-    <div class="absolute inset-0 bg-grid opacity-20"></div>
-    <div
-      class="glow-orb absolute top-1/2 right-0 w-[400px] h-[400px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2 translate-x-1/3"
-    ></div>
-    <div class="container relative z-10 pt-40 pb-16 md:pt-48 md:pb-20">
-      <div
-        class:list={[
-          "grid items-center gap-12 lg:gap-16",
-          heroImage && "lg:grid-cols-2",
-        ]}
-      >
-        <div>
-          <p
-            class="eyebrow hero-stagger text-accent-glow"
-            style="--delay: 100ms"
-          >
-            {t("site.name")}
-          </p>
-          <h1
-            class="text-h1 text-text-on-dark mt-4 max-w-2xl hero-stagger"
-            style="--delay: 200ms"
-          >
-            {entry.data.title}
-          </h1>
-          <p
-            class="text-body-lg text-text-on-dark/60 mt-4 max-w-lg hero-stagger"
-            style="--delay: 300ms"
-          >
-            {entry.data.description}
-          </p>
-        </div>
-        {heroImage && <div class="relative hero-stagger" style="--delay: 500ms">
-          <div
-            class="absolute -inset-8 rounded-[2rem] bg-gradient-to-br from-accent/20 via-transparent to-warm/20 blur-2xl"
-          />
-          <Image
-            src={heroImage}
-            alt=""
-            class="relative rounded-2xl shadow-2xl shadow-accent/10 ring-1 ring-white/10"
-            widths={[400, 600, 800, 1200]}
-            sizes="(min-width: 1024px) 50vw, 100vw"
-            loading="eager"
-          />
-        </div>}
-      </div>
-    </div>
-  </section>
+  <AsymmetricHero
+    tone="dark"
+    headline={entry.data.title}
+    lede={entry.data.description}
+    image={heroImage}
+  />
 
   <section class="py-20 md:py-28">
     <div class="container">
-      <div class="grid lg:grid-cols-5 gap-16 max-w-5xl mx-auto">
+      <div class="grid lg:grid-cols-5 gap-16">
         <!-- Contact info -->
-        <div class="lg:col-span-2 anim-slide-up">
+        <div class="lg:col-span-2">
           <article class="blog-prose mb-8">
             <Prose>
               <Content />
@@ -145,7 +103,7 @@ const inputClasses =
         </div>
 
         <!-- Form -->
-        <div class="lg:col-span-3 anim-slide-up" style="--delay: 150ms">
+        <div class="lg:col-span-3">
           <form
             id="contact-form"
             data-endpoint={formEndpoint || ""}
@@ -403,25 +361,4 @@ const inputClasses =
 
   initContactForm();
   document.addEventListener("astro:after-swap", initContactForm);
-</script>
-
-<script>
-  function initScrollAnimations() {
-    if (CSS.supports("animation-timeline: scroll()")) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries)
-          if (e.isIntersecting) {
-            e.target.classList.add("in-view");
-            observer.unobserve(e.target);
-          }
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
-    );
-    document
-      .querySelectorAll(".anim-card-enter, .anim-slide-up, .anim-fade")
-      .forEach((el) => observer.observe(el));
-  }
-  initScrollAnimations();
-  document.addEventListener("astro:after-swap", initScrollAnimations);
 </script>

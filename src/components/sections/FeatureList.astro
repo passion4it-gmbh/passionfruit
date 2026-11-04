@@ -1,0 +1,196 @@
+---
+import { Check, ArrowRight } from "@lucide/astro";
+import Section from "~/components/Section.astro";
+import Button from "~/components/Button.astro";
+import Motion from "~/components/motion/Motion.astro";
+import type { FeatureListProps } from "~/types/sections";
+
+type Props = FeatureListProps;
+
+const {
+  eyebrow,
+  headline,
+  lede,
+  items,
+  cta,
+  tone = "surface",
+  padding = "lg",
+  align = "start",
+} = Astro.props;
+
+const buttonTone = tone === "dark" ? "on-dark" : "on-light";
+const pad = (n: number) => String(n).padStart(2, "0");
+---
+
+<Section tone={tone} padding={padding}>
+  <Motion>
+    <header
+      class:list={[
+        "pf-flist__header",
+        align === "center" && "pf-flist__header--center",
+      ]}
+    >
+      {eyebrow && <span class="text-eyebrow pf-flist__eyebrow">{eyebrow}</span>}
+      <h2 class="text-h1 pf-flist__title">{headline}</h2>
+      {lede && <p class="text-body-lg pf-flist__lede">{lede}</p>}
+    </header>
+  </Motion>
+
+  <ol class="pf-flist__list">
+    {items.map((item, i) => <li class="pf-flist__item">
+      <Motion delay={i * 80}>
+        <div class="pf-flist__row">
+          <span class="pf-flist__index" aria-hidden="true">{pad(i + 1)}</span>
+          <h3 class="text-h2 pf-flist__heading">{item.title}</h3>
+          <div class="pf-flist__content">
+            <p class="text-body-lg pf-flist__body">{item.body}</p>
+            {item.bullets && item.bullets.length > 0 && <ul
+              class="pf-flist__bullets"
+            >
+              {item.bullets.map((bullet) => <li>
+                <Check class="pf-flist__check" aria-hidden="true" />
+                {bullet}
+              </li>)}
+            </ul>}
+          </div>
+        </div>
+      </Motion>
+    </li>)}
+  </ol>
+
+  {cta && <div class="pf-flist__cta">
+    <Button href={cta.href} variant="ghost" tone={buttonTone} class="group">
+      {cta.label}
+      <ArrowRight
+        class="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1"
+        aria-hidden="true"
+      />
+    </Button>
+  </div>}
+</Section>
+
+<style>
+  .pf-flist__header {
+    margin-bottom: var(--space-12);
+    max-width: 48rem;
+  }
+
+  .pf-flist__header--center {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .pf-flist__eyebrow {
+    display: inline-block;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+    color: var(--color-accent);
+  }
+
+  .pf-flist__title {
+    margin: 0 0 var(--space-4) 0;
+    text-wrap: balance;
+  }
+
+  .pf-flist__lede {
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .pf-flist__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .pf-flist__item {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .pf-flist__row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: var(--space-6);
+    row-gap: var(--space-4);
+    padding-block: var(--space-8);
+  }
+
+  .pf-flist__index {
+    font-size: var(--text-h3);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: var(--leading-heading);
+    color: var(--color-accent);
+  }
+
+  .pf-flist__heading {
+    margin: 0;
+  }
+
+  .pf-flist__content {
+    grid-column: 1 / -1;
+  }
+
+  .pf-flist__body {
+    margin: 0;
+    max-width: 36rem;
+    color: var(--color-muted);
+  }
+
+  .pf-flist__bullets {
+    list-style: none;
+    margin: var(--space-6) 0 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3) var(--space-6);
+  }
+
+  .pf-flist__bullets li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .pf-flist__check {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    color: var(--color-accent);
+  }
+
+  .pf-flist__cta {
+    margin-top: var(--space-8);
+  }
+
+  @media (min-width: 640px) {
+    .pf-flist__bullets {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 768px) {
+    .pf-flist__row {
+      grid-template-columns: var(--grid-cols-12);
+      column-gap: var(--grid-gap-lg);
+      padding-block: var(--space-12);
+    }
+
+    .pf-flist__index {
+      grid-column: 1 / span 1;
+    }
+    .pf-flist__heading {
+      grid-column: 2 / span 4;
+    }
+    .pf-flist__content {
+      grid-column: 7 / span 6;
+    }
+  }
+
+  /* --color-accent is tuned for white backgrounds, too dark for text here */
+  :global([data-tone="dark"]) .pf-flist__index,
+  :global([data-tone="dark"]) .pf-flist__check {
+    color: var(--color-accent-glow);
+  }
+</style>

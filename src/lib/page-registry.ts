@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content";
-import type { Locale } from "~/i18n";
+import { getLocalizedPath, type Locale } from "~/i18n";
 
 export type { Locale };
 
@@ -120,6 +120,13 @@ const COLLECTION_REGISTRY_KEY: Record<CollectionName, PageKey> = {
 
 export function findPageByKey(key: PageKey): PageEntry | undefined {
   return PAGES.find((p) => p.key === key);
+}
+
+/** Localized URL of a static page: pageHref("contact", "de") → "/kontakt/". */
+export function pageHref(key: PageKey, lang: Locale): string {
+  const page = findPageByKey(key);
+  if (!page) throw new Error(`Unknown page key: ${key}`);
+  return getLocalizedPath(page.slug[lang], lang);
 }
 
 export function findPageBySlug(

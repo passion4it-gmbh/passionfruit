@@ -154,7 +154,8 @@ The template ships example content branded "Greenleaf Digital". Replace it with 
 - `src/content/careers/` — example job postings (delete the collection if no Careers section)
 - `src/content/caseStudies/` — example case studies (delete if not used)
 - `src/content/events/` — example events (delete if not used)
-- `src/data/testimonials.ts` — example testimonial `quote` / `author` / `company` values (real quotes only, otherwise empty the arrays)
+- `src/data/services.ts` — the services list (title, one-line description, 3–4 bullet points each) shown on the home and services pages; rewrite from what the user offers
+- `src/data/testimonials.ts` — example testimonial `quote` / `author` / `company` values (real quotes only, otherwise empty the arrays; the home page features the first one, so put the strongest quote first)
 - `src/data/faqs.ts` — example questions about the template itself (rewrite from what the user told you, otherwise empty the arrays)
 - `src/data/stats.ts` — the example numbers on the About page (real numbers from the user only, with their labels under `about.stats` in the i18n files, otherwise empty the array)
 

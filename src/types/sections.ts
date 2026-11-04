@@ -19,11 +19,22 @@ export interface SectionProps extends SectionFrameProps {
   lede?: string;
 }
 
+export interface Cta {
+  label: string;
+  href: string;
+}
+
+/**
+ * Without an image, the hero splits headline (left) and lede (right) so a
+ * text-only page hero uses the full width instead of leaving half of it empty.
+ */
 export interface AsymmetricHeroProps extends SectionProps {
-  image: ImageMetadata;
-  imageAlt: string;
+  cta?: Cta;
+  secondaryCta?: Cta;
+  image?: ImageMetadata;
+  /** Defaults to "" — hero images are usually mood, not information. */
+  imageAlt?: string;
   imagePosition?: "right" | "left" | "fullbleed";
-  cta?: { label: string; href: string };
 }
 
 export interface MagazineGridCell {
@@ -73,7 +84,7 @@ export interface SplitFeatureItem {
   body: string;
   image: ImageMetadata;
   imageAlt: string;
-  cta?: { label: string; href: string };
+  cta?: Cta;
 }
 
 export interface SplitFeatureProps extends SectionProps {
@@ -114,4 +125,21 @@ export interface FAQItem {
 
 export interface FAQProps extends SectionProps {
   items: FAQItem[];
+}
+
+export interface FeatureListItem {
+  title: string;
+  body: string;
+  bullets?: string[];
+}
+
+export interface FeatureListProps extends SectionProps {
+  items: FeatureListItem[];
+  cta?: Cta;
+}
+
+export interface CtaBandProps extends SectionFrameProps {
+  headline: string;
+  lede?: string;
+  cta: Cta;
 }

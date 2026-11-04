@@ -29,7 +29,7 @@ For a single case study detail view, the catch-all route dispatches to `CaseStud
 Composes:
 
 - `<BaseLayout>` (headerVariant: "on-dark")
-- Dark hero with `site.name` eyebrow, `caseStudies.title` heading, and `caseStudies.description` lead
+- `<AsymmetricHero tone="dark">` (text-only): `caseStudies.title` headline left, `caseStudies.description` lede right
 - `<CaseStudiesFilter>` receiving `lang`, `baseUrl`, and `selected` (built from URL search params)
 - `<CaseStudyCard>` repeated for each filtered locale-matching entry, or `caseStudies.noResults` empty-state text
 
@@ -42,7 +42,6 @@ Filtering is performed server-side: `category` and `tag` values from `Astro.url.
 | `caseStudies.title`       | Page `<title>`, hero heading, and SEO title           |
 | `caseStudies.description` | Meta description and hero lead paragraph              |
 | `caseStudies.noResults`   | Empty-state message when no entries match the filters |
-| `site.name`               | Hero eyebrow label                                    |
 
 Additional keys consumed by `CaseStudiesFilter` and `CaseStudyCard` — see their respective sidecars.
 

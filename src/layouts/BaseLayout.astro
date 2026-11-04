@@ -128,7 +128,8 @@ const pageTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
 
     <main
       id="main-content"
-      class={`pf-vt-main ${headerVariant === "on-dark" ? "-mt-16" : ""}`}
+      class="pf-vt-main"
+      data-under-header={headerVariant === "on-dark" ? "" : undefined}
     >
       <slot />
     </main>

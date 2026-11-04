@@ -115,10 +115,8 @@
     },
     "features": {
       "title": "What we offer",
-      "subtitle": "Tailored digital solutions for your business."
-    },
-    "testimonials": {
-      "title": "What our clients say"
+      "subtitle": "Tailored digital solutions for your business.",
+      "cta": "All services"
     },
     "faq": {
       "title": "Frequently asked questions"
@@ -127,23 +125,19 @@
       "title": "Ready for the next step?",
       "subtitle": "Let's shape your digital future together.",
       "cta": "Get in touch"
+    },
+    "work": {
+      "title": "Results that speak for themselves",
+      "cta": "All case studies"
+    },
+    "journal": {
+      "title": "Fresh from the blog",
+      "cta": "All posts"
     }
   },
   "services": {
     "title": "Our Services",
-    "description": "Discover our range of services.",
-    "webDesign": {
-      "title": "Web Design",
-      "description": "Modern, responsive websites that delight."
-    },
-    "development": {
-      "title": "Web Development",
-      "description": "Technically excellent solutions with cutting-edge technologies."
-    },
-    "consulting": {
-      "title": "Consulting",
-      "description": "Strategic consulting for your digital transformation."
-    }
+    "description": "Discover our range of services."
   },
   "about": {
     "title": "About Us",

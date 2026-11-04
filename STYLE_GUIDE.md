@@ -254,14 +254,18 @@ Every page follows: **Dark hero** → **Content sections** → **CTA** → **Foo
 For page sections, use the `Section` frame + an archetype rather than rolling a generic `<section>`. The frame owns tone, padding, and container width; the archetype owns the editorial pattern.
 
 - `<Section>` — tone + padding + container primitive. Wrap a one-off section.
-- `<AsymmetricHero>` — 7/5 hero with intentional vertical offset (image-right, image-left, fullbleed).
+- `<AsymmetricHero>` — the page hero for every top-level page: 7/5 image split (right/left), fullbleed, or text-only (headline left, lede right). `tone="dark"` adds the hero glow.
 - `<MagazineGrid>` — editorial 12-col cell grid (small/medium/large spans).
 - `<StickyStory>` — pinned copy + scrolling visuals storytelling layout.
 - `<EditorialQuote>` — display-sized pull-quote with attribution + optional avatar.
 - `<SplitFeature>` — alternating image+text rows for feature lists.
+- `<FeatureList>` — numbered editorial rows (index, title, body, checklist) for services/offerings when there are no images.
 - `<Trust>` — partner/client logo strip (grayscale → color on hover).
 - `<Comparison>` — responsive comparison table (semantic on desktop, stacked cards on mobile).
 - `<FAQ>` — accordion of question/answer pairs via native `<details>`/`<summary>`.
+- `<CtaBand>` — the single closing call-to-action before the footer.
+
+`<Section tone="dark">` remaps the text, heading, muted and border tokens for all descendants, so archetypes work on dark without overrides. Keep light card grids on light tones. `container="default"` is the site `.container`, so section content, header and footer share one left edge.
 
 All archetypes consume the shared `SectionProps` shape (`eyebrow`, `headline`, `lede`, `tone`, `padding`, `align`). Per-component intent — when to reach for one over another, gotchas, exact prop tables — lives in the sidecar `.md` next to each component.
 
@@ -287,9 +291,9 @@ All archetypes consume the shared `SectionProps` shape (`eyebrow`, `headline`, `
 
 ## 6. Animations
 
-**Use when:** entrance choreography on scroll, micro-interactions on hover/press/focus, view-transition affordances. Reach for the existing `.hero-stagger` and `.anim-*` classes — they already carry the easing curves, durations, and reduced-motion gates. Set per-element delays via `style="--delay: ${i * 100}ms"`.
+**Use when:** entrance choreography on scroll, micro-interactions on hover/press/focus, view-transition affordances. Scroll entrances are `<Motion>` (below); hero entrances are `.hero-stagger`. Both already carry the easing curves, durations, and reduced-motion gates. There is exactly one scroll-entrance system — never add per-page `IntersectionObserver` scripts.
 
-**Don't use when:** custom `@keyframes` without a `prefers-reduced-motion: no-preference` gate. Never use parallax (motion sickness, zero quality lift). Never reach for a JS animation library — CSS animation-timeline + IntersectionObserver fallback cover every case the project has.
+**Don't use when:** custom `@keyframes` without a `prefers-reduced-motion: no-preference` gate. Never use parallax (motion sickness, zero quality lift). Never reach for a JS animation library — `<Motion>` covers every case the project has.
 
 ### Hero (time-based, always plays)
 
@@ -297,18 +301,9 @@ All archetypes consume the shared `SectionProps` shape (`eyebrow`, `headline`, `
 
 Animation: `translateY(20px) + blur(4px)` → visible, via `cubic-bezier(0.16, 1, 0.3, 1)` (spring easing).
 
-### Scroll-driven (CSS animation-timeline)
+### Scroll entrances
 
-Native `animation-timeline: view()` in Chrome 115+, IntersectionObserver fallback for all browsers.
-
-| Class              | Effect                                 | Usage                           |
-| ------------------ | -------------------------------------- | ------------------------------- |
-| `.anim-scale-blur` | Scale 0.92 + blur 8px → visible        | CTA sections, key reveals       |
-| `.anim-slide-up`   | TranslateY 32px → visible              | Section headings, text blocks   |
-| `.anim-card-enter` | TranslateY 20px + scale 0.97 → visible | Cards, staggered with `--delay` |
-| `.anim-fade`       | Opacity 0 → 1                          | Subtle reveals                  |
-
-Stagger cards with `style="--delay: ${i * 100}ms"`.
+Wrap the element in `<Motion>` (see Motion primitives below). Stagger grid items per row, not per index, so long lists don't wait seconds: `<Motion delay={(i % 3) * 100}>`.
 
 ### Decorative
 
@@ -318,7 +313,7 @@ Stagger cards with `style="--delay: ${i * 100}ms"`.
 
 ### Reduced Motion
 
-All animations respect `prefers-reduced-motion: reduce` — durations collapse to 0.01ms.
+All animations respect `prefers-reduced-motion: reduce`: `<Motion>` and `.hero-stagger` render their end state immediately, and other durations collapse to 0.01ms. Don't use CSS scroll timelines (`animation-timeline: view()`) — they ignore durations, so the global reduced-motion clamp can't stop them.
 
 ### Motion primitives
 
@@ -375,25 +370,20 @@ For storytelling layouts that depend on scroll position (`StickyStory`), the mot
 
 ## 7. Dark Sections
 
-**Use when:** framing a section on the dark surface (`--color-surface-dark`) — hero, footer, CTA bands, any "negative space" block in the page rhythm. Text routes through `--color-text-on-dark`; backgrounds layer noise, grid, and glow orbs to add depth.
+**Use when:** framing a section on the dark surface (`--color-surface-dark`) — hero, footer, CTA bands, any "negative space" block in the page rhythm. Text routes through `--color-text-on-dark` (via the tone's token remap); depth comes from soft radial light pools.
 
-**Don't use when:** `color: white` (or `text-white`) on a dark section. Always route through the on-dark token so `/onboard` recolorings propagate. Don't drop the `.noise` + `.bg-grid` layers either — a flat dark surface looks cheap.
+**Don't use when:** `color: white` (or `text-white`) on a dark section. Always route through the on-dark token so `/onboard` recolorings propagate. Don't hand-roll a dark `<section>` with its own orbs and grid — use the tone and the archetypes.
 
-Every dark section uses this stack:
+Dark sections are `<Section tone="dark">` (or an archetype with `tone="dark"`). The tone remaps the text, heading, muted and border tokens, so headings and ledes are legible without per-element colour classes. Depth comes from radial light pools painted on a `::before` (`AsymmetricHero` and `CtaBand` ship them), not from blurred `<div>` blobs.
 
-```html
-<section class="bg-surface-dark noise relative overflow-hidden">
-  <div class="absolute inset-0 bg-grid opacity-20"></div>
-  <div class="glow-orb absolute ... bg-accent/15 blur-[120px]"></div>
-  <div class="container relative z-10 ...">
-    <!-- content -->
-  </div>
-</section>
+```astro
+<Section tone="dark">
+  <h2 class="text-h1">Headline</h2>
+  <p class="text-muted">Reads as on-dark muted automatically.</p>
+</Section>
 ```
 
-- `.noise`: subtle SVG noise texture overlay at 1.5% opacity
-- `.bg-grid`: 60px grid lines at 3% accent opacity
-- Glow orbs: 400-500px blurred circles, positioned at edges/corners, pulsing
+- `.noise`, `.bg-grid` and `.glow-orb` still exist for the detail-page heroes (`BlogPost`, `CareerPost`, ...); don't add new uses.
 
 ### Pattern vs. anti-pattern
 
@@ -640,21 +630,21 @@ Inline error / warning / info surface. `tone` picks the visual and the lucide ic
 
 When you reach one of these decision points, take the shortcut.
 
-| Situation                                                                   | Shortcut                                                                                                                         |
-| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Need a CTA                                                                  | `<Button variant="primary\|secondary\|ghost" tone="on-light\|on-dark" href="…">…</Button>`                                       |
-| Need a color                                                                | Check `@theme` in `src/styles/global.css` first. If missing, add a `--color-*` token there; never hex.                           |
-| Need a font size                                                            | `--text-*` token (or matching `.text-*` utility). Never raw `font-size: Xrem`.                                                   |
-| Need to display a blog / team / career / case-study / event entry as a card | Use the per-type card (`BlogCard`, `TeamCard`, `CareerCard`, `CaseStudyCard`, `EventCard`).                                      |
-| Need to embed a YouTube or Spotify video                                    | Use the facade (`<YouTubeFacade>` / `<SpotifyFacade>`), never a raw `<iframe>`.                                                  |
-| Need long-form Markdown rendering                                           | Use the existing `BlogPost` / `PageContent` / `LegalDocument` patterns; don't re-roll prose styling.                             |
-| Need an icon                                                                | Import from `@lucide/astro`. Never an emoji.                                                                                     |
-| Need to add a third-party host (script, iframe, font, asset)                | Update `public/_headers` CSP first, then add the resource. Forgotten CSPs silently block in production.                          |
-| Need to add a translation string                                            | Edit both `src/i18n/de.json` and `src/i18n/en.json` together (the `passionfruit-content` skill reminds you).                     |
-| Need an animation                                                           | CSS keyframes inside a `@media (prefers-reduced-motion: no-preference)` block. No JS animation libs.                             |
-| Need a section frame                                                        | `<Section tone="..." padding="..." container="...">` or pick the right archetype from `sections/`.                               |
-| Need an editorial section pattern (hero / quote / grid)                     | Use the archetype — `AsymmetricHero`, `MagazineGrid`, `StickyStory`, `EditorialQuote`, `SplitFeature`. Don't compose one ad-hoc. |
-| Need an entrance animation primitive                                        | `<Motion effect="fade-up">` (or the `<FadeUp>` / `<FadeIn>` sugars). Don't author per-element keyframes.                         |
-| Need a loading skeleton / empty state / error surface                       | `<Skeleton variant="...">`, `<EmptyState>`, `<ErrorState tone="...">`. Don't roll your own gray box.                             |
+| Situation                                                                   | Shortcut                                                                                                                                                   |
+| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Need a CTA                                                                  | `<Button variant="primary\|secondary\|ghost" tone="on-light\|on-dark" href="…">…</Button>`                                                                 |
+| Need a color                                                                | Check `@theme` in `src/styles/global.css` first. If missing, add a `--color-*` token there; never hex.                                                     |
+| Need a font size                                                            | `--text-*` token (or matching `.text-*` utility). Never raw `font-size: Xrem`.                                                                             |
+| Need to display a blog / team / career / case-study / event entry as a card | Use the per-type card (`BlogCard`, `TeamCard`, `CareerCard`, `CaseStudyCard`, `EventCard`).                                                                |
+| Need to embed a YouTube or Spotify video                                    | Use the facade (`<YouTubeFacade>` / `<SpotifyFacade>`), never a raw `<iframe>`.                                                                            |
+| Need long-form Markdown rendering                                           | Use the existing `BlogPost` / `PageContent` / `LegalDocument` patterns; don't re-roll prose styling.                                                       |
+| Need an icon                                                                | Import from `@lucide/astro`. Never an emoji.                                                                                                               |
+| Need to add a third-party host (script, iframe, font, asset)                | Update `public/_headers` CSP first, then add the resource. Forgotten CSPs silently block in production.                                                    |
+| Need to add a translation string                                            | Edit both `src/i18n/de.json` and `src/i18n/en.json` together (the `passionfruit-content` skill reminds you).                                               |
+| Need an animation                                                           | CSS keyframes inside a `@media (prefers-reduced-motion: no-preference)` block. No JS animation libs.                                                       |
+| Need a section frame                                                        | `<Section tone="..." padding="..." container="...">` or pick the right archetype from `sections/`.                                                         |
+| Need an editorial section pattern (hero / quote / grid)                     | Use the archetype — `AsymmetricHero`, `MagazineGrid`, `StickyStory`, `EditorialQuote`, `SplitFeature`, `FeatureList`, `CtaBand`. Don't compose one ad-hoc. |
+| Need an entrance animation primitive                                        | `<Motion effect="fade-up">` (or the `<FadeUp>` / `<FadeIn>` sugars). Don't author per-element keyframes.                                                   |
+| Need a loading skeleton / empty state / error surface                       | `<Skeleton variant="...">`, `<EmptyState>`, `<ErrorState tone="...">`. Don't roll your own gray box.                                                       |
 
 If you don't see your situation here, ask. Don't guess.

@@ -29,7 +29,7 @@ Do not use for a plain "get in touch" paragraph embedded in another page — use
 Composes:
 
 - `<BaseLayout>` (headerVariant: "on-dark")
-- Dark hero with optional `<Image>` from the `pages` collection `heroImage`; hero heading and lead paragraph come from `entry.data.title` / `entry.data.description`, while `<BaseLayout>` receives its SEO `title` and meta `description` from `t("contact.title")` / `t("contact.description")`
+- `<AsymmetricHero tone="dark">` with optional `heroImage` from the `pages` collection; hero heading and lead paragraph come from `entry.data.title` / `entry.data.description`, while `<BaseLayout>` receives its SEO `title` and meta `description` from `t("contact.title")` / `t("contact.description")`
 - Two-column content section: prose `<Content />` + contact-info links (Mail, Phone, MapPin icons) left; async `<form>` card right
 - `<Button type="submit">` with Send icon
 
@@ -57,12 +57,11 @@ Note: `contact.info.email` (the i18n key) is the address **displayed** in the co
 | `contact.form.sending` | Submit button label while the fetch is in flight |
 | `contact.form.success` | Success message shown after submission           |
 | `contact.form.error`   | Error message shown on failed submission         |
-| `site.name`            | Hero eyebrow label                               |
 
 ## Gotchas
 
 - **Page entry is required.** If no `pages` collection entry with `translationKey: "contact"` exists for the locale, the component redirects to `/404`. Both DE and EN entries must be present.
-- **`heroImage` is optional.** When absent, the hero is single-column. When present, a two-column grid splits text and image. Hero heading and lead paragraph come from `entry.data.title` / `entry.data.description`; SEO title and meta description come from `t("contact.title")` / `t("contact.description")` via `<BaseLayout>`.
+- **`heroImage` is optional.** When absent, the hero is text-only (headline left, lede right). When present, the image takes the right column. Hero heading and lead paragraph come from `entry.data.title` / `entry.data.description`; SEO title and meta description come from `t("contact.title")` / `t("contact.description")` via `<BaseLayout>`.
 - **Three delivery tiers — see the Example section.** The active tier is determined at build time by `PUBLIC_FORM_ENDPOINT`. For Tier 3 (any external URL), add the endpoint's host to `connect-src` in `public/_headers` — the browser blocks cross-origin fetches that aren't in the allowlist.
 - **Spam protection (function tier only).** A hidden honeypot field is always present. When `PUBLIC_TURNSTILE_SITE_KEY` is set, Cloudflare Turnstile loads from `challenges.cloudflare.com` and the token is verified server-side before delivery. Set `PUBLIC_TURNSTILE_SITE_KEY` to an empty string to disable Turnstile (honeypot still active).
 - **Displayed email ≠ delivery recipient.** `contact.info.email` (in `de.json` / `en.json`) is what visitors see and what the mailto link uses. `CONTACT_RECIPIENT` (a Cloudflare Pages secret, never a `PUBLIC_*` var) is where Brevo sends mail in the function tier.

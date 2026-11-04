@@ -3,6 +3,8 @@ import { getCollection } from "astro:content";
 import type { Locale } from "~/i18n";
 import { useTranslations } from "~/i18n";
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import Motion from "~/components/motion/Motion.astro";
+import AsymmetricHero from "~/components/sections/AsymmetricHero.astro";
 import EventCard from "~/components/EventCard.astro";
 import EventsFilter from "~/components/EventsFilter.astro";
 
@@ -46,30 +48,11 @@ const filteredEvents = allEvents
   currentSlug={currentSlug}
   headerVariant="on-dark"
 >
-  <!-- Hero -->
-  <section class="bg-surface-dark noise relative overflow-hidden">
-    <div class="absolute inset-0 bg-grid opacity-20"></div>
-    <div
-      class="glow-orb absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2 -translate-x-1/3"
-    ></div>
-    <div class="container relative z-10 pt-48 pb-20 md:pt-56 md:pb-28">
-      <p class="eyebrow hero-stagger text-accent-glow" style="--delay: 100ms">
-        {t("site.name")}
-      </p>
-      <h1
-        class="text-h1 text-text-on-dark mt-4 max-w-2xl hero-stagger"
-        style="--delay: 200ms"
-      >
-        {t("events.title")}
-      </h1>
-      <p
-        class="text-body-lg text-text-on-dark/60 mt-4 max-w-lg hero-stagger"
-        style="--delay: 300ms"
-      >
-        {t("events.description")}
-      </p>
-    </div>
-  </section>
+  <AsymmetricHero
+    tone="dark"
+    headline={t("events.title")}
+    lede={t("events.description")}
+  />
 
   <!-- Filter + Events grid -->
   <section class="py-20 md:py-28">
@@ -85,35 +68,11 @@ const filteredEvents = allEvents
         <p class="text-muted text-center py-16">{t("events.noResults")}</p>
       ) : (
         <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredEvents.map((event, i) => <div
-            class="anim-card-enter"
-            style={`--delay: ${i * 100}ms`}
-          >
+          {filteredEvents.map((event, i) => <Motion delay={(i % 3) * 100}>
             <EventCard entry={event} lang={lang} />
-          </div>)}
+          </Motion>)}
         </div>
       )}
     </div>
   </section>
 </BaseLayout>
-
-<script>
-  function initScrollAnimations() {
-    if (CSS.supports("animation-timeline: scroll()")) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries)
-          if (e.isIntersecting) {
-            e.target.classList.add("in-view");
-            observer.unobserve(e.target);
-          }
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
-    );
-    document
-      .querySelectorAll(".anim-card-enter, .anim-slide-up, .anim-fade")
-      .forEach((el) => observer.observe(el));
-  }
-  initScrollAnimations();
-  document.addEventListener("astro:after-swap", initScrollAnimations);
-</script>

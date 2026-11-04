@@ -29,7 +29,7 @@ For a single event detail view, the catch-all route dispatches to `EventDetail` 
 Composes:
 
 - `<BaseLayout>` (headerVariant: "on-dark")
-- Dark hero with `site.name` eyebrow, `events.title` heading, and `events.description` lead
+- `<AsymmetricHero tone="dark">` (text-only): `events.title` headline left, `events.description` lede right
 - `<EventsFilter>` receiving the full unfiltered locale slice (`allEvents`), `lang`, `selected`, and `baseUrl`
 - `<EventCard>` repeated for each filtered event, sorted soonest-first, or `events.noResults` empty-state text
 
@@ -42,7 +42,6 @@ Composes:
 | `events.title`       | Page `<title>`, hero heading, and SEO title          |
 | `events.description` | Meta description and hero lead paragraph             |
 | `events.noResults`   | Empty-state message when no events match the filters |
-| `site.name`          | Hero eyebrow label                                   |
 
 Additional keys consumed by `EventsFilter` and `EventCard` — see `src/components/CLAUDE.md` § Events for the full `events.*` key table.
 
