@@ -23,51 +23,41 @@ const sizeClass: Record<MagazineGridCell["size"], string> = {
 ---
 
 <Section tone={tone} padding={padding}>
-  {
-    (eyebrow || headline || lede) && (
-      <header
-        class:list={[
-          "pf-mag__header",
-          align === "center" && "pf-mag__header--center",
-        ]}
-      >
-        {eyebrow && <span class="text-eyebrow pf-mag__eyebrow">{eyebrow}</span>}
-        <h2 class="text-h1 pf-mag__title">{headline}</h2>
-        {lede && <p class="text-body-lg pf-mag__lede">{lede}</p>}
-      </header>
-    )
-  }
+  {(eyebrow || headline || lede) && <header
+    class:list={[
+      "pf-mag__header",
+      align === "center" && "pf-mag__header--center",
+    ]}
+  >
+    {eyebrow && <span class="text-eyebrow pf-mag__eyebrow">{eyebrow}</span>}
+    <h2 class="text-h1 pf-mag__title">{headline}</h2>
+    {lede && <p class="text-body-lg pf-mag__lede">{lede}</p>}
+  </header>}
 
   <div class="pf-mag__grid">
-    {
-      cells.map((cell) => {
-        const Tag = cell.href ? "a" : "div";
-        const HeadingTag = cell.size === "large" ? "h2" : "h3";
-        const headingClass = cell.size === "large" ? "text-h2" : "text-h3";
+    {cells.map((cell) => {
+      const Tag = cell.href ? "a" : "div";
+      const HeadingTag = cell.size === "large" ? "h2" : "h3";
+      const headingClass = cell.size === "large" ? "text-h2" : "text-h3";
 
-        return (
-          <Tag
-            class:list={["pf-mag__cell", sizeClass[cell.size]]}
-            href={cell.href}
-          >
-            {cell.image && (
-              <div class="pf-mag__media">
-                <Image
-                  src={cell.image}
-                  alt={cell.imageAlt ?? ""}
-                  loading="lazy"
-                  class="pf-mag__image"
-                />
-              </div>
-            )}
-            <HeadingTag class:list={[headingClass, "pf-mag__heading"]}>
-              {cell.headline}
-            </HeadingTag>
-            {cell.lede && <p class="pf-mag__copy">{cell.lede}</p>}
-          </Tag>
-        );
-      })
-    }
+      return <Tag
+        class:list={["pf-mag__cell", sizeClass[cell.size]]}
+        href={cell.href}
+      >
+        {cell.image && <div class="pf-mag__media">
+          <Image
+            src={cell.image}
+            alt={cell.imageAlt ?? ""}
+            loading="lazy"
+            class="pf-mag__image"
+          />
+        </div>}
+        <HeadingTag class:list={[headingClass, "pf-mag__heading"]}>
+          {cell.headline}
+        </HeadingTag>
+        {cell.lede && <p class="pf-mag__copy">{cell.lede}</p>}
+      </Tag>;
+    })}
   </div>
 </Section>
 

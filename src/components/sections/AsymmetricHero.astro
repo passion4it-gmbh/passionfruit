@@ -35,15 +35,11 @@ const buttonTone = tone === "dark" || isFullbleed ? "on-dark" : "on-light";
       {eyebrow && <span class="text-eyebrow pf-hero__eyebrow">{eyebrow}</span>}
       <h1 class="text-display pf-hero__headline">{headline}</h1>
       {lede && <p class="text-body-lg pf-hero__lede">{lede}</p>}
-      {
-        cta && (
-          <div class="pf-hero__cta">
-            <Button href={cta.href} variant="primary" tone={buttonTone}>
-              {cta.label}
-            </Button>
-          </div>
-        )
-      }
+      {cta && <div class="pf-hero__cta">
+        <Button href={cta.href} variant="primary" tone={buttonTone}>
+          {cta.label}
+        </Button>
+      </div>}
     </div>
 
     <div class="pf-hero__media">

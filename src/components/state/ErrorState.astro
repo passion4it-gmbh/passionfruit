@@ -44,15 +44,11 @@ const live = tone === "error" ? "assertive" : "polite";
     <p class="pf-error-state__headline">{headline}</p>
     <p class="pf-error-state__body">{body}</p>
 
-    {
-      retry && (
-        <p class="pf-error-state__retry">
-          <a href={retry.href} class="pf-error-state__retry-link">
-            {retry.label}
-          </a>
-        </p>
-      )
-    }
+    {retry && <p class="pf-error-state__retry">
+      <a href={retry.href} class="pf-error-state__retry-link">
+        {retry.label}
+      </a>
+    </p>}
   </div>
 </div>
 

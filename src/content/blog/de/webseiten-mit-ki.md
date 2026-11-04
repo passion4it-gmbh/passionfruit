@@ -11,7 +11,7 @@ featured: false
 
 ## KI als Ihr Webentwickler
 
-Stellen Sie sich vor, Sie könnten Ihrem Computer einfach sagen: „Erstelle eine Teamseite mit unseren Mitarbeitern." Und er tut es. Genau das ermöglicht Claude Code.
+Stellen Sie sich vor, Sie könnten Ihrem Computer einfach sagen: „Erstelle eine Teamseite mit unseren Mitarbeitern.“ Und er tut es. Genau das ermöglicht Claude Code.
 
 ### Was ist Claude Code?
 

@@ -63,8 +63,7 @@ const inputClasses =
     <div class="absolute inset-0 bg-grid opacity-20"></div>
     <div
       class="glow-orb absolute top-1/2 right-0 w-[400px] h-[400px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2 translate-x-1/3"
-    >
-    </div>
+    ></div>
     <div class="container relative z-10 pt-40 pb-16 md:pt-48 md:pb-20">
       <div
         class:list={[
@@ -89,21 +88,19 @@ const inputClasses =
             {entry.data.description}
           </p>
         </div>
-        {
-          heroImage && (
-            <div class="relative hero-stagger" style="--delay: 500ms">
-              <div class="absolute -inset-8 rounded-[2rem] bg-gradient-to-br from-accent/20 via-transparent to-warm/20 blur-2xl" />
-              <Image
-                src={heroImage}
-                alt=""
-                class="relative rounded-2xl shadow-2xl shadow-accent/10 ring-1 ring-white/10"
-                widths={[400, 600, 800, 1200]}
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                loading="eager"
-              />
-            </div>
-          )
-        }
+        {heroImage && <div class="relative hero-stagger" style="--delay: 500ms">
+          <div
+            class="absolute -inset-8 rounded-[2rem] bg-gradient-to-br from-accent/20 via-transparent to-warm/20 blur-2xl"
+          />
+          <Image
+            src={heroImage}
+            alt=""
+            class="relative rounded-2xl shadow-2xl shadow-accent/10 ring-1 ring-white/10"
+            widths={[400, 600, 800, 1200]}
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            loading="eager"
+          />
+        </div>}
       </div>
     </div>
   </section>
@@ -201,14 +198,14 @@ const inputClasses =
                 name="message"
                 rows={6}
                 required
-                class={`${inputClasses} resize-y`}></textarea>
+                class={`${inputClasses} resize-y`}
+              ></textarea>
             </div>
 
             <div
               id="form-error"
               class="hidden text-sm text-red-600 dark:text-red-400 font-medium"
-            >
-            </div>
+            ></div>
 
             {/* Honeypot — hidden from real users, traps bots */}
             <div class="sr-only" aria-hidden="true">
@@ -223,15 +220,13 @@ const inputClasses =
             </div>
 
             {/* Turnstile widget — only rendered when sitekey is configured */}
-            {
-              turnstileSiteKey && (
-                <div
-                  class="cf-turnstile"
-                  data-sitekey={turnstileSiteKey}
-                  data-theme="auto"
-                />
-              )
-            }
+            {turnstileSiteKey && (
+              <div
+                class="cf-turnstile"
+                data-sitekey={turnstileSiteKey}
+                data-theme="auto"
+              />
+            )}
 
             {/* Privacy notice */}
             <p class="text-sm text-muted">
@@ -272,24 +267,21 @@ const inputClasses =
             <p
               class="text-body-lg font-semibold text-text-heading"
               id="success-message"
-            >
-            </p>
+            ></p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  {
-    turnstileSiteKey && (
-      <script
-        is:inline
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-        async
-        defer
-      />
-    )
-  }
+  {turnstileSiteKey && (
+    <script
+      is:inline
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async
+      defer
+    />
+  )}
 </BaseLayout>
 
 <script>

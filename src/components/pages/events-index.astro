@@ -51,8 +51,7 @@ const filteredEvents = allEvents
     <div class="absolute inset-0 bg-grid opacity-20"></div>
     <div
       class="glow-orb absolute top-1/2 left-0 w-[400px] h-[400px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2 -translate-x-1/3"
-    >
-    </div>
+    ></div>
     <div class="container relative z-10 pt-48 pb-20 md:pt-56 md:pb-28">
       <p class="eyebrow hero-stagger" style="--delay: 100ms">
         {t("site.name")}
@@ -82,19 +81,18 @@ const filteredEvents = allEvents
         baseUrl={Astro.url.pathname}
       />
 
-      {
-        filteredEvents.length === 0 ? (
-          <p class="text-muted text-center py-16">{t("events.noResults")}</p>
-        ) : (
-          <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredEvents.map((event, i) => (
-              <div class="anim-card-enter" style={`--delay: ${i * 100}ms`}>
-                <EventCard entry={event} lang={lang} />
-              </div>
-            ))}
-          </div>
-        )
-      }
+      {filteredEvents.length === 0 ? (
+        <p class="text-muted text-center py-16">{t("events.noResults")}</p>
+      ) : (
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredEvents.map((event, i) => <div
+            class="anim-card-enter"
+            style={`--delay: ${i * 100}ms`}
+          >
+            <EventCard entry={event} lang={lang} />
+          </div>)}
+        </div>
+      )}
     </div>
   </section>
 </BaseLayout>

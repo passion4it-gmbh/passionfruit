@@ -26,23 +26,23 @@ const loc = entry.data.location;
 <div
   class="card group flex flex-col overflow-hidden p-0 transition-all hover:shadow-lg hover:shadow-accent/5 hover:-translate-y-0.5"
 >
-  {
-    entry.data.heroImage ? (
-      <div class="aspect-[16/10] overflow-hidden flex-shrink-0">
-        <Image
-          src={entry.data.heroImage}
-          alt={entry.data.title}
-          class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          width={600}
-          height={375}
-        />
-      </div>
-    ) : (
-      <div class="aspect-[16/10] flex-shrink-0 bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center">
-        <Calendar class="w-12 h-12 text-accent/40" aria-hidden="true" />
-      </div>
-    )
-  }
+  {entry.data.heroImage ? (
+    <div class="aspect-[16/10] overflow-hidden flex-shrink-0">
+      <Image
+        src={entry.data.heroImage}
+        alt={entry.data.title}
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        width={600}
+        height={375}
+      />
+    </div>
+  ) : (
+    <div
+      class="aspect-[16/10] flex-shrink-0 bg-gradient-to-br from-accent/20 to-accent/5 flex items-center justify-center"
+    >
+      <Calendar class="w-12 h-12 text-accent/40" aria-hidden="true" />
+    </div>
+  )}
 
   <div class="flex flex-col flex-1 gap-3 p-6">
     <!-- Date + location kind -->
@@ -54,23 +54,19 @@ const loc = entry.data.location;
         <Calendar class="w-3 h-3 shrink-0" aria-hidden="true" />
         {formattedDate}
       </time>
-      {
-        (loc.kind === "online" || loc.kind === "hybrid") && (
-          <span class="inline-flex items-center gap-1 text-xs text-muted font-medium">
-            <Globe class="w-3 h-3 shrink-0" aria-hidden="true" />
-            {t("events.location.online")}
-          </span>
-        )
-      }
-      {
-        (loc.kind === "in-person" || loc.kind === "hybrid") &&
-          (loc.venue ?? loc.city) && (
-            <span class="inline-flex items-center gap-1 text-xs text-muted font-medium">
-              <MapPin class="w-3 h-3 shrink-0" aria-hidden="true" />
-              {loc.venue ?? loc.city}
-            </span>
-          )
-      }
+      {(loc.kind === "online" || loc.kind === "hybrid") && <span
+        class="inline-flex items-center gap-1 text-xs text-muted font-medium"
+      >
+        <Globe class="w-3 h-3 shrink-0" aria-hidden="true" />
+        {t("events.location.online")}
+      </span>}
+      {(loc.kind === "in-person" || loc.kind === "hybrid") &&
+        (loc.venue ?? loc.city) && <span
+          class="inline-flex items-center gap-1 text-xs text-muted font-medium"
+        >
+          <MapPin class="w-3 h-3 shrink-0" aria-hidden="true" />
+          {loc.venue ?? loc.city}
+        </span>}
     </div>
 
     <!-- Title -->
@@ -87,27 +83,27 @@ const loc = entry.data.location;
 
     <!-- CTA -->
     <div class="mt-auto pt-1">
-      {
-        entry.data.registrationUrl ? (
-          <Button
-            href={entry.data.registrationUrl}
-            variant="secondary"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {t("events.register")}
-            <ArrowRight class="w-3.5 h-3.5 ml-1" aria-hidden="true" />
-          </Button>
-        ) : (
-          <a
-            href={href}
-            class="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline"
-          >
-            {t("events.details")}
-            <ArrowRight class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-          </a>
-        )
-      }
+      {entry.data.registrationUrl ? (
+        <Button
+          href={entry.data.registrationUrl}
+          variant="secondary"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t("events.register")}
+          <ArrowRight class="w-3.5 h-3.5 ml-1" aria-hidden="true" />
+        </Button>
+      ) : (
+        <a
+          href={href}
+          class="inline-flex items-center gap-1.5 text-sm font-medium text-accent hover:underline"
+        >
+          {t("events.details")}
+          <ArrowRight
+            class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1"
+          />
+        </a>
+      )}
     </div>
   </div>
 </div>

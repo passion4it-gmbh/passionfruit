@@ -31,8 +31,7 @@ const members = allMembers
     <div class="absolute inset-0 bg-grid opacity-20"></div>
     <div
       class="glow-orb absolute top-1/2 right-0 w-[400px] h-[400px] rounded-full bg-accent/15 blur-[120px] -translate-y-1/2"
-    >
-    </div>
+    ></div>
     <div class="container relative z-10 pt-48 pb-20 md:pt-56 md:pb-28">
       <p class="eyebrow hero-stagger" style="--delay: 100ms">
         {t("site.name")}
@@ -56,13 +55,12 @@ const members = allMembers
   <section class="py-20 md:py-28">
     <div class="container">
       <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {
-          members.map((member, i) => (
-            <div class="anim-card-enter" style={`--delay: ${i * 100}ms`}>
-              <TeamCard entry={member} lang={lang} />
-            </div>
-          ))
-        }
+        {members.map((member, i) => <div
+          class="anim-card-enter"
+          style={`--delay: ${i * 100}ms`}
+        >
+          <TeamCard entry={member} lang={lang} />
+        </div>)}
       </div>
     </div>
   </section>

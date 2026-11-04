@@ -81,17 +81,13 @@ const hamburgerColor = isOnDark ? "text-text-on-dark" : "text-text-heading";
         class="hidden md:flex items-center gap-6"
         aria-label="Main navigation"
       >
-        {
-          navItems.map((item) => (
-            <a
-              href={getLocalizedPath(item.slug, lang)}
-              class={`${navLinkBase} ${isActive(item.slug) ? navLinkActive : navLinkInactive}`}
-              aria-current={isActive(item.slug) ? "page" : undefined}
-            >
-              {t(item.labelKey)}
-            </a>
-          ))
-        }
+        {navItems.map((item) => <a
+          href={getLocalizedPath(item.slug, lang)}
+          class={`${navLinkBase} ${isActive(item.slug) ? navLinkActive : navLinkInactive}`}
+          aria-current={isActive(item.slug) ? "page" : undefined}
+        >
+          {t(item.labelKey)}
+        </a>)}
       </nav>
 
       <!-- Right: language switcher + mobile hamburger -->
@@ -124,23 +120,19 @@ const hamburgerColor = isOnDark ? "text-text-on-dark" : "text-text-heading";
     aria-label="Mobile navigation"
   >
     <div class="container py-4 flex flex-col gap-1">
-      {
-        navItems.map((item) => (
-          <a
-            href={getLocalizedPath(item.slug, lang)}
-            class={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-[var(--transition-fast)] ${
-              isActive(item.slug)
-                ? "bg-accent/10 text-accent"
-                : isOnDark
-                  ? "text-text-on-dark/80 hover:bg-white/10 hover:text-text-on-dark"
-                  : "text-text hover:bg-surface-dark/5 hover:text-text-heading"
-            }`}
-            aria-current={isActive(item.slug) ? "page" : undefined}
-          >
-            {t(item.labelKey)}
-          </a>
-        ))
-      }
+      {navItems.map((item) => <a
+        href={getLocalizedPath(item.slug, lang)}
+        class={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-[var(--transition-fast)] ${
+          isActive(item.slug)
+            ? "bg-accent/10 text-accent"
+            : isOnDark
+              ? "text-text-on-dark/80 hover:bg-white/10 hover:text-text-on-dark"
+              : "text-text hover:bg-surface-dark/5 hover:text-text-heading"
+        }`}
+        aria-current={isActive(item.slug) ? "page" : undefined}
+      >
+        {t(item.labelKey)}
+      </a>)}
     </div>
   </nav>
 </header>

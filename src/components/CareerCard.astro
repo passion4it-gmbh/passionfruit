@@ -48,14 +48,10 @@ const href = getLocalizedPath(`${careersIndexSlug}/${entrySlug}`, lang);
       <MapPin class="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
       {entry.data.location}
     </span>
-    {
-      entry.data.department && (
-        <span class="flex items-center gap-1.5">
-          <Briefcase class="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-          {entry.data.department}
-        </span>
-      )
-    }
+    {entry.data.department && <span class="flex items-center gap-1.5">
+      <Briefcase class="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+      {entry.data.department}
+    </span>}
   </div>
 </a>
 

@@ -17,39 +17,27 @@ const {
 ---
 
 <Section tone={tone} padding={padding} container="narrow">
-  {
-    (eyebrow || headline || lede) && (
-      <header
-        class:list={[
-          "pf-faq__header",
-          align === "center" && "pf-faq__header--center",
-        ]}
-      >
-        {eyebrow && <span class="text-eyebrow pf-faq__eyebrow">{eyebrow}</span>}
-        {headline && <h2 class="text-h2 pf-faq__title">{headline}</h2>}
-        {lede && <p class="text-body-lg pf-faq__lede">{lede}</p>}
-      </header>
-    )
-  }
+  {(eyebrow || headline || lede) && <header
+    class:list={[
+      "pf-faq__header",
+      align === "center" && "pf-faq__header--center",
+    ]}
+  >
+    {eyebrow && <span class="text-eyebrow pf-faq__eyebrow">{eyebrow}</span>}
+    {headline && <h2 class="text-h2 pf-faq__title">{headline}</h2>}
+    {lede && <p class="text-body-lg pf-faq__lede">{lede}</p>}
+  </header>}
 
   <ul role="list" class="pf-faq__list">
-    {
-      items.map((item) => (
-        <li class="pf-faq__item">
-          <details class="pf-faq__details">
-            <summary class="pf-faq__summary">
-              <span class="pf-faq__question">{item.question}</span>
-              <ChevronDown
-                size={18}
-                class="pf-faq__chevron"
-                aria-hidden="true"
-              />
-            </summary>
-            <div class="pf-faq__answer">{item.answer}</div>
-          </details>
-        </li>
-      ))
-    }
+    {items.map((item) => <li class="pf-faq__item">
+      <details class="pf-faq__details">
+        <summary class="pf-faq__summary">
+          <span class="pf-faq__question">{item.question}</span>
+          <ChevronDown size={18} class="pf-faq__chevron" aria-hidden="true" />
+        </summary>
+        <div class="pf-faq__answer">{item.answer}</div>
+      </details>
+    </li>)}
   </ul>
 </Section>
 

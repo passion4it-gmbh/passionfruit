@@ -18,17 +18,15 @@ const { Content } = await render(entry);
 
 <div class="container section">
   <div class="max-w-3xl mx-auto">
-    {
-      entry.data.heroImage && (
-        <Image
-          src={entry.data.heroImage}
-          alt={entry.data.title}
-          class="w-full h-72 object-cover rounded-[var(--radius-lg)] mb-8"
-          width={900}
-          height={450}
-        />
-      )
-    }
+    {entry.data.heroImage && (
+      <Image
+        src={entry.data.heroImage}
+        alt={entry.data.title}
+        class="w-full h-72 object-cover rounded-[var(--radius-lg)] mb-8"
+        width={900}
+        height={450}
+      />
+    )}
 
     <h1 class="text-4xl font-bold text-text-heading leading-tight mb-8">
       {entry.data.title}

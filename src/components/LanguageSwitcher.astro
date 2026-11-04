@@ -39,9 +39,11 @@ const enHref =
     href={deHref}
     aria-label="Deutsch"
     aria-current={lang === "de" ? "page" : undefined}
-    class={lang === "de"
-      ? "font-bold text-accent"
-      : "text-text hover:text-accent transition-colors duration-[var(--transition-fast)]"}
+    class={
+      lang === "de"
+        ? "font-bold text-accent"
+        : "text-text hover:text-accent transition-colors duration-[var(--transition-fast)]"
+    }
   >
     DE
   </a>
@@ -50,9 +52,11 @@ const enHref =
     href={enHref}
     aria-label="English"
     aria-current={lang === "en" ? "page" : undefined}
-    class={lang === "en"
-      ? "font-bold text-accent"
-      : "text-text hover:text-accent transition-colors duration-[var(--transition-fast)]"}
+    class={
+      lang === "en"
+        ? "font-bold text-accent"
+        : "text-text hover:text-accent transition-colors duration-[var(--transition-fast)]"
+    }
   >
     EN
   </a>

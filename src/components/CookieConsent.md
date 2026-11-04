@@ -34,7 +34,8 @@ import CookieConsent from "~/components/CookieConsent.astro";
 ---
 
 <html lang={lang}>
-  <head></head>...
+  <head></head>
+  ...
   <body>
     <slot />
     <CookieConsent lang={lang} />

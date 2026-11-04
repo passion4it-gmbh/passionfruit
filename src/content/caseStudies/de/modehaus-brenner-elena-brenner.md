@@ -31,4 +31,4 @@ Greenleaf Digital entwickelte einen neuen Onlineshop auf Basis moderner Webtechn
 
 ## Ergebnis
 
-Drei Monate nach dem Relaunch verzeichnete Modehaus Brenner einen Anstieg der Online-Conversion-Rate von 0,8 % auf 2,1 %. Der mobile Umsatz wuchs um 85 %. Elena Brenner: „Ich hätte nicht gedacht, dass eine bessere Website so direkt auf den Umsatz wirkt."
+Drei Monate nach dem Relaunch verzeichnete Modehaus Brenner einen Anstieg der Online-Conversion-Rate von 0,8 % auf 2,1 %. Der mobile Umsatz wuchs um 85 %. Elena Brenner: „Ich hätte nicht gedacht, dass eine bessere Website so direkt auf den Umsatz wirkt.“

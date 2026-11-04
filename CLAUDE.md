@@ -124,6 +124,7 @@ Before committing:
 - [ ] No brand/fixture literals in code — name/URL/logo come from `t('site.name')` + `Astro.site` (the `check-fixtures` gate enforces this)
 - [ ] New collection entries have `translationKey` in both locales
 - [ ] New i18n strings added to both `de.json` and `en.json`
+- [ ] German quotes are typed as literal `„…“` — a straight closing `"` renders as `”`
 - [ ] Changes align with STYLE_GUIDE.md
 - [ ] New components have a sidecar `.md`
 

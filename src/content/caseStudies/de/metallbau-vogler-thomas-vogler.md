@@ -18,4 +18,4 @@ Thomas Vogler führt Metallbau Vogler in zweiter Generation. Der Betrieb fertigt
 
 Greenleaf Digital erstellte eine neue Website, die die Stärken des Betriebs in den Vordergrund stellt: Bildgalerien mit abgeschlossenen Projekten, klare Leistungsbeschreibungen und ein einfaches Kontaktformular. Zusätzlich wurde eine lokale SEO-Strategie umgesetzt, die das Unternehmen in der Region besser auffindbar macht.
 
-Sechs Monate nach dem Launch gehen monatlich zwischen acht und zwölf qualifizierte Anfragen über die Website ein – ein direktes Resultat, das Thomas Vogler begeistert: „Für uns als Handwerksbetrieb war das ein echter Gamechanger."
+Sechs Monate nach dem Launch gehen monatlich zwischen acht und zwölf qualifizierte Anfragen über die Website ein – ein direktes Resultat, das Thomas Vogler begeistert: „Für uns als Handwerksbetrieb war das ein echter Gamechanger.“

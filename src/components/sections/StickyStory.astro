@@ -16,46 +16,38 @@ const {
 ---
 
 <Section tone={tone} padding={padding}>
-  {
-    (eyebrow || headline || lede) && (
-      <header class="pf-story__header">
-        {eyebrow && (
-          <span class="text-eyebrow pf-story__eyebrow">{eyebrow}</span>
-        )}
-        <h2 class="text-h1 pf-story__title">{headline}</h2>
-        {lede && <p class="text-body-lg pf-story__lede">{lede}</p>}
-      </header>
-    )
-  }
+  {(eyebrow || headline || lede) && <header class="pf-story__header">
+    {eyebrow && <span class="text-eyebrow pf-story__eyebrow">{eyebrow}</span>}
+    <h2 class="text-h1 pf-story__title">{headline}</h2>
+    {lede && <p class="text-body-lg pf-story__lede">{lede}</p>}
+  </header>}
 
   <div class="pf-story" data-pf-story>
     <div class="pf-story__grid">
       <div class="pf-story__copy">
-        {
-          chapters.map((chapter, idx) => (
-            <div class="pf-story__chapter-copy" data-chapter-index={idx}>
-              <h3 class="text-h2 pf-story__chapter-heading">
-                {chapter.headline}
-              </h3>
-              <p class="pf-story__chapter-body">{chapter.body}</p>
-            </div>
-          ))
-        }
+        {chapters.map((chapter, idx) => <div
+          class="pf-story__chapter-copy"
+          data-chapter-index={idx}
+        >
+          <h3 class="text-h2 pf-story__chapter-heading">
+            {chapter.headline}
+          </h3>
+          <p class="pf-story__chapter-body">{chapter.body}</p>
+        </div>)}
       </div>
 
       <div class="pf-story__media">
-        {
-          chapters.map((chapter, idx) => (
-            <div class="pf-story__chapter-media" data-chapter-index={idx}>
-              <Image
-                src={chapter.image}
-                alt={chapter.imageAlt}
-                loading={idx === 0 ? "eager" : "lazy"}
-                class="pf-story__image"
-              />
-            </div>
-          ))
-        }
+        {chapters.map((chapter, idx) => <div
+          class="pf-story__chapter-media"
+          data-chapter-index={idx}
+        >
+          <Image
+            src={chapter.image}
+            alt={chapter.imageAlt}
+            loading={idx === 0 ? "eager" : "lazy"}
+            class="pf-story__image"
+          />
+        </div>)}
       </div>
     </div>
   </div>
