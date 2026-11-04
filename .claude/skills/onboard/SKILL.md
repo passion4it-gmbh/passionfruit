@@ -115,7 +115,7 @@ This site speaks for a real business, so never invent facts about it. Don't make
 
 - Write copy only from what the user told you or what's on their existing site. You can word it well, but don't add claims.
 - For each collection they kept in Q6, ask for real entries. If they have none yet, remove that section as described below and tell them they can add it later. Example entries must not go live.
-- If there are no real testimonials, empty both arrays in `src/data/testimonials.ts`. The home page hides the section when it's empty.
+- If there are no real testimonials, FAQs or stats, empty those arrays in `src/data/`. The site hides each section when it's empty.
 - Don't generate portraits of real people.
 - Tell the user what you removed or left out in your final message.
 
@@ -155,6 +155,8 @@ The template ships example content branded "Greenleaf Digital". Replace it with 
 - `src/content/caseStudies/` — example case studies (delete if not used)
 - `src/content/events/` — example events (delete if not used)
 - `src/data/testimonials.ts` — example testimonial `quote` / `author` / `company` values (real quotes only, otherwise empty the arrays)
+- `src/data/faqs.ts` — example questions about the template itself (rewrite from what the user told you, otherwise empty the arrays)
+- `src/data/stats.ts` — the example numbers on the About page (real numbers from the user only, with their labels under `about.stats` in the i18n files, otherwise empty the array)
 
 ### Remove unused pages and collections
 
@@ -185,7 +187,7 @@ pnpm generate-og --lang <de|en>  # single-language site: only the locale you kep
 ### Verify nothing was missed
 
 ```bash
-git grep --untracked -inE 'greenleaf|musterstra|musterstadt|hello@example\.com|\+49 123 456 789|DE123456789|platzhalter|is a placeholder' -- src/content src/i18n src/data   # expect: no matches
+git grep --untracked -inE 'greenleaf|musterstra|musterstadt|hello@example\.com|\+49 123 456 789|DE123456789|platzhalter|is a placeholder|Brauche ich Programmierkenntnisse|Do I need programming skills|"98%"' -- src/content src/i18n src/data   # expect: no matches
 pnpm build   # runs the fixture, accent and bilingual gates
 ```
 

@@ -27,7 +27,7 @@ Before starting, verify:
 3. No template placeholders are left:
 
    ```bash
-   git grep --untracked -inE 'greenleaf|musterstra|musterstadt|hello@example\.com|\+49 123 456 789|DE123456789|platzhalter|is a placeholder' -- src/content src/i18n src/data
+   git grep --untracked -inE 'greenleaf|musterstra|musterstadt|hello@example\.com|\+49 123 456 789|DE123456789|platzhalter|is a placeholder|Brauche ich Programmierkenntnisse|Do I need programming skills|"98%"' -- src/content src/i18n src/data
    ```
 
    If this finds anything, stop and tell the user what's missing in plain language. A public German site with a placeholder imprint or privacy policy is a legal risk. Only continue if the user says this is a test site and confirms it.
@@ -114,7 +114,7 @@ If they're happy with email, skip to Step 7.
 
 Otherwise, guide them through these one at a time:
 
-> **1. Spam protection.** In the Cloudflare dashboard, open **Turnstile** and add a widget for your site's address. Keep that page open, because it shows a **site key** and a **secret key**.
+> **1. Spam protection.** In the Cloudflare dashboard, open **Turnstile** and add a widget. Add your site's address, and also your `<project>.pages.dev` address so the form works on preview links. Keep that page open, because it shows a **site key** and a **secret key**.
 >
 > **2. Email delivery.** In https://app.brevo.com:
 >

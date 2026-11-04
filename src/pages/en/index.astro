@@ -207,7 +207,9 @@ const servicesHref = getLocalizedPath("services", lang);
   </section>}
 
   <!-- ═══════════ FAQs ═══════════ -->
-  <FAQ headline={t("home.faq.title")} items={faqItems} />
+  {faqItems.length > 0 && (
+    <FAQ headline={t("home.faq.title")} items={faqItems} />
+  )}
 
   <!-- ═══════════ CTA ═══════════ -->
   <section
