@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/passion4it-gmbh/passionfruit/compare/v1.2.0...v1.3.0) (2026-11-04)
+
+
+### Features
+
+* **design:** rebuild home, services and about on section archetypes ([#53](https://github.com/passion4it-gmbh/passionfruit/issues/53)) ([b649e11](https://github.com/passion4it-gmbh/passionfruit/commit/b649e11be30c8da7636251e9925af373c34eae1e))
+
 ## [1.2.0](https://github.com/passion4it-gmbh/passionfruit/compare/v1.1.2...v1.2.0) (2026-11-04)
 
 
