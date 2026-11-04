@@ -41,6 +41,7 @@ Overlay scrims and shadow lifts have their own tokens (`--color-overlay-scrim-*`
 ### Usage Rules
 
 - Dark sections: `bg-surface-dark` with `.noise` overlay and `.bg-grid` pattern
+- Accent text on dark surfaces uses `text-accent-glow`, never `text-accent`: the accent is tuned for white backgrounds and misses 4.5:1 on dark
 - Glow orbs: `bg-accent/15 blur-[120px]` or `bg-warm/10 blur-[100px]`
 - Glass on dark: `.glass` class (white/5 bg, blur-20, white/8 border)
 - Glass on light: `.glass-light` class (white/65 bg, blur-20)

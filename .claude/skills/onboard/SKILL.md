@@ -90,7 +90,7 @@ Ask these ONE AT A TIME using the AskUserQuestion tool:
 2. "What do you do?" (one sentence — becomes meta description + hero tagline)
 3. "What's your primary language?" (German at root, or English at root?)
 4. "Do you need a second language?" If no: remove /en/ pages, strip i18n JSON to single locale, disable bilingual check, simplify page-registry to single-slug entries. If yes: ask which locale and configure accordingly.
-5. "Pick an accent color" — offer the presets below or let them describe their brand colors. All four are readable as white-on-accent and as accent-on-white:
+5. "Pick an accent color" — offer the presets below or let them describe their brand colors. `--color-accent` is for white backgrounds and buttons, `--color-accent-glow` for text on dark surfaces. All four pairs pass 4.5:1:
 
    | Preset  | `--color-accent` | `--color-accent-hover` | `--color-accent-glow` |
    | ------- | ---------------- | ---------------------- | --------------------- |
@@ -124,7 +124,7 @@ Brand name, URL, and logo are **derived from config + i18n** — never hardcoded
 
 - `src/i18n/de.json` and `src/i18n/en.json` — `site.name`, `site.tagline`, `site.description`, `footer.copyright`, plus any navigation labels
 - `astro.config.mjs` — the `site` URL (drives canonical URLs, sitemap, OG tags, JSON-LD)
-- `src/styles/global.css` — accent tokens `--color-accent`, `--color-accent-hover`, `--color-accent-glow`. `pnpm build` fails if the accent is under 4.5:1 on white. For a custom color, set it and run `node scripts/check-accent-contrast.mjs`: if it fails, use the shade it prints as `--color-accent`, keep the original as `--color-accent-glow`, and tell the user why.
+- `src/styles/global.css` — accent tokens `--color-accent`, `--color-accent-hover`, `--color-accent-glow`. `pnpm build` fails if the accent is under 4.5:1 on white. For a custom color, set it and run `node scripts/check-accent-contrast.mjs`: if it fails, use the shade it prints as `--color-accent`, keep the original as `--color-accent-glow`, and tell the user why. The glow must stay readable on the dark surface.
 - `src/layouts/BaseLayout.astro` — the `theme-color` meta tag, set to the accent
 
 Apart from that meta tag, do **not** edit `structured-data.ts`, `BaseLayout.astro`, `Header.astro`, or `Footer.astro` for branding — they read `site.name` and `Astro.site` already. The `pnpm build` fixture check fails if a brand literal is ever reintroduced into code.
@@ -163,7 +163,8 @@ Also delete `src/pages/design-floor/` — it's a dev-only design showcase, not p
 The shipped images say "Greenleaf Digital". Replace them now, no API key needed:
 
 ```bash
-pnpm generate-og
+pnpm generate-og               # both locales
+pnpm generate-og --lang <de|en>  # single-language site: only the locale you kept
 ```
 
 ### Verify nothing was missed
