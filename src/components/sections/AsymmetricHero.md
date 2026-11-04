@@ -76,7 +76,8 @@ _None — strings are passed in as props by the calling page._
 
 - **Fullbleed image escapes `<Section>` padding** via negative `inset` equal to `--space-section-lg`. If you change the section's `padding` to `sm` or `md`, the fullbleed image's escape distance will not match and you'll see a gap. Stick with `padding="lg"` (the default) for fullbleed.
 - **Button tone is auto-resolved** from `tone === "dark" || fullbleed` — don't pass a `tone` to a child Button; this section owns it.
-- **Vertical offset on desktop** uses `margin-block-start: 2rem` on the media column to create the asymmetric feel; this only kicks in at ≥ 768px.
+- **Vertical offset on desktop** uses `margin-block-start: 2rem` on the media column to create the asymmetric feel; this only kicks in at ≥ 768px. The text-only headline/lede split starts at ≥ 1024px; below that the lede stacks under the headline.
+- **Long single words hyphenate** (`hyphens: auto`, language from `html[lang]`), so a German index title like „Veranstaltungen“ breaks instead of clipping on phones.
 - **`tone="dark"` adds the hero glow** (accent and warm radial light pools) via a `::before` on the section. Other tones stay flat.
 - **Under an on-dark header** the layout adds the header height to the first section's top padding (`main[data-under-header]` in `global.css`), so don't add extra top spacing yourself.
 - **Text and media enter with `.hero-stagger`** (time-based, not scroll-based); reduced motion shows them immediately.

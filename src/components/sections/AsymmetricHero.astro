@@ -136,9 +136,13 @@ const buttonTone = tone === "dark" || isFullbleed ? "on-dark" : "on-light";
     color: var(--color-accent);
   }
 
+  /* Long single words (de: "Veranstaltungen") must break rather than clip
+     at display size; html[lang] drives the hyphenation dictionary. */
   .pf-hero__headline {
     margin: 0;
     text-wrap: balance;
+    hyphens: auto;
+    overflow-wrap: break-word;
   }
 
   .pf-hero__body {
@@ -148,7 +152,7 @@ const buttonTone = tone === "dark" || isFullbleed ? "on-dark" : "on-light";
   .pf-hero__lede {
     margin: 0;
     max-width: 40rem;
-    color: color-mix(in srgb, currentColor 70%, transparent);
+    color: var(--color-text);
     text-wrap: pretty;
   }
 
@@ -191,10 +195,15 @@ const buttonTone = tone === "dark" || isFullbleed ? "on-dark" : "on-light";
       grid-row: 1;
     }
 
+    .pf-hero--text-only .pf-hero__text {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 1024px) {
     /* Text only: headline left, lede + CTAs right, sharing a baseline at the
        bottom. Uses the width a missing image would otherwise leave empty. */
     .pf-hero--text-only .pf-hero__text {
-      grid-column: 1 / -1;
       display: grid;
       grid-template-columns: var(--grid-cols-12);
       gap: var(--grid-gap-lg);
@@ -256,6 +265,10 @@ const buttonTone = tone === "dark" || isFullbleed ? "on-dark" : "on-light";
      indigo-on-dark; the brighter --color-accent-glow keeps the eyebrow legible. */
   .pf-hero--fullbleed .pf-hero__eyebrow {
     color: var(--color-accent-glow);
+  }
+
+  .pf-hero--fullbleed .pf-hero__lede {
+    color: inherit;
   }
 
   @media (min-width: 768px) {
