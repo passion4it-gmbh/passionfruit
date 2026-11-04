@@ -22,7 +22,7 @@ The user is usually not technical. Tell them exactly where to click, one step at
 
 Before starting, verify:
 
-1. The GitHub repo exists and has a remote (`git remote -v`). If not, help the user create one first, because Cloudflare deploys from GitHub: use `gh repo create`, or have them create an empty repo at https://github.com/new and add it as `origin` yourself.
+1. The GitHub repo exists and has a remote (`git remote -v`). If not, help the user create one first, because Cloudflare deploys from GitHub: use `gh repo create`, or have them create an empty repo at https://github.com/new and add it as `origin` yourself. Then run `git push -u origin main`, because a new repo has no `main` to open a pull request against.
 2. The site builds (`pnpm build`).
 3. No template placeholders are left:
 
