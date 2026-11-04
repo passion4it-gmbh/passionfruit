@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.2](https://github.com/passion4it-gmbh/passionfruit/compare/v1.1.1...v1.1.2) (2026-11-04)
+
+
+### Bug Fixes
+
+* **consent:** leave no tracker storage behind after withdrawal ([#50](https://github.com/passion4it-gmbh/passionfruit/issues/50)) ([ffd47bf](https://github.com/passion4it-gmbh/passionfruit/commit/ffd47bfdcff03f2f5bee2b9bf8afc37ec78cc577))
+* **consent:** let visitors change cookie settings and stop tracking on withdrawal ([#48](https://github.com/passion4it-gmbh/passionfruit/issues/48)) ([3bdffeb](https://github.com/passion4it-gmbh/passionfruit/commit/3bdffeb0daa22dcd1d8674497a6db57f0b8b3fae))
+* **onboarding:** unblock cloud sessions and move to Node 26 ([#47](https://github.com/passion4it-gmbh/passionfruit/issues/47)) ([4f56bf7](https://github.com/passion4it-gmbh/passionfruit/commit/4f56bf725c1a1e21709286f05c22e6f1535c8ba6))
+
 ## [1.1.1](https://github.com/passion4it-gmbh/passionfruit/compare/v1.1.0...v1.1.1) (2026-06-22)
 
 
