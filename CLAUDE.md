@@ -87,6 +87,8 @@ Style and pattern guidance lives in `STYLE_GUIDE.md` — colors, typography, but
 
 **Google Analytics 4** — `PUBLIC_GA_MEASUREMENT_ID` (format `G-XXXXXXXXXX`). Uses Consent Mode v2 with `analytics_storage: granted` only after the user accepts; ad cookies stay denied. IP anonymization on.
 
+**Withdrawing consent** stops the trackers, not just the consent state: PostHog opts out, GA4 is disabled, and both remove their stored data. Both use host-only cookies because `CookieConsent`'s autoclear can't reach a parent domain. To test consent changes, use a real subdomain (`--host-resolver-rules` in Chromium), since `127.0.0.1` can't show parent-domain cookies.
+
 You can run either, both, or neither. Most users want GA4 (familiar dashboard); PostHog is for those who want session replay, funnels, and feature flags.
 
 **Google Tag Manager** — `PUBLIC_GTM_CONTAINER_ID` (format `GTM-XXXXXXX`). Use this instead of GA4 direct when you need a tag-management layer (e.g. multiple tracking pixels, custom event triggers, A/B testing tools). Loads the GTM container only after analytics consent is granted; uses Consent Mode v2 with `analytics_storage` granted on consent and all ad\_\* signals permanently denied (passionfruit has no marketing category). GTM, GA4, and PostHog are all independent — each is env-var gated, so any combination works.

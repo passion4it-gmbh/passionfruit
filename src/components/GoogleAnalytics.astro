@@ -33,6 +33,8 @@ const isEnabled = Boolean(GA_MEASUREMENT_ID);
 		});
 		window.gtag('config', GA_MEASUREMENT_ID, {
 			anonymize_ip: true,
+			// Host-only cookies, so CookieConsent's autoclear can reach them.
+			cookie_domain: 'none',
 			send_page_view: true,
 		});
 

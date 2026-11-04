@@ -37,6 +37,10 @@ const isEnabled = Boolean(POSTHOG_API_KEY);
 			// replay in order: a stale opt-in would capture before the opt-out runs.
 			// So stay opted out, then apply the latest consent once the SDK is ready.
 			opt_out_capturing_by_default: true,
+			// Without this the SDK re-creates its storage after a withdrawal.
+			opt_out_persistence_by_default: true,
+			// Host-only cookies, so CookieConsent's autoclear can reach them.
+			cross_subdomain_cookie: false,
 			loaded: syncPostHogConsent,
 		});
 	}
