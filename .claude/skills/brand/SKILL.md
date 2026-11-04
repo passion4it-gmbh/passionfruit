@@ -28,6 +28,8 @@ Options:
 
 Ask for the file path. Then:
 
+**Always keep a `public/favicon.svg`.** `pnpm generate-og` and its tests need it, so removing it breaks CI. A raster logo gets the SVG wrapper below.
+
 1. **If SVG:** Copy it to `public/favicon.svg`. This is the preferred format — crisp at all sizes.
 2. **If PNG/JPG:** Create an SVG wrapper that embeds the raster image:
    ```svg
@@ -105,7 +107,7 @@ Guidelines for the prompt:
 - Include the company name if the user wants text on the image
 - Match the site's accent color and visual style
 - Ideal OG dimensions: 1200×630. Using 1536x1024 gives good quality; platforms will crop to fit.
-- Example prompt: "Professional banner for [Company Name], [industry], accent color #6366f1, clean modern design, suitable as social media preview"
+- Example prompt: "Professional banner for [Company Name], [industry], accent color #6265f0, clean modern design, suitable as social media preview"
 
 **Remind the user:** This requires `OPENAI_API_KEY` in `.env`.
 

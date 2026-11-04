@@ -22,15 +22,15 @@ If the cwd already contains a passionfruit repo, stop and tell the user:
 Run silently:
 
 ```bash
-node --version    # must be >= 24
+node --version    # must be >= 22.23.4
 pnpm --version    # must exist
 git --version     # must exist
 gh --version      # optional, enables direct GitHub repo creation
 ```
 
-If Node < 24 or missing: instruct the user to install Node 24+ (`brew install node` / nodejs.org) and come back.
+If Node < 22.23.4 or missing: instruct the user to install the current Node (`brew install node` / nodejs.org) and come back.
 If pnpm missing: `npm install -g pnpm` or `corepack enable && corepack prepare pnpm@latest --activate`.
-If git missing: `xcode-select --install` (Mac) / nodejs.org / `apt install git`.
+If git missing: `xcode-select --install` (Mac) / git-scm.com (Windows) / `apt install git`.
 
 Don't announce success — only speak up if something needs the user's action.
 
@@ -104,4 +104,4 @@ Then **stop**. Don't auto-run `/onboard` — let the user invoke it when they're
 | `git clone` fails with auth prompt     | Public repo over HTTPS, no token | Should never happen for the public template; check network                  |
 | `pnpm install` fails on `prepare`      | lefthook + non-default hooksPath | `./node_modules/.bin/lefthook install --force`; then `pnpm install` again   |
 | Directory `<name>` already exists      | Name collision                   | Ask user for a different name, or to remove the existing directory          |
-| Node version too old                   | `node --version` < 24            | Stop and instruct user to upgrade Node                                      |
+| Node version too old                   | `node --version` < 22.23.4       | Stop and instruct user to upgrade Node                                      |

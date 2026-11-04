@@ -53,7 +53,7 @@ export class OgDiscoverError extends Error {
 }
 
 const DEFAULTS = {
-  accent: "#6366f1",
+  accent: "#6265f0",
   surface: "#0c0c1d",
   textOnDark: "#f0f0f5",
 } as const;

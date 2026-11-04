@@ -30,6 +30,7 @@ This is not optional. These files are the project's memory. If they drift from r
 
 | Tool            | Version / notes                                                                                  |
 | --------------- | ------------------------------------------------------------------------------------------------ |
+| Node            | 26 LTS in `.nvmrc`; `engines` floor stays 22.23.4 because cloud sessions ship Node 22            |
 | Astro           | 7, static output                                                                                 |
 | Markdown        | Sätteri (Astro 7's native engine); external links handled by a hast plugin in `astro.config.mjs` |
 | Tailwind        | v4 via `@tailwindcss/vite` (theme in `src/styles/global.css` `@theme` block)                     |
@@ -125,6 +126,7 @@ Before committing:
 - [ ] New collection entries have `translationKey` in both locales
 - [ ] New i18n strings added to both `de.json` and `en.json`
 - [ ] German quotes are typed as literal `„…“` — a straight closing `"` renders as `”`
+- [ ] `--color-accent` reaches 4.5:1 on white (`scripts/check-accent-contrast.mjs` enforces this)
 - [ ] Changes align with STYLE_GUIDE.md
 - [ ] New components have a sidecar `.md`
 
@@ -158,7 +160,7 @@ Options: `--size` (1536x1024 for landscapes, 1024x1536 for portraits), `--qualit
 
 - Be specific about composition, lighting, and mood
 - Reference a visual style ("editorial photography", "Kinfolk magazine", "minimal tech aesthetic")
-- Specify colors to match brand tokens (accent: #6366f1, dark: #1a1a2e)
+- Specify colors to match brand tokens (accent: #6265f0, dark: #1a1a2e)
 - Always end with "No text, no logos" unless text is wanted
 - Use `--size 1536x1024` for hero/banner images, `1024x1024` for square thumbnails
 
@@ -171,6 +173,8 @@ Options: `--size` (1536x1024 for landscapes, 1024x1536 for portraits), `--qualit
 **Link checker** (linkinator): runs against built `dist/` output after `astro build`. Catches broken internal links — pages referenced in nav or content that don't exist. Runs in CI after build.
 
 **Alt text** enforcement: `jsx-a11y/alt-text` is set to `error` (not warn) in the a11y ESLint config. Missing alt text on images blocks the build.
+
+**Accent contrast gate** (`scripts/check-accent-contrast.mjs`, runs as `prebuild`): fails the build if `--color-accent` is under 4.5:1 on white, the ratio shared by white-on-accent buttons and accent-colored text, and prints the nearest passing shade. Tested in `scripts/check-accent-contrast.test.mjs`.
 
 **Fixture-brand gate** (`scripts/check-fixtures.mjs`, runs as `prebuild`): fails the build if the fixture brand ("Greenleaf") is hardcoded into shipped code (`.astro`/`.ts`/`.tsx`/`.js`/`.mjs`/`.css` under `src/`). Brand identity must come from the `site.name` i18n string + `Astro.site`, never literals — this keeps the template/instance seam clean so `/onboard` only edits content + i18n, never component or library code. Replaceable fixtures (`src/content`, `src/i18n`, `src/data`) and the dev-only `src/pages/design-floor` showcase are exempt. Tested in `scripts/check-fixtures.test.mjs`.
 

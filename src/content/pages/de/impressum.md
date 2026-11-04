@@ -1,10 +1,10 @@
 ---
 translationKey: "imprint"
 title: "Impressum"
-description: "Angaben gemäß § 5 TMG."
+description: "Angaben gemäß § 5 DDG."
 ---
 
-## Angaben gemäß § 5 TMG
+## Angaben gemäß § 5 DDG
 
 Greenleaf Digital
 Musterstraße 1
@@ -20,7 +20,7 @@ E-Mail: hello@example.com
 Umsatzsteuer-Identifikationsnummer gemäß §27a Umsatzsteuergesetz:
 DE123456789
 
-## Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV
+## Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV
 
 Anna Müller
 Musterstraße 1

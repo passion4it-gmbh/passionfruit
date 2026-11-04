@@ -17,18 +17,23 @@ This skill personalizes a fresh passionfruit template for a new website, or migr
 Before anything else, verify the user's environment. Run these checks silently:
 
 ```bash
-node --version    # Must be >= 24.0.0
+node --version    # Must be >= 22.23.4
 pnpm --version    # Must be installed
 git --version     # Must be installed
+echo "$CLAUDE_CODE_REMOTE"    # "true" in a claude.ai/code cloud session
 ```
 
-**If Node.js is missing or too old (< 24):**
+**In a cloud session (`CLAUDE_CODE_REMOTE=true`), never ask the user to install anything.** They have no terminal and no machine to install on. Node, pnpm and git come preinstalled. If Node is older than 22.23.4, download a current build from nodejs.org into `~/.local/node` and put its `bin` directory first on `PATH` for every later command, then continue.
 
-> "You need Node.js 24 or newer. The easiest way to install it:
+The rest of this section is for local sessions.
+
+**If Node.js is missing or too old (< 22.23.4):**
+
+> "You need a newer Node.js. The easiest way to install it:
 >
 > **Mac:** `brew install node` or download from https://nodejs.org
 > **Windows:** Download from https://nodejs.org
-> **Linux:** `curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash - && sudo apt-get install -y nodejs`
+> **Linux:** `curl -fsSL https://deb.nodesource.com/setup_26.x | sudo -E bash - && sudo apt-get install -y nodejs`
 >
 > After installing, restart your terminal and come back."
 
@@ -53,7 +58,7 @@ git --version     # Must be installed
 Also verify that dependencies are installed:
 
 ```bash
-ls node_modules/.package-lock.json 2>/dev/null || pnpm install
+ls node_modules/.modules.yaml 2>/dev/null || pnpm install
 ```
 
 If `node_modules` doesn't exist, run `pnpm install` automatically before proceeding.
@@ -85,10 +90,19 @@ Ask these ONE AT A TIME using the AskUserQuestion tool:
 2. "What do you do?" (one sentence — becomes meta description + hero tagline)
 3. "What's your primary language?" (German at root, or English at root?)
 4. "Do you need a second language?" If no: remove /en/ pages, strip i18n JSON to single locale, disable bilingual check, simplify page-registry to single-slug entries. If yes: ask which locale and configure accordingly.
-5. "Pick an accent color" — offer 4 presets (indigo #6366f1, emerald #10b981, amber #f59e0b, rose #f43f5e) or let them describe their brand colors
+5. "Pick an accent color" — offer the presets below or let them describe their brand colors. All four are readable as white-on-accent and as accent-on-white:
+
+   | Preset  | `--color-accent` | `--color-accent-hover` | `--color-accent-glow` |
+   | ------- | ---------------- | ---------------------- | --------------------- |
+   | Indigo  | `#6265f0`        | `#4f46e5`              | `#818cf8`             |
+   | Emerald | `#047857`        | `#065f46`              | `#10b981`             |
+   | Amber   | `#b45309`        | `#92400e`              | `#f59e0b`             |
+   | Rose    | `#e11d48`        | `#be123c`              | `#fb7185`             |
+
 6. "Which pages and sections do you need?" — multi-select: Home, About, Services, Blog, Team, Contact, Privacy, Imprint, Careers, Case Studies, Events
 7. "Contact details?" — email, phone, address for footer, contact page, and legal pages
-8. "Social media links?" — LinkedIn, Instagram, X/Twitter, etc.
+8. "Details for your imprint?" (German sites need these) — legal form, who is legally responsible for the content, VAT ID, and commercial register court + number if registered
+9. "Social media links?" — LinkedIn, Instagram, X/Twitter, etc.
 
 ## After answers
 
@@ -110,9 +124,10 @@ Brand name, URL, and logo are **derived from config + i18n** — never hardcoded
 
 - `src/i18n/de.json` and `src/i18n/en.json` — `site.name`, `site.tagline`, `site.description`, `footer.copyright`, plus any navigation labels
 - `astro.config.mjs` — the `site` URL (drives canonical URLs, sitemap, OG tags, JSON-LD)
-- `src/styles/global.css` — accent tokens `--color-accent`, `--color-accent-hover`, `--color-accent-glow`
+- `src/styles/global.css` — accent tokens `--color-accent`, `--color-accent-hover`, `--color-accent-glow`. `pnpm build` fails if the accent is under 4.5:1 on white. For a custom color, set it and run `node scripts/check-accent-contrast.mjs`: if it fails, use the shade it prints as `--color-accent`, keep the original as `--color-accent-glow`, and tell the user why.
+- `src/layouts/BaseLayout.astro` — the `theme-color` meta tag, set to the accent
 
-Do **not** edit `structured-data.ts`, `BaseLayout.astro`, `Header.astro`, or `Footer.astro` for branding — they read `site.name` and `Astro.site` already. The `pnpm build` fixture check fails if a brand literal is ever reintroduced into code.
+Apart from that meta tag, do **not** edit `structured-data.ts`, `BaseLayout.astro`, `Header.astro`, or `Footer.astro` for branding — they read `site.name` and `Astro.site` already. The `pnpm build` fixture check fails if a brand literal is ever reintroduced into code.
 
 ### Rewrite the fixture content
 
@@ -120,7 +135,7 @@ The template ships example content branded "Greenleaf Digital". Rewrite or remov
 
 - `src/content/blog/` — example posts
 - `src/content/team/` — example team members
-- `src/content/pages/` — about / services / privacy / imprint copy (put real company name + address in the legal pages)
+- `src/content/pages/` — about / services / privacy / imprint copy (put the real company name, address and Q8 details in the legal pages, list only the services the site really uses in the privacy policy, and tell the user a lawyer or legal generator should check both)
 - `src/content/careers/` — example job postings (delete the collection if no Careers section)
 - `src/content/caseStudies/` — example case studies (delete if not used)
 - `src/content/events/` — example events (delete if not used)
@@ -143,14 +158,22 @@ Also delete `src/pages/design-floor/` — it's a dev-only design showcase, not p
 - Update STYLE_GUIDE.md with the chosen colors
 - `README.md` — replace upstream marketing content (banner, "What You Get", "Why Not WordPress", "Tech Stack") with a short, business-specific README. **Keep** the "Staying Current" section verbatim — it tells the owner how to pull in passionfruit improvements over time.
 
+### Regenerate the social sharing image
+
+The shipped images say "Greenleaf Digital". Replace them now, no API key needed:
+
+```bash
+pnpm generate-og
+```
+
 ### Verify nothing was missed
 
 ```bash
-rg -i greenleaf src/   # expect: no matches
-pnpm build             # runs the fixture gate + bilingual check
+git grep --untracked -inE 'greenleaf|musterstra|musterstadt|hello@example\.com|\+49 123 456 789|DE123456789|platzhalter|is a placeholder' -- src/content src/i18n src/data   # expect: no matches
+pnpm build   # runs the fixture, accent and bilingual gates
 ```
 
-If `rg` finds anything, rewrite it before committing.
+If the search finds anything, rewrite it before committing.
 
 ## Final step
 
@@ -161,15 +184,22 @@ git add -A
 git commit -m "feat: initial setup — [Company Name] website"
 ```
 
-Then tell the user:
+In a cloud session, also push: `git push -u origin HEAD`.
 
-> "Your website is ready! Run `pnpm dev` to see it at http://localhost:4321.
->
-> **One more thing** — the favicon and social preview image are still placeholders. Run `/brand` to set up your own logo and social sharing image.
->
+Then tell the user what they can actually do on their surface.
+
+**Local session:** start `pnpm dev` in the background yourself, then say:
+
+> "Your website is ready! Open http://localhost:4321 to see it."
+
+**Cloud session:** localhost isn't reachable from the user's browser, so don't mention it or any terminal command. Say:
+
+> "Your website is set up, and the changes are saved to your GitHub repo. You can't preview it from here yet: the first way to see it is to put it online, so that's the next step."
+
+In both cases, continue with:
+
 > **What you can do next:**
 >
-> - **Run `/brand`** to replace the placeholder favicon and social sharing image with your own
+> - **Run `/deploy`** to put your site online (free Cloudflare Pages hosting). I'll walk you through each step
+> - **Run `/brand`** to replace the placeholder favicon with your own logo
 > - Tell me to change the design, add content, or modify any page
-> - Run `pnpm build` to create a production build
-> - **Run `/deploy` to put your site online** (free Cloudflare Pages hosting, takes 5 minutes)"

@@ -29,7 +29,7 @@ Premium, confident, modern — intentional, not sterile, not flashy. Depth comes
 | `--color-text`                  | `#3d4156` | Body text                                 |
 | `--color-text-heading`          | `#12132d` | Headings (near-black with blue tint)      |
 | `--color-text-on-dark`          | `#f0f0f5` | Text on dark backgrounds                  |
-| `--color-accent`                | `#6366f1` | Primary accent (swappable via `/onboard`) |
+| `--color-accent`                | `#6265f0` | Primary accent (swappable via `/onboard`) |
 | `--color-accent-hover`          | `#4f46e5` | Hover state                               |
 | `--color-accent-glow`           | `#818cf8` | Lighter accent for glows and gradients    |
 | `--color-warm`                  | `#f59e0b` | Warm accent (from passionfruit flesh)     |
