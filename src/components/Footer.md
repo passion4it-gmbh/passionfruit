@@ -7,7 +7,7 @@ tags: [layout]
 
 ## Purpose
 
-Renders the persistent bottom section of every page: a three-column grid (brand + tagline, main nav links, legal links), a bottom bar with the copyright year and the passionfruit attribution. Always dark-surface (`bg-surface-dark text-text-on-dark`).
+Renders the persistent bottom section of every page: a three-column grid (brand + tagline, main nav links, legal links plus the cookie settings button), a bottom bar with the copyright year and the passionfruit attribution. Always dark-surface (`bg-surface-dark text-text-on-dark`).
 
 ## When to use
 
@@ -36,25 +36,27 @@ import Footer from "~/components/Footer.astro";
 
 ## i18n keys
 
-| Key                   | DE                                       | EN                             |
-| --------------------- | ---------------------------------------- | ------------------------------ |
-| `site.name`           | Greenleaf Digital                        | Greenleaf Digital              |
-| `navigation.home`     | Startseite                               | Home                           |
-| `navigation.about`    | Über uns                                 | About                          |
-| `navigation.services` | Leistungen                               | Services                       |
-| `navigation.blog`     | Blog                                     | Blog                           |
-| `navigation.team`     | Team                                     | Team                           |
-| `navigation.contact`  | Kontakt                                  | Contact                        |
-| `footer.privacy`      | Datenschutz                              | Privacy Policy                 |
-| `footer.imprint`      | Impressum                                | Imprint                        |
-| `footer.copyright`    | © {year} Greenleaf Digital. Alle Rechte… | © {year} Greenleaf Digital…    |
-| `footer.builtWith`    | Erstellt mit passionfruit                | Built with passionfruit        |
-| `site.tagline`        | Digitale Lösungen mit Leidenschaft       | Digital solutions with passion |
+| Key                     | DE                                       | EN                             |
+| ----------------------- | ---------------------------------------- | ------------------------------ |
+| `site.name`             | Greenleaf Digital                        | Greenleaf Digital              |
+| `navigation.home`       | Startseite                               | Home                           |
+| `navigation.about`      | Über uns                                 | About                          |
+| `navigation.services`   | Leistungen                               | Services                       |
+| `navigation.blog`       | Blog                                     | Blog                           |
+| `navigation.team`       | Team                                     | Team                           |
+| `navigation.contact`    | Kontakt                                  | Contact                        |
+| `footer.privacy`        | Datenschutz                              | Privacy Policy                 |
+| `footer.imprint`        | Impressum                                | Imprint                        |
+| `footer.cookieSettings` | Cookie-Einstellungen                     | Cookie settings                |
+| `footer.copyright`      | © {year} Greenleaf Digital. Alle Rechte… | © {year} Greenleaf Digital…    |
+| `footer.builtWith`      | Erstellt mit passionfruit                | Built with passionfruit        |
+| `site.tagline`          | Digitale Lösungen mit Leidenschaft       | Digital solutions with passion |
 
 Nav links (`navLinks`) and legal links (`legalLinks`) are built inline in the component frontmatter from `getLocalizedPath` + `t()`. Localized legal slugs: `datenschutz` ↔ `privacy`, `impressum` ↔ `imprint`. These must stay in sync with `src/lib/page-registry.ts`.
 
 ## Gotchas
 
+- **Keep the cookie settings button.** It's how visitors change or withdraw consent, and the privacy policy points to it. `id="cookie-settings"` is what `CookieConsent` listens for, so it must appear exactly once per page.
 - **Social links are a placeholder.** The brand column has a `<!-- TODO: Add social links -->` comment. Fill these in during `/onboard` — they are not driven by i18n or props.
 - **Copyright year is dynamic.** `currentYear` is derived from `new Date().getFullYear()` at build time, not at request time. For a static site this is fine; for on-demand rendering it would need to be runtime-resolved.
 - **`footer.builtWith` split.** The component splits `t('footer.builtWith')` on the word `"passionfruit"` to wrap the word in an `<a>`. The i18n string must contain exactly one occurrence of `passionfruit` or the split will break.

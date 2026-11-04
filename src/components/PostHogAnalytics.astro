@@ -13,7 +13,8 @@ const isEnabled = Boolean(POSTHOG_API_KEY);
 			typeof window.hasAnalyticsConsent === 'function' && window.hasAnalyticsConsent();
 
 		if (!hasConsent) return;
-		if (window.posthog && window.posthog.__loaded) return;
+		if (window.__posthogStarted) return;
+		window.__posthogStarted = true;
 
 		// Official PostHog snippet — loads array.js from CDN
 		// eslint-disable-next-line
@@ -32,6 +33,11 @@ const isEnabled = Boolean(POSTHOG_API_KEY);
 				maskAllInputs: true,
 			},
 			capture_performance: true,
+			// Consent can change while array.js loads, and calls queued on the stub
+			// replay in order: a stale opt-in would capture before the opt-out runs.
+			// So stay opted out, then apply the latest consent once the SDK is ready.
+			opt_out_capturing_by_default: true,
+			loaded: syncPostHogConsent,
 		});
 	}
 
@@ -41,11 +47,33 @@ const isEnabled = Boolean(POSTHOG_API_KEY);
 		setTimeout(initPostHog, 200);
 	}
 
+	function clearPostHogStorage() {
+		for (const storage of [localStorage, sessionStorage]) {
+			Object.keys(storage)
+				.filter((key) => key.startsWith('ph_'))
+				.forEach((key) => storage.removeItem(key));
+		}
+	}
+
+	function syncPostHogConsent(sdk) {
+		if (window.hasAnalyticsConsent()) {
+			// Also clears an opt-out stored by an earlier withdrawal. This runs on
+			// every page load, so don't record an $opt_in event each time.
+			sdk.opt_in_capturing({ captureEventName: false });
+		} else {
+			sdk.opt_out_capturing();
+			clearPostHogStorage();
+		}
+	}
+
 	window.addEventListener('passionfruit:consent-changed', () => {
 		initPostHog();
+		if (window.posthog?.__loaded) syncPostHogConsent(window.posthog);
 	});
 
 	document.addEventListener('astro:after-swap', () => {
+		if (!window.hasAnalyticsConsent?.()) return;
+
 		if (window.posthog && window.posthog.__loaded) {
 			posthog.capture('$pageview');
 		} else {

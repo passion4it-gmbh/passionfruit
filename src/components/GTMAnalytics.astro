@@ -92,6 +92,8 @@ const isEnabled = Boolean(GTM_CONTAINER_ID);
 	});
 
 	document.addEventListener("astro:after-swap", function () {
+		if (!window.hasAnalyticsConsent?.()) return;
+
 		if (window.__gtmLoaded && window.dataLayer) {
 			window.dataLayer.push({ event: "astro:after-swap" });
 		} else {
