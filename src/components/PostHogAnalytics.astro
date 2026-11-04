@@ -41,11 +41,29 @@ const isEnabled = Boolean(POSTHOG_API_KEY);
 		setTimeout(initPostHog, 200);
 	}
 
-	window.addEventListener('passionfruit:consent-changed', () => {
-		initPostHog();
+	function clearPostHogStorage() {
+		for (const storage of [localStorage, sessionStorage]) {
+			Object.keys(storage)
+				.filter((key) => key.startsWith('ph_'))
+				.forEach((key) => storage.removeItem(key));
+		}
+	}
+
+	window.addEventListener('passionfruit:consent-changed', (event) => {
+		if (event.detail.analytics) {
+			initPostHog();
+			// Clears an opt-out stored by an earlier withdrawal. This event fires on
+			// every page load, so don't record an $opt_in event each time.
+			window.posthog?.opt_in_capturing({ captureEventName: false });
+		} else if (window.posthog) {
+			window.posthog.opt_out_capturing();
+			clearPostHogStorage();
+		}
 	});
 
 	document.addEventListener('astro:after-swap', () => {
+		if (!window.hasAnalyticsConsent?.()) return;
+
 		if (window.posthog && window.posthog.__loaded) {
 			posthog.capture('$pageview');
 		} else {

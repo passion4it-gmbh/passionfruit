@@ -46,6 +46,7 @@ None
 - **Env-var gated.** Requires `PUBLIC_GA_MEASUREMENT_ID` (format `G-XXXXXXXXXX`) set at build time. When absent, the component renders nothing — silent no-op; no console error.
 - **Consent required.** Calls `window.hasAnalyticsConsent()` before loading. If the user has not yet interacted with the cookie banner, GA4 does not load. It loads lazily on `passionfruit:consent-changed` when `analytics` is granted. `CookieConsent.astro` must be present on the page to provide this event and the `hasAnalyticsConsent` helper.
 - **Consent Mode v2.** Ad-related consent signals (`ad_storage`, `ad_user_data`, `ad_personalization`) are permanently denied — passionfruit has no marketing/advertising category. Only `analytics_storage`, `functionality_storage`, and `security_storage` are granted.
+- **Withdrawal.** When `passionfruit:consent-changed` reports `analytics: false`, the component sets `ga-disable-<id>`, updates consent to denied, and stops sending SPA page views. `CookieConsent` clears the `_ga` cookies.
 - **IP anonymization** is enabled (`anonymize_ip: true`) and cannot be overridden via props.
 - **SPA page views.** On `astro:after-swap`, if GA is already loaded it fires a synthetic `page_view` event; otherwise it retries `initGoogleAnalytics`. No duplicate page views on initial load.
 - **`__gaLoaded` guard.** A `window.__gaLoaded` flag prevents double-initialization across idle callbacks and consent events.
