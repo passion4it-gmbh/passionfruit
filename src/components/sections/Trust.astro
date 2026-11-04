@@ -17,22 +17,16 @@ const {
 ---
 
 <Section tone={tone} padding={padding}>
-  {
-    (eyebrow || headline || lede) && (
-      <header
-        class:list={[
-          "pf-trust__header",
-          align === "center" && "pf-trust__header--center",
-        ]}
-      >
-        {eyebrow && (
-          <span class="text-eyebrow pf-trust__eyebrow">{eyebrow}</span>
-        )}
-        {headline && <h2 class="text-h2 pf-trust__title">{headline}</h2>}
-        {lede && <p class="text-body-lg pf-trust__lede">{lede}</p>}
-      </header>
-    )
-  }
+  {(eyebrow || headline || lede) && <header
+    class:list={[
+      "pf-trust__header",
+      align === "center" && "pf-trust__header--center",
+    ]}
+  >
+    {eyebrow && <span class="text-eyebrow pf-trust__eyebrow">{eyebrow}</span>}
+    {headline && <h2 class="text-h2 pf-trust__title">{headline}</h2>}
+    {lede && <p class="text-body-lg pf-trust__lede">{lede}</p>}
+  </header>}
 
   <ul
     class:list={[
@@ -42,39 +36,35 @@ const {
     role="list"
     aria-label={eyebrow ?? headline}
   >
-    {
-      logos.map((logo) => (
-        <li class="pf-trust__logo">
-          {logo.href ? (
-            <a
-              href={logo.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="pf-trust__logo-link"
-              aria-label={logo.alt}
-            >
-              <Image
-                src={logo.src}
-                alt=""
-                height={40}
-                class="pf-trust__logo-image"
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
-          ) : (
-            <Image
-              src={logo.src}
-              alt={logo.alt}
-              height={40}
-              class="pf-trust__logo-image"
-              loading="lazy"
-              decoding="async"
-            />
-          )}
-        </li>
-      ))
-    }
+    {logos.map((logo) => <li class="pf-trust__logo">
+      {logo.href ? (
+        <a
+          href={logo.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="pf-trust__logo-link"
+          aria-label={logo.alt}
+        >
+          <Image
+            src={logo.src}
+            alt=""
+            height={40}
+            class="pf-trust__logo-image"
+            loading="lazy"
+            decoding="async"
+          />
+        </a>
+      ) : (
+        <Image
+          src={logo.src}
+          alt={logo.alt}
+          height={40}
+          class="pf-trust__logo-image"
+          loading="lazy"
+          decoding="async"
+        />
+      )}
+    </li>)}
   </ul>
 </Section>
 

@@ -58,9 +58,9 @@ const { Content } = await render(entry);
   <header class="hero">
     <span class="category">{entry.data.category}</span>
     <h1 class="quote">
-      {t("caseStudies.quoteOpen")}{entry.data.quote}{
-        t("caseStudies.quoteClose")
-      }
+      {t("caseStudies.quoteOpen")}{entry.data.quote}{t(
+        "caseStudies.quoteClose",
+      )}
     </h1>
   </header>
 
@@ -92,33 +92,26 @@ const { Content } = await render(entry);
         <dd class="firma">{entry.data.clientName}</dd>
       </dl>
 
-      {
-        entry.data.tags.length > 0 && (
-          <ul class="tags" aria-label={t("caseStudies.tagsLabel")}>
-            {entry.data.tags.map((tag) => (
-              <li>
-                <Badge>{tag}</Badge>
-              </li>
-            ))}
-          </ul>
-        )
-      }
+      {entry.data.tags.length > 0 && <ul
+        class="tags"
+        aria-label={t("caseStudies.tagsLabel")}
+      >
+        {entry.data.tags.map((tag) => <li>
+          <Badge>{tag}</Badge>
+        </li>)}
+      </ul>}
     </div>
   </div>
 
-  {
-    entry.data.videoId && (
-      <div class="video">
-        <YouTubeFacade
-          lang={lang}
-          videoId={entry.data.videoId}
-          poster={entry.data.portraitImage}
-          posterAlt={`${entry.data.personName} | ${entry.data.clientName}`}
-          title={`${t("caseStudies.watchInterview")} – ${entry.data.personName}`}
-        />
-      </div>
-    )
-  }
+  {entry.data.videoId && <div class="video">
+    <YouTubeFacade
+      lang={lang}
+      videoId={entry.data.videoId}
+      poster={entry.data.portraitImage}
+      posterAlt={`${entry.data.personName} | ${entry.data.clientName}`}
+      title={`${t("caseStudies.watchInterview")} – ${entry.data.personName}`}
+    />
+  </div>}
 
   <div class="body blog-prose">
     <Prose>
@@ -127,30 +120,26 @@ const { Content } = await render(entry);
   </div>
 
   <nav class="siblings" aria-label={t("caseStudies.siblingNav")}>
-    {
-      prevEntry ? (
-        <a href={entryHref(prevEntry)} class="sibling sibling-prev">
-          <ArrowLeft class="w-5 h-5" aria-hidden="true" />
-          <span class="sibling-label">
-            {t("caseStudies.previousReference")}
-          </span>
-          <span class="sibling-name">{prevEntry.data.personName}</span>
-        </a>
-      ) : (
-        <span />
-      )
-    }
-    {
-      nextEntry ? (
-        <a href={entryHref(nextEntry)} class="sibling sibling-next">
-          <span class="sibling-label">{t("caseStudies.nextReference")}</span>
-          <span class="sibling-name">{nextEntry.data.personName}</span>
-          <ArrowRight class="w-5 h-5" aria-hidden="true" />
-        </a>
-      ) : (
-        <span />
-      )
-    }
+    {prevEntry ? (
+      <a href={entryHref(prevEntry)} class="sibling sibling-prev">
+        <ArrowLeft class="w-5 h-5" aria-hidden="true" />
+        <span class="sibling-label">
+          {t("caseStudies.previousReference")}
+        </span>
+        <span class="sibling-name">{prevEntry.data.personName}</span>
+      </a>
+    ) : (
+      <span />
+    )}
+    {nextEntry ? (
+      <a href={entryHref(nextEntry)} class="sibling sibling-next">
+        <span class="sibling-label">{t("caseStudies.nextReference")}</span>
+        <span class="sibling-name">{nextEntry.data.personName}</span>
+        <ArrowRight class="w-5 h-5" aria-hidden="true" />
+      </a>
+    ) : (
+      <span />
+    )}
   </nav>
 </article>
 

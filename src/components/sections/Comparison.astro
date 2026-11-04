@@ -22,20 +22,16 @@ const { t } = useTranslations(lang);
 ---
 
 <Section tone={tone} padding={padding}>
-  {
-    (eyebrow || headline || lede) && (
-      <header
-        class:list={[
-          "pf-cmp__header",
-          align === "center" && "pf-cmp__header--center",
-        ]}
-      >
-        {eyebrow && <span class="text-eyebrow pf-cmp__eyebrow">{eyebrow}</span>}
-        {headline && <h2 class="text-h1 pf-cmp__title">{headline}</h2>}
-        {lede && <p class="text-body-lg pf-cmp__lede">{lede}</p>}
-      </header>
-    )
-  }
+  {(eyebrow || headline || lede) && <header
+    class:list={[
+      "pf-cmp__header",
+      align === "center" && "pf-cmp__header--center",
+    ]}
+  >
+    {eyebrow && <span class="text-eyebrow pf-cmp__eyebrow">{eyebrow}</span>}
+    {headline && <h2 class="text-h1 pf-cmp__title">{headline}</h2>}
+    {lede && <p class="text-body-lg pf-cmp__lede">{lede}</p>}
+  </header>}
 
   {/* Desktop: semantic table */}
   <div class="pf-cmp__table-wrap">
@@ -45,133 +41,108 @@ const { t } = useTranslations(lang);
           <th scope="col" class="pf-cmp__th-feature">
             <span class="sr-only">{t("comparison.feature")}</span>
           </th>
-          {
-            columns.map((col) => (
-              <th
-                scope="col"
-                class:list={[
-                  "pf-cmp__th-col",
-                  col.highlight && "pf-cmp__th-col--highlight",
-                ]}
-              >
-                {col.name}
-              </th>
-            ))
-          }
+          {columns.map((col) => <th
+            scope="col"
+            class:list={[
+              "pf-cmp__th-col",
+              col.highlight && "pf-cmp__th-col--highlight",
+            ]}
+          >
+            {col.name}
+          </th>)}
         </tr>
       </thead>
       <tbody>
-        {
-          rows.map((row, rowIdx) => (
-            <tr
+        {rows.map((row, rowIdx) => <tr
+          class:list={[
+            "pf-cmp__row",
+            rowIdx % 2 === 0 ? "pf-cmp__row--even" : "pf-cmp__row--odd",
+          ]}
+        >
+          <th scope="row" class="pf-cmp__th-row">
+            {row.feature}
+          </th>
+          {columns.map((col, colIdx) => {
+            const value = row.values[colIdx];
+            return <td
               class:list={[
-                "pf-cmp__row",
-                rowIdx % 2 === 0 ? "pf-cmp__row--even" : "pf-cmp__row--odd",
+                "pf-cmp__cell",
+                col.highlight && "pf-cmp__cell--highlight",
               ]}
             >
-              <th scope="row" class="pf-cmp__th-row">
-                {row.feature}
-              </th>
-              {columns.map((col, colIdx) => {
-                const value = row.values[colIdx];
-                return (
-                  <td
-                    class:list={[
-                      "pf-cmp__cell",
-                      col.highlight && "pf-cmp__cell--highlight",
-                    ]}
+              {typeof value === "boolean" ? (
+                value ? (
+                  <span
+                    class="pf-cmp__icon-wrap"
+                    aria-label={t("comparison.yes")}
                   >
-                    {typeof value === "boolean" ? (
-                      value ? (
-                        <span
-                          class="pf-cmp__icon-wrap"
-                          aria-label={t("comparison.yes")}
-                        >
-                          <Check
-                            class="pf-cmp__icon pf-cmp__icon--yes"
-                            aria-hidden="true"
-                          />
-                        </span>
-                      ) : (
-                        <span
-                          class="pf-cmp__icon-wrap"
-                          aria-label={t("comparison.no")}
-                        >
-                          <X
-                            class="pf-cmp__icon pf-cmp__icon--no"
-                            aria-hidden="true"
-                          />
-                        </span>
-                      )
-                    ) : (
-                      <span class="pf-cmp__text">{value}</span>
-                    )}
-                  </td>
-                );
-              })}
-            </tr>
-          ))
-        }
+                    <Check
+                      class="pf-cmp__icon pf-cmp__icon--yes"
+                      aria-hidden="true"
+                    />
+                  </span>
+                ) : (
+                  <span
+                    class="pf-cmp__icon-wrap"
+                    aria-label={t("comparison.no")}
+                  >
+                    <X
+                      class="pf-cmp__icon pf-cmp__icon--no"
+                      aria-hidden="true"
+                    />
+                  </span>
+                )
+              ) : (
+                <span class="pf-cmp__text">{value}</span>
+              )}
+            </td>;
+          })}
+        </tr>)}
       </tbody>
     </table>
   </div>
 
   {/* Mobile: per-column cards */}
   <div class="pf-cmp__cards">
-    {
-      columns.map((col, colIdx) => (
-        <div
-          class:list={[
-            "pf-cmp__card",
-            col.highlight && "pf-cmp__card--highlight",
-          ]}
-        >
-          <div
-            class:list={[
-              "pf-cmp__card-header",
-              col.highlight && "pf-cmp__card-header--highlight",
-            ]}
-          >
-            {col.name}
-          </div>
-          <ul role="list" class="pf-cmp__card-list">
-            {rows.map((row) => {
-              const value = row.values[colIdx];
-              return (
-                <li class="pf-cmp__card-item">
-                  <span class="pf-cmp__card-feature">{row.feature}</span>
-                  {typeof value === "boolean" ? (
-                    value ? (
-                      <span
-                        class="pf-cmp__icon-wrap"
-                        aria-label={t("comparison.yes")}
-                      >
-                        <Check
-                          class="pf-cmp__icon pf-cmp__icon--yes"
-                          aria-hidden="true"
-                        />
-                      </span>
-                    ) : (
-                      <span
-                        class="pf-cmp__icon-wrap"
-                        aria-label={t("comparison.no")}
-                      >
-                        <X
-                          class="pf-cmp__icon pf-cmp__icon--no"
-                          aria-hidden="true"
-                        />
-                      </span>
-                    )
-                  ) : (
-                    <span class="pf-cmp__card-value">{value}</span>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))
-    }
+    {columns.map((col, colIdx) => <div
+      class:list={["pf-cmp__card", col.highlight && "pf-cmp__card--highlight"]}
+    >
+      <div
+        class:list={[
+          "pf-cmp__card-header",
+          col.highlight && "pf-cmp__card-header--highlight",
+        ]}
+      >
+        {col.name}
+      </div>
+      <ul role="list" class="pf-cmp__card-list">
+        {rows.map((row) => {
+          const value = row.values[colIdx];
+          return <li class="pf-cmp__card-item">
+            <span class="pf-cmp__card-feature">{row.feature}</span>
+            {typeof value === "boolean" ? (
+              value ? (
+                <span
+                  class="pf-cmp__icon-wrap"
+                  aria-label={t("comparison.yes")}
+                >
+                  <Check
+                    class="pf-cmp__icon pf-cmp__icon--yes"
+                    aria-hidden="true"
+                  />
+                </span>
+              ) : (
+                <span class="pf-cmp__icon-wrap" aria-label={t("comparison.no")}>
+                  <X class="pf-cmp__icon pf-cmp__icon--no" aria-hidden="true" />
+                </span>
+              )
+            ) : (
+              <span class="pf-cmp__card-value">{value}</span>
+            )}
+          </li>;
+        })}
+      </ul>
+    </div>)}
   </div>
 </Section>
 

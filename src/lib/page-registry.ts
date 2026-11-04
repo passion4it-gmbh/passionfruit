@@ -16,12 +16,7 @@ export type PageKey =
   | "careers-index";
 
 export type CollectionName =
-  | "blog"
-  | "team"
-  | "pages"
-  | "careers"
-  | "events"
-  | "caseStudies";
+  "blog" | "team" | "pages" | "careers" | "events" | "caseStudies";
 
 export interface PageEntry {
   key: PageKey;

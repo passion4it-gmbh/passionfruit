@@ -15,24 +15,20 @@ const { quote, attribution, tone = "surface", padding = "lg" } = Astro.props;
     </blockquote>
 
     <figcaption class="pf-quote__attribution">
-      {
-        attribution.avatar && attribution.avatarAlt && (
-          <Image
-            src={attribution.avatar}
-            alt={attribution.avatarAlt}
-            width={48}
-            height={48}
-            class="pf-quote__avatar"
-          />
-        )
-      }
+      {attribution.avatar && attribution.avatarAlt && (
+        <Image
+          src={attribution.avatar}
+          alt={attribution.avatarAlt}
+          width={48}
+          height={48}
+          class="pf-quote__avatar"
+        />
+      )}
       <div class="pf-quote__attribution-meta">
         <span class="pf-quote__name">{attribution.name}</span>
-        {
-          attribution.role && (
-            <span class="pf-quote__role">{attribution.role}</span>
-          )
-        }
+        {attribution.role && <span class="pf-quote__role"
+          >{attribution.role}</span
+        >}
       </div>
     </figcaption>
   </figure>

@@ -42,7 +42,9 @@ const sorted = jobs.sort(
 
 <div class="bg-surface-dark py-16">
   <div class="container grid grid-cols-1 md:grid-cols-2 gap-4">
-    {sorted.map((job) => <CareerCard entry={job} lang={lang} />)}
+    {sorted.map((job) => (
+      <CareerCard entry={job} lang={lang} />
+    ))}
   </div>
 </div>
 ```

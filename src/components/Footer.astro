@@ -70,18 +70,14 @@ const legalLinks: NavLink[] = [
           {t("navigation.home")}
         </p>
         <ul class="space-y-2">
-          {
-            navLinks.map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  class="text-sm text-text-on-dark/70 hover:text-text-on-dark transition-colors duration-[var(--transition-fast)]"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))
-          }
+          {navLinks.map((link) => <li>
+            <a
+              href={link.href}
+              class="text-sm text-text-on-dark/70 hover:text-text-on-dark transition-colors duration-[var(--transition-fast)]"
+            >
+              {link.label}
+            </a>
+          </li>)}
         </ul>
       </div>
 
@@ -93,18 +89,14 @@ const legalLinks: NavLink[] = [
           Legal
         </p>
         <ul class="space-y-2">
-          {
-            legalLinks.map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  class="text-sm text-text-on-dark/70 hover:text-text-on-dark transition-colors duration-[var(--transition-fast)]"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))
-          }
+          {legalLinks.map((link) => <li>
+            <a
+              href={link.href}
+              class="text-sm text-text-on-dark/70 hover:text-text-on-dark transition-colors duration-[var(--transition-fast)]"
+            >
+              {link.label}
+            </a>
+          </li>)}
         </ul>
       </div>
     </div>

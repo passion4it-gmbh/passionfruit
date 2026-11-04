@@ -28,22 +28,19 @@ const formattedDate = formatDate(entry.data.publishedAt, lang);
 <!-- Hero -->
 <section class="bg-surface-dark noise relative overflow-hidden">
   <div class="absolute inset-0 bg-grid opacity-20"></div>
-  {
-    entry.data.heroImage && (
-      <Image
-        src={entry.data.heroImage}
-        alt=""
-        class="absolute inset-0 w-full h-full object-cover opacity-15"
-        widths={[640, 1024, 1536]}
-        sizes="100vw"
-        loading="eager"
-      />
-    )
-  }
+  {entry.data.heroImage && (
+    <Image
+      src={entry.data.heroImage}
+      alt=""
+      class="absolute inset-0 w-full h-full object-cover opacity-15"
+      widths={[640, 1024, 1536]}
+      sizes="100vw"
+      loading="eager"
+    />
+  )}
   <div
     class="absolute inset-0 bg-gradient-to-b from-surface-dark/60 via-surface-dark/80 to-surface-dark"
-  >
-  </div>
+  ></div>
 
   <div class="container relative z-10 pt-44 pb-20 md:pt-52 md:pb-28">
     <a
@@ -55,18 +52,12 @@ const formattedDate = formatDate(entry.data.publishedAt, lang);
       {t("cta.backToBlog")}
     </a>
 
-    {
-      entry.data.tags.length > 0 && (
-        <div
-          class="flex flex-wrap gap-2 mb-4 hero-stagger"
-          style="--delay: 200ms"
-        >
-          {entry.data.tags.map((tag) => (
-            <Badge tone="on-dark">{tag}</Badge>
-          ))}
-        </div>
-      )
-    }
+    {entry.data.tags.length > 0 && <div
+      class="flex flex-wrap gap-2 mb-4 hero-stagger"
+      style="--delay: 200ms"
+    >
+      {entry.data.tags.map((tag) => <Badge tone="on-dark">{tag}</Badge>)}
+    </div>}
 
     <h1
       class="text-h1 text-text-on-dark max-w-3xl hero-stagger"

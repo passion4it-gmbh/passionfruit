@@ -129,64 +129,62 @@ if (props.kind === "collection-detail") {
 }
 ---
 
-{
-  props.kind === "collection-detail" ? (
-    <BaseLayout
-      title={collectionTitle}
-      description={collectionDescription}
-      lang={lang}
-      currentSlug={slug}
-      alternateSlug={collectionAlternateSlug}
-    >
-      {blogPostingLd && (
-        <StructuredData
-          slot="structured-data"
-          type="BlogPosting"
-          data={blogPostingLd}
-        />
-      )}
-      {jobPostingLd && (
-        <StructuredData
-          slot="structured-data"
-          type="JobPosting"
-          data={jobPostingLd}
-        />
-      )}
-      {eventLd && (
-        <StructuredData slot="structured-data" type="Event" data={eventLd} />
-      )}
-      {reviewLd && (
-        <StructuredData slot="structured-data" type="Review" data={reviewLd} />
-      )}
-      {props.collection === "blog" && (
-        <BlogPost entry={props.entry as CollectionEntry<"blog">} lang={lang} />
-      )}
-      {props.collection === "pages" && (
-        <PageContent
-          entry={props.entry as CollectionEntry<"pages">}
-          lang={lang}
-        />
-      )}
-      {props.collection === "careers" && (
-        <CareerPost
-          entry={props.entry as CollectionEntry<"careers">}
-          lang={lang}
-        />
-      )}
-      {props.collection === "events" && (
-        <EventDetail
-          entry={props.entry as CollectionEntry<"events">}
-          lang={lang}
-        />
-      )}
-      {props.collection === "caseStudies" && (
-        <CaseStudyDetail
-          entry={props.entry as CollectionEntry<"caseStudies">}
-          lang={lang}
-        />
-      )}
-    </BaseLayout>
-  ) : (
-    StaticComponent && <StaticComponent lang={lang} currentSlug={slug} />
-  )
-}
+{props.kind === "collection-detail" ? (
+  <BaseLayout
+    title={collectionTitle}
+    description={collectionDescription}
+    lang={lang}
+    currentSlug={slug}
+    alternateSlug={collectionAlternateSlug}
+  >
+    {blogPostingLd && (
+      <StructuredData
+        slot="structured-data"
+        type="BlogPosting"
+        data={blogPostingLd}
+      />
+    )}
+    {jobPostingLd && (
+      <StructuredData
+        slot="structured-data"
+        type="JobPosting"
+        data={jobPostingLd}
+      />
+    )}
+    {eventLd && (
+      <StructuredData slot="structured-data" type="Event" data={eventLd} />
+    )}
+    {reviewLd && (
+      <StructuredData slot="structured-data" type="Review" data={reviewLd} />
+    )}
+    {props.collection === "blog" && (
+      <BlogPost entry={props.entry as CollectionEntry<"blog">} lang={lang} />
+    )}
+    {props.collection === "pages" && (
+      <PageContent
+        entry={props.entry as CollectionEntry<"pages">}
+        lang={lang}
+      />
+    )}
+    {props.collection === "careers" && (
+      <CareerPost
+        entry={props.entry as CollectionEntry<"careers">}
+        lang={lang}
+      />
+    )}
+    {props.collection === "events" && (
+      <EventDetail
+        entry={props.entry as CollectionEntry<"events">}
+        lang={lang}
+      />
+    )}
+    {props.collection === "caseStudies" && (
+      <CaseStudyDetail
+        entry={props.entry as CollectionEntry<"caseStudies">}
+        lang={lang}
+      />
+    )}
+  </BaseLayout>
+) : (
+  StaticComponent && <StaticComponent lang={lang} currentSlug={slug} />
+)}

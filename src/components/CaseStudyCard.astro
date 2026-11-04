@@ -40,22 +40,21 @@ const cardLinkLabel = `${entry.data.personName}, ${entry.data.clientName} – ${
       class="thumbnail-img"
       loading="lazy"
     />
-    {
-      entry.data.videoId && (
-        <span class="video-badge" aria-label={t("caseStudies.videoAvailable")}>
-          <Play class="w-4 h-4" aria-hidden="true" />
-        </span>
-      )
-    }
+    {entry.data.videoId && <span
+      class="video-badge"
+      aria-label={t("caseStudies.videoAvailable")}
+    >
+      <Play class="w-4 h-4" aria-hidden="true" />
+    </span>}
   </div>
 
   <div class="content">
     <span class="category">{entry.data.category}</span>
 
     <blockquote class="quote">
-      {t("caseStudies.quoteOpen")}{entry.data.quote}{
-        t("caseStudies.quoteClose")
-      }
+      {t("caseStudies.quoteOpen")}{entry.data.quote}{t(
+        "caseStudies.quoteClose",
+      )}
     </blockquote>
 
     <div class="details">
@@ -64,17 +63,14 @@ const cardLinkLabel = `${entry.data.personName}, ${entry.data.clientName} – ${
       <span class="firma">{entry.data.clientName}</span>
     </div>
 
-    {
-      entry.data.tags.length > 0 && (
-        <ul class="tags" aria-label={t("caseStudies.tagsLabel")}>
-          {entry.data.tags.map((tag) => (
-            <li class="relative z-[2]">
-              <Badge>{tag}</Badge>
-            </li>
-          ))}
-        </ul>
-      )
-    }
+    {entry.data.tags.length > 0 && <ul
+      class="tags"
+      aria-label={t("caseStudies.tagsLabel")}
+    >
+      {entry.data.tags.map((tag) => <li class="relative z-[2]">
+        <Badge>{tag}</Badge>
+      </li>)}
+    </ul>}
 
     <span class="read-more">
       {t("caseStudies.readMore")}

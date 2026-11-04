@@ -60,29 +60,27 @@ const lineCount = Math.max(1, Math.floor(lines));
   aria-busy="true"
   class:list={["pf-skeleton-root", className]}
 >
-  {
-    isMultiLineText ? (
-      <div class="pf-skeleton-stack" style={inlineStyle}>
-        {Array.from({ length: lineCount }, (_, i) => {
-          // Last line slightly shorter — feels more like real prose.
-          const isLast = i === lineCount - 1;
-          const lineStyle = isLast ? "width: 70%;" : undefined;
-          return (
-            <div
-              class:list={["pf-skeleton", variantClass]}
-              style={lineStyle}
-              aria-hidden="true"
-            />
-          );
-        })}
-      </div>
-    ) : (
-      <div
-        class:list={["pf-skeleton", variantClass]}
-        style={inlineStyle}
-        aria-hidden="true"
-      />
-    )
-  }
+  {isMultiLineText ? (
+    <div class="pf-skeleton-stack" style={inlineStyle}>
+      {Array.from({ length: lineCount }, (_, i) => {
+        // Last line slightly shorter — feels more like real prose.
+        const isLast = i === lineCount - 1;
+        const lineStyle = isLast ? "width: 70%;" : undefined;
+        return (
+          <div
+            class:list={["pf-skeleton", variantClass]}
+            style={lineStyle}
+            aria-hidden="true"
+          />
+        );
+      })}
+    </div>
+  ) : (
+    <div
+      class:list={["pf-skeleton", variantClass]}
+      style={inlineStyle}
+      aria-hidden="true"
+    />
+  )}
   <span class="sr-only">{loadingLabel}…</span>
 </div>

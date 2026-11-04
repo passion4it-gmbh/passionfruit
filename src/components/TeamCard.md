@@ -41,7 +41,9 @@ const sorted = members.sort(
 ---
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-  {sorted.map((member) => <TeamCard entry={member} lang={lang} />)}
+  {sorted.map((member) => (
+    <TeamCard entry={member} lang={lang} />
+  ))}
 </div>
 ```
 

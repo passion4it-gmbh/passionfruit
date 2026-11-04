@@ -13,17 +13,17 @@ if (!import.meta.env.DEV) {
   lang="en"
   noindex={true}
 >
-  <div class="container" style="padding-block: 4rem;">
-    <header style="margin-block-end: 4rem;">
+  <div class="container" style="padding-block: 4rem">
+    <header style="margin-block-end: 4rem">
       <p class="eyebrow">Design Floor / Chapter 1</p>
       <h1>Editorial type system</h1>
-      <p style="color: var(--color-muted); max-inline-size: 60ch;">
+      <p style="color: var(--color-muted); max-inline-size: 60ch">
         Verify opsz axis, OpenType features, vertical rhythm, hierarchical
         tracking. Each block below should look intentional.
       </p>
     </header>
 
-    <section style="margin-block-end: 4rem;">
+    <section style="margin-block-end: 4rem">
       <p class="eyebrow">Heading levels</p>
       <div class="text-display">Display headline weight</div>
       <h1>Heading 1 — Crafting clear interfaces</h1>
@@ -34,7 +34,7 @@ if (!import.meta.env.DEV) {
       <h6>Heading 6 — The smallest heading slot</h6>
     </section>
 
-    <section style="margin-block-end: 4rem;">
+    <section style="margin-block-end: 4rem">
       <p class="eyebrow">Prose — default measure, no drop cap</p>
       <Prose>
         <p>
@@ -51,15 +51,15 @@ if (!import.meta.env.DEV) {
       </Prose>
     </section>
 
-    <section style="margin-block-end: 4rem;">
+    <section style="margin-block-end: 4rem">
       <p class="eyebrow">Prose — with drop cap</p>
       <Prose dropCap>
         <p>
           When a publication wants to invite the reader in, it leans on a drop
           cap. The oversized first letter anchors the eye to the start of the
           piece and signals that this is a long-form read. We use
-          <code>::first-letter</code> so the markup stays semantic and screen readers
-          ignore the visual flourish.
+          <code>::first-letter</code> so the markup stays semantic and screen
+          readers ignore the visual flourish.
         </p>
         <p>
           The second paragraph in a drop-cap block should resume the normal
@@ -69,7 +69,7 @@ if (!import.meta.env.DEV) {
       </Prose>
     </section>
 
-    <section style="margin-block-end: 4rem;">
+    <section style="margin-block-end: 4rem">
       <p class="eyebrow">Oldstyle figures in flowing prose</p>
       <Prose>
         <p>
@@ -81,65 +81,92 @@ if (!import.meta.env.DEV) {
       </Prose>
     </section>
 
-    <section style="margin-block-end: 4rem;">
+    <section style="margin-block-end: 4rem">
       <p class="eyebrow">Tabular figures — numeric table</p>
       <table
         class="tabular"
-        style="border-collapse: collapse; max-inline-size: 40rem;"
+        style="border-collapse: collapse; max-inline-size: 40rem"
       >
         <thead>
           <tr>
             <th
-              style="text-align: start; padding: 0.5rem 1rem; border-block-end: 1px solid var(--color-border);"
-              >Quarter</th
+              style="
+                text-align: start;
+                padding: 0.5rem 1rem;
+                border-block-end: 1px solid var(--color-border);
+              "
             >
+              Quarter
+            </th>
             <th
-              style="text-align: end; padding: 0.5rem 1rem; border-block-end: 1px solid var(--color-border);"
-              >Revenue</th
+              style="
+                text-align: end;
+                padding: 0.5rem 1rem;
+                border-block-end: 1px solid var(--color-border);
+              "
             >
+              Revenue
+            </th>
             <th
-              style="text-align: end; padding: 0.5rem 1rem; border-block-end: 1px solid var(--color-border);"
-              >Customers</th
+              style="
+                text-align: end;
+                padding: 0.5rem 1rem;
+                border-block-end: 1px solid var(--color-border);
+              "
             >
+              Customers
+            </th>
             <th
-              style="text-align: end; padding: 0.5rem 1rem; border-block-end: 1px solid var(--color-border);"
-              >Growth</th
+              style="
+                text-align: end;
+                padding: 0.5rem 1rem;
+                border-block-end: 1px solid var(--color-border);
+              "
             >
+              Growth
+            </th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 0.5rem 1rem;">Q1 2025</td>
-            <td style="text-align: end; padding: 0.5rem 1rem;">€1,247,890</td>
-            <td style="text-align: end; padding: 0.5rem 1rem;">1,032</td>
-            <td style="text-align: end; padding: 0.5rem 1rem;">+12.4%</td>
+            <td style="padding: 0.5rem 1rem">Q1 2025</td>
+            <td style="text-align: end; padding: 0.5rem 1rem">€1,247,890</td>
+            <td style="text-align: end; padding: 0.5rem 1rem">1,032</td>
+            <td style="text-align: end; padding: 0.5rem 1rem">+12.4%</td>
           </tr>
           <tr>
-            <td style="padding: 0.5rem 1rem;">Q2 2025</td>
-            <td style="text-align: end; padding: 0.5rem 1rem;">€1,489,210</td>
-            <td style="text-align: end; padding: 0.5rem 1rem;">1,184</td>
-            <td style="text-align: end; padding: 0.5rem 1rem;">+19.3%</td>
+            <td style="padding: 0.5rem 1rem">Q2 2025</td>
+            <td style="text-align: end; padding: 0.5rem 1rem">€1,489,210</td>
+            <td style="text-align: end; padding: 0.5rem 1rem">1,184</td>
+            <td style="text-align: end; padding: 0.5rem 1rem">+19.3%</td>
           </tr>
           <tr>
-            <td style="padding: 0.5rem 1rem;">Q3 2025</td>
-            <td style="text-align: end; padding: 0.5rem 1rem;">€1,732,055</td>
-            <td style="text-align: end; padding: 0.5rem 1rem;">1,401</td>
-            <td style="text-align: end; padding: 0.5rem 1rem;">+16.3%</td>
+            <td style="padding: 0.5rem 1rem">Q3 2025</td>
+            <td style="text-align: end; padding: 0.5rem 1rem">€1,732,055</td>
+            <td style="text-align: end; padding: 0.5rem 1rem">1,401</td>
+            <td style="text-align: end; padding: 0.5rem 1rem">+16.3%</td>
           </tr>
           <tr>
-            <td style="padding: 0.5rem 1rem;">Q4 2025</td>
-            <td style="text-align: end; padding: 0.5rem 1rem;">€2,108,374</td>
-            <td style="text-align: end; padding: 0.5rem 1rem;">1,673</td>
-            <td style="text-align: end; padding: 0.5rem 1rem;">+21.7%</td>
+            <td style="padding: 0.5rem 1rem">Q4 2025</td>
+            <td style="text-align: end; padding: 0.5rem 1rem">€2,108,374</td>
+            <td style="text-align: end; padding: 0.5rem 1rem">1,673</td>
+            <td style="text-align: end; padding: 0.5rem 1rem">+21.7%</td>
           </tr>
         </tbody>
       </table>
     </section>
 
-    <section style="margin-block-end: 4rem;">
+    <section style="margin-block-end: 4rem">
       <p class="eyebrow">Code — ligatures off</p>
       <pre
-        style="background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 1rem; overflow-x: auto;"><code>{`function compose(...fns) {
+        style="
+          background: var(--color-surface-elevated);
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-md);
+          padding: 1rem;
+          overflow-x: auto;
+        "
+      ><code>{`function compose(...fns) {
   return (x) => fns.reduceRight((acc, fn) => fn(acc), x);
 }
 

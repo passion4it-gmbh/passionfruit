@@ -42,13 +42,9 @@ import FadeUp from "~/components/motion/FadeUp.astro";
 </FadeUp>
 
 <!-- Stagger a card grid by stepping the delay -->
-{
-  cards.map((card, i) => (
-    <FadeUp delay={i * 80}>
-      <Card {...card} />
-    </FadeUp>
-  ))
-}
+{cards.map((card, i) => <FadeUp delay={i * 80}>
+  <Card {...card} />
+</FadeUp>)}
 ```
 
 ## i18n keys

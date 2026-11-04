@@ -41,7 +41,9 @@ const sorted = events.sort(
 ---
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {sorted.map((event) => <EventCard entry={event} lang={lang} />)}
+  {sorted.map((event) => (
+    <EventCard entry={event} lang={lang} />
+  ))}
 </div>
 ```
 

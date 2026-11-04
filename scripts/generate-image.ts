@@ -45,10 +45,7 @@ function loadEnv(): void {
 loadEnv();
 
 type Model =
-  | "gpt-image-2"
-  | "gpt-image-1.5"
-  | "gpt-image-1"
-  | "gpt-image-1-mini";
+  "gpt-image-2" | "gpt-image-1.5" | "gpt-image-1" | "gpt-image-1-mini";
 type Size = "1024x1024" | "1536x1024" | "1024x1536" | "auto";
 type Quality = "low" | "medium" | "high" | "auto";
 type Background = "transparent" | "opaque" | "auto";

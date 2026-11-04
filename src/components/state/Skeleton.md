@@ -47,7 +47,9 @@ import Skeleton from "~/components/state/Skeleton.astro";
 
 <!-- Card silhouette while a blog list loads -->
 <div class="grid">
-  {Array.from({ length: 6 }).map(() => <Skeleton variant="card" />)}
+  {Array.from({ length: 6 }).map(() => (
+    <Skeleton variant="card" />
+  ))}
 </div>
 ```
 

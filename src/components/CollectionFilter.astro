@@ -103,91 +103,78 @@ const idleChipClasses =
   class:list={["collection-filter", className]}
   aria-label={t("filter.ariaLabel")}
 >
-  {
-    facets.map((facet) => {
-      const activeValues = selected[facet.key] ?? [];
+  {facets.map((facet) => {
+    const activeValues = selected[facet.key] ?? [];
 
-      // Build "All" href — current params minus this facet
-      const allParams = new URLSearchParams();
-      for (const [fk, values] of Object.entries(selected)) {
-        if (fk !== facet.key) {
-          for (const v of values) allParams.append(fk, v);
-        }
+    // Build "All" href — current params minus this facet
+    const allParams = new URLSearchParams();
+    for (const [fk, values] of Object.entries(selected)) {
+      if (fk !== facet.key) {
+        for (const v of values) allParams.append(fk, v);
       }
-      const allQs = allParams.toString();
-      const allHref = allQs ? `${baseUrl}?${allQs}` : baseUrl;
-      const isAll = activeValues.length === 0;
+    }
+    const allQs = allParams.toString();
+    const allHref = allQs ? `${baseUrl}?${allQs}` : baseUrl;
+    const isAll = activeValues.length === 0;
 
-      return (
-        <div class="flex flex-wrap items-center gap-2 mb-3 last:mb-0">
-          <span class="text-xs font-semibold uppercase tracking-wide text-muted mr-1 shrink-0">
-            {facet.label}
-          </span>
+    return <div class="flex flex-wrap items-center gap-2 mb-3 last:mb-0">
+      <span
+        class="text-xs font-semibold uppercase tracking-wide text-muted mr-1 shrink-0"
+      >
+        {facet.label}
+      </span>
 
-          <a
-            href={allHref}
-            aria-current={isAll ? "true" : undefined}
-            class:list={["chip", isAll ? "chip--active" : idleChipClasses]}
-          >
-            {allLabel}
-          </a>
+      <a
+        href={allHref}
+        aria-current={isAll ? "true" : undefined}
+        class:list={["chip", isAll ? "chip--active" : idleChipClasses]}
+      >
+        {allLabel}
+      </a>
 
-          {facet.values.map((val) => {
-            const isActive = activeValues.includes(val.key);
-            return (
-              <a
-                href={buildToggleUrl(facet.key, val.key)}
-                aria-current={isActive ? "true" : undefined}
-                class:list={[
-                  "chip",
-                  isActive ? "chip--active" : idleChipClasses,
-                ]}
-              >
-                {val.label}
-                {val.count !== undefined && (
-                  <span class="ml-1 opacity-60 text-xs">({val.count})</span>
-                )}
-              </a>
-            );
-          })}
-        </div>
-      );
-    })
-  }
-
-  {
-    hasActiveFilters && (
-      <div class="mt-2">
-        <a
-          href={resetUrl}
-          class:list={[
-            "inline-flex items-center gap-1.5 text-sm font-medium motion-safe:transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded",
-            tone === "on-dark"
-              ? "text-white/60 hover:text-white"
-              : "text-muted hover:text-accent",
-          ]}
-          aria-label={resolvedResetLabel}
+      {facet.values.map((val) => {
+        const isActive = activeValues.includes(val.key);
+        return <a
+          href={buildToggleUrl(facet.key, val.key)}
+          aria-current={isActive ? "true" : undefined}
+          class:list={["chip", isActive ? "chip--active" : idleChipClasses]}
         >
-          <RotateCcw size={14} aria-hidden="true" />
-          {resolvedResetLabel}
-        </a>
-      </div>
-    )
-  }
+          {val.label}
+          {val.count !== undefined && <span class="ml-1 opacity-60 text-xs"
+            >({val.count})</span
+          >}
+        </a>;
+      })}
+    </div>;
+  })}
+
+  {hasActiveFilters && <div class="mt-2">
+    <a
+      href={resetUrl}
+      class:list={[
+        "inline-flex items-center gap-1.5 text-sm font-medium motion-safe:transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded",
+        tone === "on-dark"
+          ? "text-white/60 hover:text-white"
+          : "text-muted hover:text-accent",
+      ]}
+      aria-label={resolvedResetLabel}
+    >
+      <RotateCcw size={14} aria-hidden="true" />
+      {resolvedResetLabel}
+    </a>
+  </div>}
 </nav>
 
-{
-  isEmpty && (
-    <EmptyState
-      headline={t("state.empty.filters.headline")}
-      body={t("state.empty.filters.body")}
-      cta={{
-        label: t("state.empty.filters.cta"),
-        href: emptyResetHref ?? baseUrl,
-      }}
-    />
-  )
-}
+{isEmpty && (
+  <EmptyState
+    headline={t("state.empty.filters.headline")}
+    body={t("state.empty.filters.body")}
+    cta={{
+      label: t("state.empty.filters.cta"),
+      href: emptyResetHref ?? baseUrl,
+    }}
+  />
+)}
 
 <style>
   .chip {

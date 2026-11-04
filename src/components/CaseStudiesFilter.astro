@@ -65,15 +65,13 @@ if (tagCounts.size > 0) {
 }
 ---
 
-{
-  facets.length > 0 && (
-    <CollectionFilter
-      {facets}
-      {selected}
-      {lang}
-      {baseUrl}
-      {tone}
-      class={className}
-    />
-  )
-}
+{facets.length > 0 && (
+  <CollectionFilter
+    {facets}
+    {selected}
+    {lang}
+    {baseUrl}
+    {tone}
+    class={className}
+  />
+)}
