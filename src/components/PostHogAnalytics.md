@@ -51,5 +51,5 @@ None
 - **`person_profiles: 'identified_only'`** — anonymous visitors do not get a person profile, reducing EU GDPR exposure.
 - **`window.posthog.__loaded` guard.** Prevents re-initialization across idle callbacks and consent events.
 - **Cookie autoclear.** The `CookieConsent` config clears PostHog cookies (`/^_ph/`, `/^ph_/`) when the user revokes analytics consent.
-- **Withdrawal.** When `passionfruit:consent-changed` reports `analytics: false`, the component opts PostHog out and removes its `ph_` keys from local and session storage. Accepting again opts back in, which also clears the stored opt-out.
+- **Withdrawal.** PostHog starts opted out and only applies the latest consent once the SDK is ready, because calls queued while `array.js` loads would replay in order and a stale opt-in captures a page view. After that, `passionfruit:consent-changed` opts in or out directly. Withdrawing also removes its `ph_` keys from local and session storage.
 - **CSP.** PostHog loads `array.js` from `https://us-assets.i.posthog.com` (the SDK CDN, even for EU instances). Add this origin to `script-src` in `public/_headers` or PostHog will be blocked silently.
